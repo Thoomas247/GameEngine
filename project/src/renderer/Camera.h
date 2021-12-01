@@ -33,7 +33,7 @@ struct Camera
 namespace Camera_f
 {
 	glm::mat4 GetViewMatrix(const Camera& cam);
-	void ApplyRotation(Camera& cam, const float& yawDelta, const float& pitchDelta);
+	void ApplyRotation(Camera& cam);
 	void ApplyTranslation(Camera& cam, const glm::vec3 translation);
 }
 

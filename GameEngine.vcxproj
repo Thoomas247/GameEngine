@@ -96,6 +96,8 @@
     <ClCompile Include="project\src\game\Player.cpp" />
     <ClCompile Include="project\src\main.cpp" />
     <ClCompile Include="project\src\renderer\Camera.cpp" />
+    <ClCompile Include="project\src\renderer\Mesh.cpp" />
+    <ClCompile Include="project\src\renderer\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project\src\core\Time.h" />
@@ -104,6 +106,13 @@
     <ClInclude Include="project\src\main.h" />
     <ClInclude Include="project\src\game\Settings.h" />
     <ClInclude Include="project\src\renderer\Camera.h" />
+    <ClInclude Include="project\src\renderer\Mesh.h" />
+    <ClInclude Include="project\src\renderer\Shader.h" />
+    <ClInclude Include="project\src\renderer\Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project\src\shaders\Base.frag" />
+    <None Include="project\src\shaders\Base.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

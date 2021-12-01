@@ -1,6 +1,8 @@
 #include "main.h"
 
 #include "renderer/Camera.h"
+#include "renderer/Shader.h"
+#include "renderer/Mesh.h"
 #include "game/Player.h"
 #include "core/InputManager.h"
 #include "core/Time.h"
@@ -46,6 +48,13 @@ int main()
 
 	// main: init variables
 	Player player;
+
+	// debug: create shader
+	Shader shader = Shader_f::LoadShader(
+		"C:/GameEngine/GameEngine/project/src/shaders/Base.vert", "C:/GameEngine/GameEngine/project/src/shaders/Base.frag");
+
+	//debug: create triangle
+	Mesh mesh = Mesh_f::LoadTri(shader);
 
 	// main: program loop
 	while (!glfwWindowShouldClose(window)) 

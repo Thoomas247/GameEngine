@@ -33,6 +33,12 @@
     <ClCompile Include="project\src\core\Time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="project\src\renderer\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="project\src\renderer\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project\src\main.h">
@@ -53,5 +59,18 @@
     <ClInclude Include="project\src\core\Time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="project\src\renderer\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="project\src\renderer\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="project\src\renderer\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project\src\shaders\Base.vert" />
+    <None Include="project\src\shaders\Base.frag" />
   </ItemGroup>
 </Project>

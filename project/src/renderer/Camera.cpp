@@ -1,14 +1,15 @@
 #include "Camera.h"
 
+#include "../core/InputManager.h"
+#include "../game/Settings.h"
+
 glm::mat4 Camera_f::GetViewMatrix(const Camera& cam)
 {
 	return glm::lookAt(cam.LocalPosition, cam.LocalPosition + cam.Front, cam.Up);
 }
 
-void Camera_f::ApplyRotation(Camera& cam, const float& yawDelta, const float& pitchDelta)
+void Camera_f::ApplyRotation(Camera& cam)
 {
-	cam.Yaw += yawDelta;
-	cam.Pitch += pitchDelta;
 
 	// constrain pitch
 	if (cam.Pitch > 89.0f)
