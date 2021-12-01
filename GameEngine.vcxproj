@@ -90,7 +90,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="project\src\core\Time.cpp" />
+    <ClCompile Include="project\src\core\InputManager.cpp" />
+    <ClCompile Include="project\src\external\glad.c" />
+    <ClCompile Include="project\src\game\Player.cpp" />
     <ClCompile Include="project\src\main.cpp" />
+    <ClCompile Include="project\src\renderer\Camera.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="project\src\core\Time.h" />
+    <ClInclude Include="project\src\core\InputManager.h" />
+    <ClInclude Include="project\src\game\Player.h" />
+    <ClInclude Include="project\src\main.h" />
+    <ClInclude Include="project\src\game\Settings.h" />
+    <ClInclude Include="project\src\renderer\Camera.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
