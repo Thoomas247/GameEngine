@@ -1,33 +1,29 @@
 #include "Camera.h"
 
-#include "../core/InputManager.h"
 #include "../game/Settings.h"
 
-glm::mat4 Camera_f::GetViewMatrix(const Camera& cam)
-{
-	return glm::lookAt(cam.LocalPosition, cam.LocalPosition + cam.Front, cam.Up);
-}
-
-void Camera_f::ApplyRotation(Camera& cam)
+// PUBLIC
+Camera::Camera()
 {
 
-	// constrain pitch
-	if (cam.Pitch > 89.0f)
-		cam.Pitch = 89.0f;
-	if (cam.Pitch < -89.0f)
-		cam.Pitch = -89.0f;
-
-	glm::vec3 newFront;
-	newFront.x = cos(glm::radians(cam.Yaw)) * cos(glm::radians(cam.Pitch));
-	newFront.y = sin(glm::radians(cam.Pitch));
-	newFront.z = sin(glm::radians(cam.Yaw)) * cos(glm::radians(cam.Pitch));
-	cam.Front = glm::normalize(newFront);
-
-	cam.Right = glm::normalize(glm::cross(cam.Front, WorldUp));
-	cam.Up = glm::normalize(glm::cross(cam.Right, cam.Front));
 }
 
-void Camera_f::ApplyTranslation(Camera& cam, const glm::vec3 translation)
+void Camera::Update(Data& data, const float deltaTime, const glm::mat4& parentTransform)
 {
-	cam.LocalPosition += translation;
+	GlobalTransform = parentTransform * glm::mat4_cast(LocalRotation) * glm::translate(glm::mat4(1.0f), LocalPosition);
+
+	glm::vec3 front = GlobalTransform * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+	glm::vec3 up = GlobalTransform * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+
+	ViewProjectionMatrix = glm::perspective<float>(glm::radians(FOV), S_ScreenWidth / S_ScreenHeight, NearPlane, FarPlane)
+		* glm::lookAt(glm::vec3(GlobalTransform[3]), glm::vec3(GlobalTransform[3]) + front, up);
+
+	data.ViewProjectionMatrix = ViewProjectionMatrix;
 }
+
+glm::mat4 Camera::GetViewProjectionMatrix()
+{
+	return ViewProjectionMatrix;
+}
+
+

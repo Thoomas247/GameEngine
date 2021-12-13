@@ -4,11 +4,17 @@
 #include <sstream>
 #include <iostream>
 
-#include "glad/glad.h"
 
-Shader Shader_f::LoadShader(const std::string& vertexPath, const std::string& fragmentPath)
+// PUBLIC
+Shader::Shader()
 {
-	unsigned int newID;
+
+}
+
+Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
+{
+	VertexPath = vertexPath;
+	FragmentPath = fragmentPath;
 
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string vertexCode;
@@ -57,67 +63,72 @@ Shader Shader_f::LoadShader(const std::string& vertexPath, const std::string& fr
 	checkCompileErrors(fragment, "FRAGMENT");
 
 	// shader Program
-	newID = glCreateProgram();
-	glAttachShader(newID, vertex);
-	glAttachShader(newID, fragment);
-	glLinkProgram(newID);
-	checkCompileErrors(newID, "PROGRAM");
+	GLID = glCreateProgram();
+	glAttachShader(GLID, vertex);
+	glAttachShader(GLID, fragment);
+	glLinkProgram(GLID);
+	checkCompileErrors(GLID, "PROGRAM");
 
 	// delete the shaders as they're linked into our program now and no longer necessary
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
-
-	return Shader(newID, vertexPath, fragmentPath);
 }
 
-void Shader_f::SetBool(const Shader& shader, const std::string& assetName, bool value)
+Shader::Shader(const unsigned int& id, const std::string& vertexPath, const std::string& fragmentPath)
 {
-	glUniform1i(glGetUniformLocation(shader.GLID, assetName.c_str()), (int)value);
+	GLID = id;
+	VertexPath = vertexPath;
+	FragmentPath = fragmentPath;
 }
 
-void Shader_f::SetInt(const Shader& shader, const std::string& assetName, int value)
+void Shader::SetBool(const std::string& uniformName, const bool& value)
 {
-	glUniform1i(glGetUniformLocation(shader.GLID, assetName.c_str()), value);
+	glUniform1i(glGetUniformLocation(GLID, uniformName.c_str()), (int)value);
 }
 
-void Shader_f::SetFloat(const Shader& shader, const std::string& assetName, float value)
+void Shader::SetInt(const std::string& uniformName, const int& value)
 {
-	glUniform1f(glGetUniformLocation(shader.GLID, assetName.c_str()), value);
+	glUniform1i(glGetUniformLocation(GLID, uniformName.c_str()), value);
 }
 
-void Shader_f::SetVec2(const Shader& shader, const std::string& assetName, const glm::vec2& value)
+void Shader::SetFloat(const std::string& uniformName, const float& value)
 {
-	glUniform2fv(glGetUniformLocation(shader.GLID, assetName.c_str()), 1, &value[0]);
+	glUniform1f(glGetUniformLocation(GLID, uniformName.c_str()), value);
 }
 
-void Shader_f::SetVec3(const Shader& shader, const std::string& assetName, const glm::vec3& value)
+void Shader::SetVec2(const std::string& uniformName, const glm::vec2& value)
 {
-	glUniform3fv(glGetUniformLocation(shader.GLID, assetName.c_str()), 1, &value[0]);
+	glUniform2fv(glGetUniformLocation(GLID, uniformName.c_str()), 1, &value[0]);
 }
 
-void Shader_f::SetVec4(const Shader& shader, const std::string& assetName, const glm::vec4& value)
+void Shader::SetVec3(const std::string& uniformName, const glm::vec3& value)
 {
-	glUniform4fv(glGetUniformLocation(shader.GLID, assetName.c_str()), 1, &value[0]);
+	glUniform3fv(glGetUniformLocation(GLID, uniformName.c_str()), 1, &value[0]);
 }
 
-void Shader_f::SetMat2(const Shader& shader, const std::string& assetName, const glm::mat2& mat)
+void Shader::SetVec4(const std::string& uniformName, const glm::vec4& value)
 {
-	glUniformMatrix2fv(glGetUniformLocation(shader.GLID, assetName.c_str()), 1, GL_FALSE, &mat[0][0]);
+	glUniform4fv(glGetUniformLocation(GLID, uniformName.c_str()), 1, &value[0]);
 }
 
-void Shader_f::SetMat3(const Shader& shader, const std::string& assetName, const glm::mat3& mat)
+void Shader::SetMat2(const std::string& uniformName, const glm::mat2& mat)
 {
-	glUniformMatrix3fv(glGetUniformLocation(shader.GLID, assetName.c_str()), 1, GL_FALSE, &mat[0][0]);
+	glUniformMatrix2fv(glGetUniformLocation(GLID, uniformName.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
-void Shader_f::SetMat4(const Shader& shader, const std::string& assetName, const glm::mat4& mat)
+void Shader::SetMat3(const std::string& uniformName, const glm::mat3& mat)
 {
-	glUniformMatrix4fv(glGetUniformLocation(shader.GLID, assetName.c_str()), 1, GL_FALSE, &mat[0][0]);
+	glUniformMatrix3fv(glGetUniformLocation(GLID, uniformName.c_str()), 1, GL_FALSE, &mat[0][0]);
+}
+
+void Shader::SetMat4(const std::string& uniformName, const glm::mat4& mat)
+{
+	glUniformMatrix4fv(glGetUniformLocation(GLID, uniformName.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
 
-
-void checkCompileErrors(const unsigned int& shader, const std::string& type)
+// PRIVATE
+void Shader::checkCompileErrors(const unsigned int& shader, const std::string& type)
 {
 	int success;
 	char infoLog[1024];

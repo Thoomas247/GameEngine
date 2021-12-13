@@ -3,38 +3,33 @@
 
 #include <string>
 
+#include "../external/GLIncludes.h"
 #include "glm/glm.hpp"
 
-struct Shader 
+class Shader
 {
+private:
 	unsigned int GLID = 0;	// opengl ID of shader after compilation
 	std::string VertexPath;
 	std::string FragmentPath;
 
-	Shader() {}
+public:
+	Shader();
+	Shader(const std::string& vertexPath, const std::string& fragmentPath);
+	Shader(const unsigned int& id, const std::string& vertexPath, const std::string& fragmentPath);
 
-	Shader(unsigned int id, std::string vertexPath, std::string fragmentPath) {
-		GLID = id;
-		VertexPath = vertexPath;
-		FragmentPath = fragmentPath;
-	}
+	void SetBool(const std::string& uniformName, const bool& value);
+	void SetInt(const std::string& uniformName, const int& value);
+	void SetFloat(const std::string& uniformName, const float& value);
+	void SetVec2(const std::string& uniformName, const glm::vec2& value);
+	void SetVec3(const std::string& uniformName, const glm::vec3& value);
+	void SetVec4(const std::string& uniformName, const glm::vec4& value);
+	void SetMat2(const std::string& uniformName, const glm::mat2& mat);
+	void SetMat3(const std::string& uniformName, const glm::mat3& mat);
+	void SetMat4(const std::string& uniformName, const glm::mat4& mat);
+
+private:
+	void checkCompileErrors(const unsigned int& shader, const std::string& type);
 };
-
-namespace Shader_f 
-{
-	Shader LoadShader(const std::string& vertexPath, const std::string& fragmentPath);
-
-	void SetBool(const Shader& shader, const std::string& assetName, bool value);
-	void SetInt(const Shader& shader, const std::string& assetName, int value);
-	void SetFloat(const Shader& shader, const std::string& assetName, float value);
-	void SetVec2(const Shader& shader, const std::string& assetName, const glm::vec2& value);
-	void SetVec3(const Shader& shader, const std::string& assetName, const glm::vec3& value);
-	void SetVec4(const Shader& shader, const std::string& assetName, const glm::vec4& value);
-	void SetMat2(const Shader& shader, const std::string& assetName, const glm::mat2& mat);
-	void SetMat3(const Shader& shader, const std::string& assetName, const glm::mat3& mat);
-	void SetMat4(const Shader& shader, const std::string& assetName, const glm::mat4& mat);
-}
-
-void checkCompileErrors(const unsigned int& shader, const std::string& type);
 
 #endif // !SHADER

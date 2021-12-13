@@ -4,10 +4,12 @@
 #include "glm/glm.hpp"
 
 // World settings:
-const glm::vec3 WorldUp = { 0.0f, 1.0f, 0.0f };
+const glm::vec3 S_WorldUp = { 0.0f, 1.0f, 0.0f };
 
-// User settings:
-const float MouseSensitivity = 0.1f;
+// User settings: (TODO: make not const and global)
+const unsigned int S_ScreenWidth = 800;
+const unsigned int S_ScreenHeight = 600;
+const float S_MouseSensitivity = 0.1f;
 
 #endif // !SETTINGS
 

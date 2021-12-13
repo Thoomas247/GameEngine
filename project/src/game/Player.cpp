@@ -1,39 +1,45 @@
 #include "Player.h"
 
-#include "../core/InputManager.h"
-#include "../core/Time.h"
-
-void Player_f::Update(Player& player)
+// PUBLIC
+void Player::Update(Data& data, const float& deltaTime, const glm::mat4& parentTransform)
 {
 	// handle movement input:
-	player.Yaw += Inputs::MouseDeltaX * MouseSensitivity;
-
-	glm::vec3 newFront = glm::vec3(0.0f);
-	newFront.x = cos(glm::radians(player.Yaw));
-	newFront.z = sin(glm::radians(player.Yaw));
-	player.Front = glm::normalize(newFront);
+	glm::vec3 up = glm::mat3_cast(LocalRotation) * glm::vec3(0.0f, 1.0f, 0.0f);
+	float yawDelta = data.Input.MouseDeltaX * S_MouseSensitivity;
+	LocalRotation = glm::rotate(LocalRotation, yawDelta, up);
 
 	glm::vec3 inputVector = glm::vec3(0.0f);
 
-	if (Inputs::ActionMoveForward) {
+	if (data.Input.ActionMoveForward) {
 		inputVector.z += -1.0f;
 	}
-	if (Inputs::ActionMoveBack) {
+	if (data.Input.ActionMoveBack) {
 		inputVector.z += 1.0f;
 	}
-	if (Inputs::ActionMoveLeft) {
+	if (data.Input.ActionMoveLeft) {
 		inputVector.x += -1.0f;
 	}
-	if (Inputs::ActionMoveRight) {
+	if (data.Input.ActionMoveRight) {
 		inputVector.x += 1.0f;
 	}
 
-	inputVector = glm::normalize(inputVector);
+	if (inputVector != glm::vec3(0.0f)) {
+		inputVector = glm::normalize(inputVector);
+		LocalPosition += glm::mat3_cast(LocalRotation) * (inputVector * Speed * deltaTime);
+	}
 
-	player.GlobalPosition += player.Front * inputVector * player.Speed * Time::DeltaTime;
+	// update transform:
+	GlobalTransform = parentTransform * glm::mat4_cast(LocalRotation) * glm::translate(glm::mat4(1.0f), LocalPosition);
 
-	// update camera:
-	player.Camera.Pitch += Inputs::MouseDeltaY * MouseSensitivity;
-	player.Camera.Yaw = player.Yaw;
+	// update children:
+	Camera.Update(data, deltaTime, GlobalTransform);
+	for (auto& [key, mesh] : MeshChildren)
+	{
+		mesh.Update(data, deltaTime, GlobalTransform);
+	}
 
+}
+
+void Player::AddChildMesh(const std::string& name, Mesh& mesh)
+{
 }
