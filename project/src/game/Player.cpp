@@ -1,45 +1,50 @@
 #include "Player.h"
 
+#include <iostream>
+
+#include "Settings.h"
+
 // PUBLIC
-void Player::Update(Data& data, const float& deltaTime, const glm::mat4& parentTransform)
+Player::Player()
 {
-	// handle movement input:
-	glm::vec3 up = glm::mat3_cast(LocalRotation) * glm::vec3(0.0f, 1.0f, 0.0f);
-	float yawDelta = data.Input.MouseDeltaX * S_MouseSensitivity;
-	LocalRotation = glm::rotate(LocalRotation, yawDelta, up);
+}
+
+// PRIVATE
+void Player::onUpdate(Data& data, const float& deltaTime)
+{
+	std::shared_ptr<GameObject> camera = GetChild("Camera");
+
+	// Rotation
+	camera->LocalRotation = glm::rotate(camera->LocalRotation, glm::radians(data.Input.MouseDeltaX * S_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f));
+	camera->LocalRotation = glm::rotate(camera->LocalRotation, glm::radians(data.Input.MouseDeltaY * S_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	// Movement
+	glm::vec3 front = glm::mat3_cast(camera->LocalRotation) * glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 right = glm::mat3_cast(camera->LocalRotation) * glm::vec3(1.0f, 0.0f, 0.0f);
 
 	glm::vec3 inputVector = glm::vec3(0.0f);
 
-	if (data.Input.ActionMoveForward) {
-		inputVector.z += -1.0f;
-	}
-	if (data.Input.ActionMoveBack) {
+	if (data.Input.ActionMoveForward)
+	{
 		inputVector.z += 1.0f;
 	}
-	if (data.Input.ActionMoveLeft) {
-		inputVector.x += -1.0f;
+	if (data.Input.ActionMoveBack)
+	{
+		inputVector.z -= 1.0f;
 	}
-	if (data.Input.ActionMoveRight) {
+	if (data.Input.ActionMoveRight)
+	{
 		inputVector.x += 1.0f;
 	}
-
-	if (inputVector != glm::vec3(0.0f)) {
-		inputVector = glm::normalize(inputVector);
-		LocalPosition += glm::mat3_cast(LocalRotation) * (inputVector * Speed * deltaTime);
-	}
-
-	// update transform:
-	GlobalTransform = parentTransform * glm::mat4_cast(LocalRotation) * glm::translate(glm::mat4(1.0f), LocalPosition);
-
-	// update children:
-	Camera.Update(data, deltaTime, GlobalTransform);
-	for (auto& [key, mesh] : MeshChildren)
+	if (data.Input.ActionMoveLeft)
 	{
-		mesh.Update(data, deltaTime, GlobalTransform);
+		inputVector.x -= 1.0f;
 	}
 
-}
-
-void Player::AddChildMesh(const std::string& name, Mesh& mesh)
-{
+	if (inputVector != glm::vec3(0.0f))
+	{
+		inputVector = glm::normalize(inputVector);
+		LocalPosition += front * inputVector.z * Speed * deltaTime;
+		LocalPosition += right * inputVector.x * Speed * deltaTime;
+	}
 }

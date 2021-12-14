@@ -61,7 +61,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)project\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ShowIncludes>true</ShowIncludes>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -80,7 +80,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)project\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ShowIncludes>true</ShowIncludes>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -92,21 +92,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="project\src\game\GameObject.cpp" />
     <ClCompile Include="project\src\core\Input.cpp" />
     <ClCompile Include="project\src\external\glad.c" />
     <ClCompile Include="project\src\game\Player.cpp" />
-    <ClCompile Include="project\src\game\WorldRoot.cpp" />
     <ClCompile Include="project\src\main.cpp" />
     <ClCompile Include="project\src\renderer\Camera.cpp" />
     <ClCompile Include="project\src\renderer\Mesh.cpp" />
     <ClCompile Include="project\src\renderer\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="project\src\game\GameObject.h" />
     <ClInclude Include="project\src\core\Data.h" />
     <ClInclude Include="project\src\core\Input.h" />
     <ClInclude Include="project\src\external\GLIncludes.h" />
     <ClInclude Include="project\src\game\Player.h" />
-    <ClInclude Include="project\src\game\WorldRoot.h" />
     <ClInclude Include="project\src\game\Settings.h" />
     <ClInclude Include="project\src\renderer\Camera.h" />
     <ClInclude Include="project\src\renderer\Mesh.h" />

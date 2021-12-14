@@ -6,8 +6,6 @@
 class Input
 {
 public:
-	float MouseLastXPos = 0.0f;
-	float MouseLastYPos = 0.0f;
 	float MouseDeltaX = 0.0f;
 	float MouseDeltaY = 0.0f;
 
@@ -18,12 +16,15 @@ public:
 	bool ActionMoveRight = false;
 	// don't forget to update functions when adding!
 
+private:
+	float MouseLastXPos = 0.0f;
+	float MouseLastYPos = 0.0f;
+
 public:
 	void Update(GLFWwindow* window);
 
 private:
 	void resetInput();
-
 };
 
 #endif // !INPUT

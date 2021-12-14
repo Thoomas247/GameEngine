@@ -4,11 +4,9 @@
 #include <sstream>
 #include <iostream>
 
-
 // PUBLIC
 Shader::Shader()
 {
-
 }
 
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
@@ -81,6 +79,11 @@ Shader::Shader(const unsigned int& id, const std::string& vertexPath, const std:
 	FragmentPath = fragmentPath;
 }
 
+unsigned int Shader::GetGLID()
+{
+	return GLID;
+}
+
 void Shader::SetBool(const std::string& uniformName, const bool& value)
 {
 	glUniform1i(glGetUniformLocation(GLID, uniformName.c_str()), (int)value);
@@ -125,7 +128,6 @@ void Shader::SetMat4(const std::string& uniformName, const glm::mat4& mat)
 {
 	glUniformMatrix4fv(glGetUniformLocation(GLID, uniformName.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
-
 
 // PRIVATE
 void Shader::checkCompileErrors(const unsigned int& shader, const std::string& type)

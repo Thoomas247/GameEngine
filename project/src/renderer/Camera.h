@@ -1,25 +1,18 @@
 #ifndef CAMERA
 #define CAMERA
 
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/quaternion.hpp"
+/*
+	Camera class
+	A GameObject with an extra GetViewProjectionMatrix() method
+	which the renderer calls on the current camera before
+	drawing all meshes
+*/
 
-#include "../core/Data.h"
-#include "../game/Settings.h"
+#include "../game/GameObject.h"
 
-class Camera {
-
+class Camera : public GameObject {
 private:
-	glm::vec3 LocalPosition = glm::vec3(0.0f);
-	glm::quat LocalRotation = glm::quat();
-
-	glm::mat4 GlobalTransform = glm::mat4(1.0f);	// position and rotation in world space
-
 	glm::mat4 ViewProjectionMatrix = glm::mat4(1.0f);
-
-	float Yaw = 0.0f;
-	float Pitch = 0.0f;
 
 	float FarPlane = 1000.0f;
 	float NearPlane = 0.1f;
@@ -27,8 +20,10 @@ private:
 
 public:
 	Camera();
-	void Update(Data& data, const float deltaTime, const glm::mat4& parentTransform = glm::mat4(1.0f));
-	glm::mat4 GetViewProjectionMatrix();
+	void CalcViewProjectionMatrix(Data& data);
+
+private:
+	void onUpdate(Data& data, const float& deltaTime) override;
 };
 
 #endif // !CAMERA

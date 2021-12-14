@@ -17,4 +17,3 @@ struct Vertex
 };
 
 #endif // !VERTEX
-

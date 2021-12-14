@@ -3,6 +3,13 @@
 // defines the keybinds
 void Input::Update(GLFWwindow* window)
 {
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	MouseDeltaX = float(xpos) - MouseLastXPos;
+	MouseDeltaY = MouseLastYPos - float(ypos);
+	MouseLastXPos = xpos;
+	MouseLastYPos = ypos;
+
 	resetInput();
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)

@@ -36,7 +36,7 @@
     <ClCompile Include="project\src\renderer\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="project\src\game\WorldRoot.cpp">
+    <ClCompile Include="project\src\game\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,13 +62,13 @@
     <ClInclude Include="project\src\renderer\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="project\src\game\WorldRoot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="project\src\core\Data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="project\src\external\GLIncludes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="project\src\game\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

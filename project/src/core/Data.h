@@ -1,15 +1,15 @@
 #ifndef DATA
 #define DATA
 
-#include "glm/glm.hpp"
+#include <memory>
+#include <vector>
 
 #include "Input.h"
 
 struct Data
 {
 	Input Input;
-	glm::mat4  ViewProjectionMatrix = glm::mat4(1.0f);
+	glm::mat4 ViewProjectionMatrix = glm::mat4(1.0f);
 };
 
 #endif // !DATA
-

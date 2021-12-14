@@ -18,6 +18,8 @@ public:
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	Shader(const unsigned int& id, const std::string& vertexPath, const std::string& fragmentPath);
 
+	unsigned int GetGLID();
+
 	void SetBool(const std::string& uniformName, const bool& value);
 	void SetInt(const std::string& uniformName, const int& value);
 	void SetFloat(const std::string& uniformName, const float& value);

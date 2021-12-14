@@ -1,45 +1,45 @@
 #include "Mesh.h"
 
+#include "glm/gtc/matrix_transform.hpp"
+
 // PUBLIC
 Mesh::Mesh()
 {
-
+	makeTri();
 }
 
 Mesh::Mesh(const Shader& shader)
 {
 	ShaderProgram = shader;
+	makeTri();
 }
 
 Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Shader& shader)
 {
-	Vertices = vertices;
-	Indices = indices;
 	ShaderProgram = shader;
-
-	createMeshBuffers();
-}
-
-void Mesh::Update(Data& data, const float& deltaTime, const glm::mat4 parentTransform)
-{
-	drawMesh(data);
-}
-
-void Mesh::MakeTri()
-{
-	Vertices.push_back(Vertex(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec2(0.0f)));
-	Vertices.push_back(Vertex(glm::vec3(10.0f, 10.0f, 0.0f), glm::vec3(0.0f), glm::vec2(0.0f)));
-	Vertices.push_back(Vertex(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec2(0.0f)));
-
-	Indices.push_back(0);
-	Indices.push_back(1);
-	Indices.push_back(2);
-
-	createMeshBuffers();
+	NumElements = indices.size();
+	createMeshBuffers(vertices, indices);
 }
 
 // PRIVATE
-void Mesh::createMeshBuffers()
+void Mesh::makeTri()
+{
+	std::vector<Vertex> vertices;
+	vertices.push_back(Vertex(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec2(0.0f)));
+	vertices.push_back(Vertex(glm::vec3(10.0f, 10.0f, 0.0f), glm::vec3(0.0f), glm::vec2(0.0f)));
+	vertices.push_back(Vertex(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec2(0.0f)));
+
+	std::vector<unsigned int> indices;
+	indices.push_back(0);
+	indices.push_back(1);
+	indices.push_back(2);
+
+	NumElements = 3;
+
+	createMeshBuffers(vertices, indices);
+}
+
+void Mesh::createMeshBuffers(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -48,10 +48,10 @@ void Mesh::createMeshBuffers()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VAO);
-	glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(Vertex), &Vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(unsigned int), &Indices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
 	// vertex positions
 	glEnableVertexAttribArray(0);
@@ -68,15 +68,18 @@ void Mesh::createMeshBuffers()
 	glBindVertexArray(0);	// unbind VAO
 }
 
-void Mesh::drawMesh(const Data& data)
+void Mesh::onUpdate(Data& data, const float& deltaTime)
 {
-	glUseProgram(ShaderProgram.GLID);
-
-	Shader_f::SetMat4(ShaderProgram, "model", Transform);
-	Shader_f::SetMat4(ShaderProgram, "view_projection", data.ViewProjectionMatrix);
-	
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
-	glBindVertexArray(0);	// unbind when done
 }
 
+void Mesh::onDraw(const Data& data)
+{
+	glUseProgram(ShaderProgram.GetGLID());
+
+	ShaderProgram.SetMat4("model", GlobalTransform);
+	ShaderProgram.SetMat4("view_projection", data.ViewProjectionMatrix);
+
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
+	glBindVertexArray(0);	// unbind when done
+}

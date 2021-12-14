@@ -1,13 +1,16 @@
 #include <iostream>
+#include <memory>
 
 #include "external/GLIncludes.h"
+
+#include "game/GameObject.h"
+#include "game/Player.h"
+#include "game/Settings.h"
 
 #include "renderer/Camera.h"
 #include "renderer/Shader.h"
 #include "renderer/Mesh.h"
-#include "game/WorldRoot.h"
-#include "game/Player.h"
-#include "game/Settings.h"
+
 #include "core/Data.h"
 
 Data data;
@@ -17,16 +20,7 @@ void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);	// make width and height global
 }
 
-void mouseCallback(GLFWwindow* window, double xpos, double ypos)
-{
-	data.Input.MouseDeltaX = float(xpos) - data.Input.MouseLastXPos;
-	data.Input.MouseDeltaY = data.Input.MouseLastYPos - float(ypos);	// y coords are reversed
-
-	data.Input.MouseLastXPos = float(xpos);
-	data.Input.MouseLastYPos = float(ypos);
-}
-
-int main() 
+int main()
 {
 	// glfw: initialize and configure
 	glfwInit();
@@ -45,7 +39,6 @@ int main()
 	glfwMakeContextCurrent(window);
 
 	glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
-	glfwSetCursorPosCallback(window, mouseCallback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// glad: load all OpenGL function pointers
@@ -66,27 +59,32 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// main: init variables
-	WorldRoot world;
+	GameObject root;
 
 	// debug: create shader
 	Shader shader = Shader("C:/Users/TM1/source/repos/GameEngine/project/src/shaders/Base.vert", "C:/Users/TM1/source/repos/GameEngine/project/src/shaders/Base.frag");
 
-	// debug: create triangle
-	Mesh mesh = Mesh(shader);
-	mesh.MakeTri();
-	world.AddChildMesh("Mesh1", mesh);
+	// debug: create triangle (in final code, creating a shared pointer will be handled by another function through object manager)
+	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(shader);
+	root.AddChild("Mesh1", mesh);
+
+	// debug: create player and camera
+	std::shared_ptr<Player> player = std::make_shared<Player>();
+	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
+	player->AddChild("Camera", camera);
+	root.AddChild("Player", player);
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
 	// main: program loop
-	while (!glfwWindowShouldClose(window)) 
+	while (!glfwWindowShouldClose(window))
 	{
 		// main: update delta time
 		float currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		std::cout << 1 / deltaTime << std::endl;	// fps count
+		//std::cout << 1 / deltaTime << std::endl;	// fps count
 
 		// main: update input globals
 		data.Input.Update(window);
@@ -97,12 +95,14 @@ int main()
 			glfwSetWindowShouldClose(window, true);
 		}
 
+		// main: update
+		root.Update(data, deltaTime);
+
 		// main: draw
 		glClearColor(0.8f, 0.3f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// main: update
-		world.Update(data, deltaTime);
+		camera->CalcViewProjectionMatrix(data);
+		root.Draw(data);
 
 		// main: swap buffers when done
 		glfwSwapBuffers(window);

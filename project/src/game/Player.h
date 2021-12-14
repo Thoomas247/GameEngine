@@ -1,35 +1,24 @@
 #ifndef PLAYER
 #define PLAYER
 
-#include <map>
-#include <string>
+/*
+	Player class
+	Class used in-engine purely for testing pusposes, but
+	should be implemented in game (or not if not needed)
+*/
 
-#include "glm/glm.hpp"
-#include "glm/gtc/quaternion.hpp"
+#include "GameObject.h"
 
-#include "../core/Data.h"
-#include "../renderer/Camera.h"
-#include "../renderer/Mesh.h"
-
-class Player
+class Player : public GameObject
 {
 private:
-	glm::vec3 LocalPosition = glm::vec3(0.0f);
-	glm::quat LocalRotation = glm::quat();
-
-	glm::mat4 GlobalTransform = glm::mat4();
-
-	//glm::vec3 Front = glm::vec3(0.0f, 0.0f, -1.0f);
-
-	float Speed = 5.0f;	// m/s
-
-	Camera Camera;
-	std::map<std::string, Mesh> MeshChildren;
+	float Speed = 10.0f;	// m/s
 
 public:
-	void Update(Data& data, const float& deltaTime, const glm::mat4& parentTransform = glm::mat4(1.0f));
+	Player();
 
-	void AddChildMesh(const std::string& name, Mesh& mesh);
+private:
+	void onUpdate(Data& data, const float& deltaTime) override;
 };
 
 #endif // !PLAYER
