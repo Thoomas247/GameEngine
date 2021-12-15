@@ -46,5 +46,6 @@ void Player::onUpdate(Data& data, const float& deltaTime)
 		inputVector = glm::normalize(inputVector);
 		LocalPosition += front * inputVector.z * Speed * deltaTime;
 		LocalPosition += right * inputVector.x * Speed * deltaTime;
+		std::cout << LocalPosition.x << " : " << LocalPosition.y << " : " << LocalPosition.z << std::endl;
 	}
 }

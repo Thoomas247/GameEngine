@@ -92,9 +92,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="project\src\importer\Importer.cpp" />
     <ClCompile Include="project\src\game\GameObject.cpp" />
     <ClCompile Include="project\src\core\Input.cpp" />
-    <ClCompile Include="project\src\external\glad.c" />
     <ClCompile Include="project\src\game\Player.cpp" />
     <ClCompile Include="project\src\main.cpp" />
     <ClCompile Include="project\src\renderer\Camera.cpp" />
@@ -102,6 +102,8 @@
     <ClCompile Include="project\src\renderer\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="F:\Users\TM1\Downloads\json.hpp" />
+    <ClInclude Include="project\src\importer\Importer.h" />
     <ClInclude Include="project\src\game\GameObject.h" />
     <ClInclude Include="project\src\core\Data.h" />
     <ClInclude Include="project\src\core\Input.h" />

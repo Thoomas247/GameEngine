@@ -13,11 +13,13 @@
 
 #include "core/Data.h"
 
+#include "importer/Importer.h"
+
 Data data;
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-	glViewport(0, 0, width, height);	// make width and height global
+	glViewport(0, 0, width, height);	// TODO: make width and height global
 }
 
 int main()
@@ -32,7 +34,7 @@ int main()
 	GLFWwindow* window = glfwCreateWindow(S_ScreenWidth, S_ScreenHeight, "Game Engine", NULL, NULL);
 	if (window == NULL)
 	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+		std::cout << "MAIN::ERROR::Failed to create GLFW window!" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
@@ -44,7 +46,7 @@ int main()
 	// glad: load all OpenGL function pointers
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
+		std::cout << "MAIN::ERROR::Failed to initialize GLAD!" << std::endl;
 		return -1;
 	}
 
@@ -57,6 +59,9 @@ int main()
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// debug: import gltf file
+	Importer::ImportGLTF("Test", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 
 	// main: init variables
 	GameObject root;
