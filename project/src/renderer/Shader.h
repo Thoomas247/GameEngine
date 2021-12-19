@@ -2,12 +2,14 @@
 #define SHADER
 
 #include <string>
+#include <unordered_map>
 
 #include "glm/glm.hpp"
 
 class Shader
 {
 private:
+	std::unordered_map <std::string, int> UniformLocationCache;
 	unsigned int GLID = 0;	// opengl ID of shader after compilation
 	std::string VertexPath;
 	std::string FragmentPath;
@@ -30,6 +32,7 @@ public:
 	void SetMat4(const std::string& uniformName, const glm::mat4& mat);
 
 private:
+	int getUniformLocation(const std::string& uniformName);
 	void checkCompileErrors(const unsigned int& shader, const std::string& type);
 };
 

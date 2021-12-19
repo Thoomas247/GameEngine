@@ -121,8 +121,6 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		{
 			for (tinygltf::AnimationChannel& channel : anim.channels)
 			{
-				int& targetedJoint = indexDict[channel.target_node];
-
 				tinygltf::AnimationSampler& sampler = anim.samplers[channel.sampler];
 
 				// input
@@ -131,7 +129,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 				tinygltf::Buffer& inputBuffer = model.buffers[inputBufferView.buffer];
 				float* times = reinterpret_cast<float*>(&inputBuffer.data[inputBufferView.byteOffset + inputAccessor.byteOffset]);
 				// output
-				tinygltf::Accessor& outputAccessor = model.accessors[sampler.input];
+				tinygltf::Accessor& outputAccessor = model.accessors[sampler.output];
 				tinygltf::BufferView& outputBufferView = model.bufferViews[outputAccessor.bufferView];
 				tinygltf::Buffer& outputBuffer = model.buffers[outputBufferView.buffer];
 				float* animatedProperty = reinterpret_cast<float*>(&outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset]);
@@ -140,20 +138,22 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 				{
 					if (channel.target_path == "translation")
 					{
-						j["animations"][anim.name][times[i]][indexDict[channel.target_node]]["translation"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };
+						j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["translation"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };
 					}
 					else if (channel.target_path == "rotation")
 					{
-						j["animations"][anim.name][times[i]][indexDict[channel.target_node]]["rotation"] = { animatedProperty[i * 4 + 0], animatedProperty[i * 4 + 1], animatedProperty[i * 4 + 2], animatedProperty[i * 4 + 3] };
+						j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["rotation"] = { animatedProperty[i * 4 + 0], animatedProperty[i * 4 + 1], animatedProperty[i * 4 + 2], animatedProperty[i * 4 + 3] };
 					}
 					else if (channel.target_path == "scale")
 					{
-						j["animations"][anim.name][times[i]][indexDict[channel.target_node]]["scale"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };;
+						j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["scale"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };;
 					}
 				}
 			}
 		}
 	}
+
+	//std::cout << j.dump(1) << std::endl;
 
 	// WRITE to file - importing done
 	std::ofstream fileOut = std::ofstream("C:/Users/TM1/source/repos/GameEngine/project/TestModel.GEM", std::ios::out | std::ios::binary);
