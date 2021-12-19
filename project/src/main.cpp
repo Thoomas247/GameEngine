@@ -6,7 +6,6 @@
 
 #include "importer/Importer.h"
 
-#include "game/GameObject.h"
 #include "game/Player.h"
 #include "game/Settings.h"
 
@@ -14,9 +13,9 @@
 #include "renderer/Shader.h"
 #include "renderer/Mesh.h"
 
+#include "core/Root.h"
+#include "core/GameObject.h"
 #include "core/Data.h"
-
-Data data;
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -51,8 +50,6 @@ int main()
 		std::cout << "MAIN::ERROR::Failed to initialize OpenGL context!" << std::endl;
 		return -1;
 	}
-
-	// Successfully loaded OpenGL
 	std::cout << "MAIN::INFO::Loaded OpenGL " << GLAD_VERSION_MAJOR(version) << "." << GLAD_VERSION_MINOR(version) << std::endl;
 
 	// opengl: enable settings
@@ -69,7 +66,7 @@ int main()
 	Importer::ImportGLTF("Test", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 
 	// main: init variables
-	GameObject root;
+	Root root;
 
 	// debug: create shader
 	Shader shader = Shader("C:/Users/TM1/source/repos/GameEngine/project/src/shaders/Base.vert", "C:/Users/TM1/source/repos/GameEngine/project/src/shaders/Base.frag");
@@ -97,22 +94,22 @@ int main()
 		//std::cout << 1 / deltaTime << std::endl;	// fps count
 
 		// main: update input globals
-		data.Input.Update(window);
+		Data::Inputs.Update(window);
 
 		// debug: detect if window should close
-		if (data.Input.ActionEscape)
+		if (Data::Inputs.ActionEscape)
 		{
 			glfwSetWindowShouldClose(window, true);
 		}
 
 		// main: update
-		root.Update(data, deltaTime);
+		root.Update(deltaTime);
 
 		// main: draw
 		glClearColor(0.8f, 0.3f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		camera->CalcViewProjectionMatrix(data);
-		root.Draw(data);
+		camera->CalcViewProjectionMatrix();
+		root.Draw();
 
 		// main: swap buffers when done
 		glfwSwapBuffers(window);

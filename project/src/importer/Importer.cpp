@@ -9,6 +9,8 @@
 
 #include "json/json.hpp"
 
+#include "../core/ProjectManager.h"
+
 using json = nlohmann::json;
 
 void Importer::ImportGLTF(const std::string& name, const std::string& path)
@@ -49,17 +51,49 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 	json j;
 
+	// TEXTURES
+	std::map<int, std::string> textureDict;
+	for (int i = 0; i < model.textures.size(); i++)
+	{
+		tinygltf::Texture& texture = model.textures[i];
+		std::string& uri = model.images[texture.source].uri;
+		if (!uri.empty())
+		{
+			std::string texturePath = path.substr(0, path.find_last_of("/") + 1) + uri;
+			std::string destPath = ProjectManager::ProjectPath + ProjectManager::DefaultTexturesPath + name + "_textures";
+
+			std::filesystem::create_directories(destPath);
+
+			destPath += uri.substr(uri.find_last_of("/"));
+
+			if (!std::filesystem::copy_file(texturePath, destPath, std::filesystem::copy_options::overwrite_existing))
+			{
+				std::cout << "IMPORTER::ERROR::Texture could not be copied! (" << uri << ")" << std::endl;
+			}
+			else
+			{
+				textureDict[i] = name + "_textures" + uri.substr(uri.find_last_of("/"));	// store relative path of texture
+			}
+
+		}
+		else
+		{
+			std::cout << "IMPORTER::WARNING::Texture does not have uri, not importing" << std::endl;
+		}
+	}
+
 	// MESHES
 	for (tinygltf::Mesh& mesh : model.meshes)
 	{
 		tinygltf::Primitive& primitive = mesh.primitives[0];
-
+		
 		if (primitive.mode != TINYGLTF_MODE_TRIANGLES && primitive.mode != TINYGLTF_MODE_TRIANGLE_FAN && primitive.mode != TINYGLTF_MODE_TRIANGLE_STRIP)
 		{
 			std::cout << "IMPORTER::ERROR::Primitive mode not supported!" << std::endl;
 			return;
 		}
 
+		// vertices
 		j[mesh.name]["positions"] = getVertexPositions(model, primitive);
 		j[mesh.name]["normals"] = getVertexNormals(model, primitive);
 		j[mesh.name]["texCoords"] = getVertexTextureCoords(model, primitive);
@@ -67,7 +101,22 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		j[mesh.name]["joints"] = getVertexJoints(model, primitive);
 		j[mesh.name]["weights"] = getVertexWeights(model, primitive);
 
+		// indices
 		j[mesh.name]["indices"] = getIndices(model, primitive);
+
+		// material
+		int& materialIndex = primitive.material;
+		tinygltf::Material& material = model.materials[materialIndex];
+
+		j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["baseColorFactor"] = material.pbrMetallicRoughness.baseColorFactor;
+		//j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["baseColorTexture"] = material.pbrMetallicRoughness.baseColorTexture.index;
+		j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["metallicFactor"] = material.pbrMetallicRoughness.metallicFactor;
+		j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["roughnessFactor"] = material.pbrMetallicRoughness.roughnessFactor;
+		//j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["metallicRoughnessTexture"] = material.pbrMetallicRoughness.metallicRoughnessTexture.index;
+		j[mesh.name]["materials"][materialIndex]["emissiveFactor"] = material.emissiveFactor;
+		//j[mesh.name]["materials"][materialIndex]["emissiveTexture"] = material.emissiveTexture.index;
+		//j[mesh.name]["materials"][materialIndex]["normalTexture"] = material.normalTexture.index;
+		//j[mesh.name]["materials"][materialIndex]["occlusionTexture"] = material.occlusionTexture.index;
 	}
 
 	// JOINTS
@@ -153,10 +202,12 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		}
 	}
 
-	//std::cout << j.dump(1) << std::endl;
-
 	// WRITE to file - importing done
-	std::ofstream fileOut = std::ofstream("C:/Users/TM1/source/repos/GameEngine/project/TestModel.GEM", std::ios::out | std::ios::binary);
+	std::string modelDestPath = ProjectManager::ProjectPath + ProjectManager::DefaultModelPath;
+	std::filesystem::create_directories(modelDestPath);
+	modelDestPath += name + ".GEM";
+
+	std::ofstream fileOut = std::ofstream(modelDestPath, std::ios::out | std::ios::binary);
 	std::vector<unsigned char> dataVec = json::to_bson(j);
 	fileOut.write(reinterpret_cast<const char*>(dataVec.data()), dataVec.size());
 	fileOut.close();

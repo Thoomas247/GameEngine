@@ -8,7 +8,7 @@
 	drawing all meshes
 */
 
-#include "../game/GameObject.h"
+#include "../core/GameObject.h"
 
 class Camera : public GameObject {
 private:
@@ -20,10 +20,10 @@ private:
 
 public:
 	Camera();
-	void CalcViewProjectionMatrix(Data& data);
+	void CalcViewProjectionMatrix();
 
 private:
-	void onUpdate(Data& data, const float& deltaTime) override;
+	void onUpdate(const float& deltaTime) override;
 };
 
 #endif // !CAMERA

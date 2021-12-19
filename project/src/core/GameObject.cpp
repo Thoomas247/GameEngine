@@ -1,0 +1,66 @@
+#include "GameObject.h"
+
+// PUBLIC
+void GameObject::Update(const float& deltaTime, const glm::mat4& parentTransform)
+{
+	onUpdate(deltaTime);
+	calcTransforms(parentTransform);
+
+	for (auto& [name, object] : m_Children)
+	{
+		object->Update(deltaTime, m_GlobalTransform);
+	}
+}
+
+void GameObject::Draw()
+{
+	onDraw();
+	for (auto& [name, object] : m_Children)
+	{
+		object->Draw();
+	}
+}
+
+void GameObject::AddChild(const std::string& name, const std::shared_ptr<GameObject>& object)
+{
+	m_Children[name] = object;
+}
+
+std::shared_ptr<GameObject> GameObject::GetChild(const std::string& path)
+{
+	size_t index = path.find_first_of("/");
+	std::string name = path.substr(0, index);
+
+	const std::unordered_map<std::string, std::shared_ptr<GameObject>>::iterator it = m_Children.find(name);
+	if (it != m_Children.end())
+	{
+		if (index == std::string::npos)
+		{
+			return it->second;
+		}
+
+		std::string newPath = path.substr(index);
+		return it->second->GetChild(newPath);
+	}
+
+	return NULL;
+}
+
+// PRIVATE
+inline void GameObject::calcTransforms(const glm::mat4& parentTransform)
+{
+	m_LocalTransform = glm::scale(glm::mat4(1.0f), m_LocalScale);
+	m_LocalTransform = glm::mat4_cast(m_LocalRotation) * m_LocalTransform;
+	m_LocalTransform = glm::translate(m_LocalTransform, m_LocalPosition);
+
+	m_GlobalTransform = parentTransform * m_LocalTransform;
+}
+
+void GameObject::onUpdate(const float& deltaTime)
+{
+	// Does nothing by default
+}
+
+void GameObject::onDraw()
+{
+}

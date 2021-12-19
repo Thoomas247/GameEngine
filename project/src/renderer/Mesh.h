@@ -11,7 +11,7 @@
 	on screen
 */
 
-#include "../game/GameObject.h"
+#include "../core/GameObject.h"
 #include "../core/Data.h"
 #include "Shader.h"
 #include "Vertex.h"
@@ -33,8 +33,8 @@ private:
 	void createMeshBuffers(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
 	void makeTri();
 
-	void onUpdate(Data& data, const float& deltaTime) override;
-	void onDraw(const Data& data) override;
+	void onUpdate(const float& deltaTime) override;
+	void onDraw() override;
 };
 
 #endif // !MESH

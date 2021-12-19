@@ -1,15 +1,15 @@
 #ifndef DATA
 #define DATA
 
-#include <memory>
-#include <vector>
+#include "glm/glm.hpp"
 
 #include "Input.h"
 
-struct Data
+// Data which needs to be shared accross the whole engine
+namespace Data
 {
-	Input Input;
-	glm::mat4 ViewProjectionMatrix = glm::mat4(1.0f);
-};
+	extern Input Inputs;
+	extern glm::mat4 ViewProjectionMatrix;
+}
 
 #endif // !DATA

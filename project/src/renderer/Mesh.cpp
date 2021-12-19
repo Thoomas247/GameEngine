@@ -69,16 +69,16 @@ void Mesh::createMeshBuffers(const std::vector<Vertex>& vertices, const std::vec
 	glBindVertexArray(0);	// unbind VAO
 }
 
-void Mesh::onUpdate(Data& data, const float& deltaTime)
+void Mesh::onUpdate(const float& deltaTime)
 {
 }
 
-void Mesh::onDraw(const Data& data)
+void Mesh::onDraw()
 {
 	glUseProgram(ShaderProgram.GetGLID());
 
-	ShaderProgram.SetMat4("model", GlobalTransform);
-	ShaderProgram.SetMat4("view_projection", data.ViewProjectionMatrix);
+	ShaderProgram.SetMat4("model", m_GlobalTransform);
+	ShaderProgram.SetMat4("view_projection", Data::ViewProjectionMatrix);
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices

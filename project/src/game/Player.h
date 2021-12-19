@@ -7,7 +7,7 @@
 	should be implemented in game (or not if not needed)
 */
 
-#include "GameObject.h"
+#include "../core/GameObject.h"
 
 class Player : public GameObject
 {
@@ -18,7 +18,7 @@ public:
 	Player();
 
 private:
-	void onUpdate(Data& data, const float& deltaTime) override;
+	void onUpdate(const float& deltaTime) override;
 };
 
 #endif // !PLAYER

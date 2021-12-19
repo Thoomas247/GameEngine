@@ -139,7 +139,7 @@ int Shader::getUniformLocation(const std::string& uniformName)
 	{
 		return locationIterator->second;
 	}
-	int location = getUniformLocation(uniformName);
+	int location = glGetUniformLocation(GLID, uniformName.c_str());
 	UniformLocationCache[uniformName] = location;
 	return location;
 }
@@ -152,14 +152,14 @@ void Shader::checkCompileErrors(const unsigned int& shader, const std::string& t
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 		if (!success) {
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+			std::cout << "SHADER::ERROR::Shader compilation failed!" << "\n" << type << ": " << infoLog << std::endl;
 		}
 	}
 	else {
 		glGetProgramiv(shader, GL_LINK_STATUS, &success);
 		if (!success) {
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+			std::cout << "SHADER::ERROR::Shader linking failed!" << "\n" << type << ": " << infoLog << std::endl;
 		}
 	}
 }
