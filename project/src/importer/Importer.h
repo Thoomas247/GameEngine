@@ -7,7 +7,6 @@
 
 #include "tinygltf/tiny_gltf.h"
 
-
 namespace Importer
 {
 	void ImportGLTF(const std::string& name, const std::string& path);

@@ -86,13 +86,13 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		tinygltf::Skin skin = model.skins[0];
 
 		// read invBindMatrices and assign them to their joints
-		tinygltf::Accessor& accessor = model.accessors[skin.inverseBindMatrices];
-		tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
-		tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+		tinygltf::Accessor& matrixAccessor = model.accessors[skin.inverseBindMatrices];
+		tinygltf::BufferView& matrixBufferView = model.bufferViews[matrixAccessor.bufferView];
+		tinygltf::Buffer& matrixBuffer = model.buffers[matrixBufferView.buffer];
 
-		float* matrices = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+		float* matrices = reinterpret_cast<float*>(&matrixBuffer.data[matrixBufferView.byteOffset + matrixAccessor.byteOffset]);
 
-		for (unsigned int i = 0; i < accessor.count; i++)
+		for (unsigned int i = 0; i < matrixAccessor.count; i++)
 		{
 			j["joints"][i]["inverseBindMatrix"] = { matrices[i * 16 + 0], matrices[i * 16 + 1], matrices[i * 16 + 2], matrices[i * 16 + 3],
 				matrices[i * 16 + 4], matrices[i * 16 + 5], matrices[i * 16 + 6], matrices[i * 16 + 7],
@@ -115,17 +115,51 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 				j["joints"][indexDict[childIndex]]["parentID"] = indexDict[jointIndex];
 			}
 		}
+
+		// ANIMATIONS
+		for (tinygltf::Animation& anim : model.animations)
+		{
+			for (tinygltf::AnimationChannel& channel : anim.channels)
+			{
+				int& targetedJoint = indexDict[channel.target_node];
+
+				tinygltf::AnimationSampler& sampler = anim.samplers[channel.sampler];
+
+				// input
+				tinygltf::Accessor& inputAccessor = model.accessors[sampler.input];
+				tinygltf::BufferView& inputBufferView = model.bufferViews[inputAccessor.bufferView];
+				tinygltf::Buffer& inputBuffer = model.buffers[inputBufferView.buffer];
+				float* times = reinterpret_cast<float*>(&inputBuffer.data[inputBufferView.byteOffset + inputAccessor.byteOffset]);
+				// output
+				tinygltf::Accessor& outputAccessor = model.accessors[sampler.input];
+				tinygltf::BufferView& outputBufferView = model.bufferViews[outputAccessor.bufferView];
+				tinygltf::Buffer& outputBuffer = model.buffers[outputBufferView.buffer];
+				float* animatedProperty = reinterpret_cast<float*>(&outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset]);
+
+				for (unsigned int i = 0; i < inputAccessor.count; i++)
+				{
+					if (channel.target_path == "translation")
+					{
+						j["animations"][anim.name][times[i]][indexDict[channel.target_node]]["translation"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };
+					}
+					else if (channel.target_path == "rotation")
+					{
+						j["animations"][anim.name][times[i]][indexDict[channel.target_node]]["rotation"] = { animatedProperty[i * 4 + 0], animatedProperty[i * 4 + 1], animatedProperty[i * 4 + 2], animatedProperty[i * 4 + 3] };
+					}
+					else if (channel.target_path == "scale")
+					{
+						j["animations"][anim.name][times[i]][indexDict[channel.target_node]]["scale"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };;
+					}
+				}
+			}
+		}
 	}
 
-	// ANIMATIONS
-	model.animations;
-
-	// WRITE to file
+	// WRITE to file - importing done
 	std::ofstream fileOut = std::ofstream("C:/Users/TM1/source/repos/GameEngine/project/TestModel.GEM", std::ios::out | std::ios::binary);
 	std::vector<unsigned char> dataVec = json::to_bson(j);
 	fileOut.write(reinterpret_cast<const char*>(dataVec.data()), dataVec.size());
 	fileOut.close();
-	__debugbreak();
 
 	/*	READ FILE: Use simdjson in actual implementation, this is for TESTING only
 	std::streamsize size = std::filesystem::file_size("C:/Users/TM1/source/repos/GameEngine/project/TestModel.GEM");
