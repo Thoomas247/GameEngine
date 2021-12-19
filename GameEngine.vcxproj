@@ -57,7 +57,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)project\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -76,7 +76,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)project\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="project\include\glad\gl.c" />
     <ClCompile Include="project\src\importer\Importer.cpp" />
     <ClCompile Include="project\src\game\GameObject.cpp" />
     <ClCompile Include="project\src\core\Input.cpp" />
@@ -102,15 +103,15 @@
     <ClCompile Include="project\src\renderer\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="F:\Users\TM1\Downloads\json.hpp" />
+    <ClInclude Include="project\include\simdjson\simdjson.cpp" />
     <ClInclude Include="project\src\importer\Importer.h" />
     <ClInclude Include="project\src\game\GameObject.h" />
     <ClInclude Include="project\src\core\Data.h" />
     <ClInclude Include="project\src\core\Input.h" />
-    <ClInclude Include="project\src\external\GLIncludes.h" />
     <ClInclude Include="project\src\game\Player.h" />
     <ClInclude Include="project\src\game\Settings.h" />
     <ClInclude Include="project\src\renderer\Camera.h" />
+    <ClInclude Include="project\src\renderer\Joint.h" />
     <ClInclude Include="project\src\renderer\Mesh.h" />
     <ClInclude Include="project\src\renderer\Shader.h" />
     <ClInclude Include="project\src\renderer\Vertex.h" />

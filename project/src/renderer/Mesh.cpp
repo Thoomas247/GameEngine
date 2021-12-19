@@ -1,5 +1,6 @@
 #include "Mesh.h"
 
+#include "glad/gl.h"
 #include "glm/gtc/matrix_transform.hpp"
 
 // PUBLIC
@@ -63,7 +64,7 @@ void Mesh::createMeshBuffers(const std::vector<Vertex>& vertices, const std::vec
 
 	// vertex texture coordinates
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
 
 	glBindVertexArray(0);	// unbind VAO
 }

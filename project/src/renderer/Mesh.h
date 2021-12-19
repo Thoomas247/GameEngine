@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "../external/GLIncludes.h"
 #include "glm/glm.hpp"
 
 /*

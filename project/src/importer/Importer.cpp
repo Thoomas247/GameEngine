@@ -1,6 +1,15 @@
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STBI_MSC_SECURE_CRT
 #include "Importer.h"
 
 #include <iostream>
+#include <filesystem>
+
+#include "json/json.hpp"
+
+using json = nlohmann::json;
 
 void Importer::ImportGLTF(const std::string& name, const std::string& path)
 {
@@ -13,53 +22,125 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 	// parse GLTF
 	bool ret = false;
-	if (std::strcmp(fileType.c_str(), "gltf"))
+	if (std::strcmp(fileType.c_str(), "gltf") == 0)
 	{
 		ret = loader.LoadASCIIFromFile(&model, &err, &warn, path);
 	}
-	else if (std::strcmp(fileType.c_str(), "glb"))
+	else if (std::strcmp(fileType.c_str(), "glb") == 0)
 	{
 		ret = loader.LoadBinaryFromFile(&model, &err, &warn, path);
 	}
 	else
 	{
 		std::cout << "IMPORTER::ERROR::Invalid GLTF format!" << std::endl;
+		return;
 	}
 
 	if (!warn.empty()) {
 		std::cout << "IMPORTER::WARNING::" << warn << std::endl;
 	}
-
 	if (!err.empty()) {
 		std::cout << "IMPORTER::ERROR::" << err << std::endl;
 	}
 	if (!ret) {
 		std::cout << "IMPORTER::ERROR::Failed to parse GLTF!" << std::endl;
+		return;
 	}
 
-	// meshes
+	json j;
+
+	// MESHES
 	for (tinygltf::Mesh& mesh : model.meshes)
 	{
-		std::vector<glm::vec3> vertexPositions;
-		std::vector<glm::vec3> vertexNormals;
-		std::vector<glm::vec2> vertexTextureCoords;
-		std::vector<glm::vec4> vertexColors;
-		std::vector<glm::ivec4> vertexJoints;
-		std::vector<glm::vec4> vertexWeights;
+		tinygltf::Primitive& primitive = mesh.primitives[0];
 
-		for (tinygltf::Primitive& primitive : mesh.primitives)
+		if (primitive.mode != TINYGLTF_MODE_TRIANGLES && primitive.mode != TINYGLTF_MODE_TRIANGLE_FAN && primitive.mode != TINYGLTF_MODE_TRIANGLE_STRIP)
 		{
-			getVertexPositions(model, primitive, vertexPositions);
-			getVertexNormals(model, primitive, vertexNormals);
-			getVertexTextureCoords(model, primitive, vertexTextureCoords);
-			getVertexColors(model, primitive, vertexColors);
-			getVertexJoints(model, primitive, vertexJoints);
-			getVertexWeights(model, primitive, vertexWeights);
+			std::cout << "IMPORTER::ERROR::Primitive mode not supported!" << std::endl;
+			return;
+		}
+
+		j[mesh.name]["positions"] = getVertexPositions(model, primitive);
+		j[mesh.name]["normals"] = getVertexNormals(model, primitive);
+		j[mesh.name]["texCoords"] = getVertexTextureCoords(model, primitive);
+		j[mesh.name]["colors"] = getVertexColors(model, primitive);
+		j[mesh.name]["joints"] = getVertexJoints(model, primitive);
+		j[mesh.name]["weights"] = getVertexWeights(model, primitive);
+
+		j[mesh.name]["indices"] = getIndices(model, primitive);
+	}
+
+	// JOINTS
+	if (model.skins.size() > 1)
+	{
+		std::cout << "IMPORTER::WARNING::More than one skin not supported" << std::endl;
+	}
+
+	if (model.skins.size() == 0)
+	{
+		std::cout << "IMPORTER::WARNING::Model has no skinning information" << std::endl;
+	}
+
+	else
+	{
+		tinygltf::Skin skin = model.skins[0];
+
+		// read invBindMatrices and assign them to their joints
+		tinygltf::Accessor& accessor = model.accessors[skin.inverseBindMatrices];
+		tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+		tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+
+		float* matrices = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+
+		for (unsigned int i = 0; i < accessor.count; i++)
+		{
+			j["joints"][i]["inverseBindMatrix"] = { matrices[i * 16 + 0], matrices[i * 16 + 1], matrices[i * 16 + 2], matrices[i * 16 + 3],
+				matrices[i * 16 + 4], matrices[i * 16 + 5], matrices[i * 16 + 6], matrices[i * 16 + 7],
+				matrices[i * 16 + 8], matrices[i * 16 + 9], matrices[i * 16 + 10], matrices[i * 16 + 11],
+				matrices[i * 16 + 12], matrices[i * 16 + 13], matrices[i * 16 + 14], matrices[i * 16 + 15] };
+		}
+
+		// dict to translate from gltf indexes to own indexes
+		std::map<int, int> indexDict;
+		for (unsigned int i = 0; i < skin.joints.size(); i++)
+		{
+			indexDict[skin.joints[i]] = i;
+		}
+
+		// set joint parents
+		for (int& jointIndex : skin.joints)
+		{
+			for (int& childIndex : model.nodes[jointIndex].children)
+			{
+				j["joints"][indexDict[childIndex]]["parentID"] = indexDict[jointIndex];
+			}
 		}
 	}
+
+	// ANIMATIONS
+	model.animations;
+
+	// WRITE to file
+	std::ofstream fileOut = std::ofstream("C:/Users/TM1/source/repos/GameEngine/project/TestModel.GEM", std::ios::out | std::ios::binary);
+	std::vector<unsigned char> dataVec = json::to_bson(j);
+	fileOut.write(reinterpret_cast<const char*>(dataVec.data()), dataVec.size());
+	fileOut.close();
+	__debugbreak();
+
+	/*	READ FILE: Use simdjson in actual implementation, this is for TESTING only
+	std::streamsize size = std::filesystem::file_size("C:/Users/TM1/source/repos/GameEngine/project/TestModel.GEM");
+	std::vector<char> buffer;
+	buffer.reserve(size);
+
+	std::ifstream fileIn = std::ifstream("C:/Users/TM1/source/repos/GameEngine/project/TestModel.GEM", std::ios::in | std::ios::binary);
+	fileIn.read(buffer.data(), size);
+	fileIn.close();
+
+	json j2 = json::from_bson(buffer);
+	*/
 }
 
-void Importer::getVertexPositions(tinygltf::Model& model, tinygltf::Primitive& primitive, std::vector<glm::vec3>& vertexPositions)
+std::vector<float> Importer::getVertexPositions(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
 	tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
@@ -67,19 +148,23 @@ void Importer::getVertexPositions(tinygltf::Model& model, tinygltf::Primitive& p
 
 	float* positions = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
-	// convert to vec3 and store in vPos vector
+	std::vector<float> vertexPositions;
+	vertexPositions.reserve(accessor.count);
+
 	for (unsigned int i = 0; i < accessor.count; i++)
 	{
-		vertexPositions.push_back(glm::vec3(positions[i * 3 + 0], positions[i * 3 + 1], positions[i * 3 + 2]));
+		vertexPositions.push_back(positions[i]);
 	}
+
+	return vertexPositions;
 }
 
-void Importer::getVertexNormals(tinygltf::Model& model, tinygltf::Primitive& primitive, std::vector<glm::vec3>& vertexNormals)
+std::vector<float> Importer::getVertexNormals(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	if (primitive.attributes.count("NORMAL") == 0)
 	{
-		std::cout << "IMPORTER::WARNING::Mesh primitve has no normals attribute!";	// may need to change to error
-		return;
+		std::cout << "IMPORTER::WARNING::Mesh has no normals attribute!" << std::endl;	// may need to change to error
+		return std::vector<float>();
 	}
 
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["NORMAL"]];
@@ -88,24 +173,31 @@ void Importer::getVertexNormals(tinygltf::Model& model, tinygltf::Primitive& pri
 
 	float* normals = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
-	// convert to vec3 and store in vNorm vector
+	std::vector<float> vertexNormals;
+	vertexNormals.reserve(accessor.count);
+
 	for (unsigned int i = 0; i < accessor.count; i++)
 	{
-		vertexNormals.push_back(glm::vec3(normals[i * 3 + 0], normals[i * 3 + 1], normals[i * 3 + 2]));
+		vertexNormals.push_back(normals[i]);
 	}
+
+	return vertexNormals;
 }
 
-void Importer::getVertexTextureCoords(tinygltf::Model& model, tinygltf::Primitive& primitive, std::vector<glm::vec2>& vertexTextureCoords)
+std::vector<float> Importer::getVertexTextureCoords(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	if (primitive.attributes.count("TEXCOORD_0") == 0)
 	{
-		std::cout << "IMPORTER::INFO::Mesh primitve has no texture coordinates attribute";
-		return;
+		std::cout << "IMPORTER::INFO::Mesh has no texture coordinates attribute" << std::endl;
+		return std::vector<float>();
 	}
 
 	if (primitive.attributes.count("TEXCOORD_1") > 0 || primitive.attributes.count("TEXCOORD_2") > 0 || primitive.attributes.count("TEXCOORD_3") > 0)
 	{
-		std::cout << "IMPORTER::WARNING::More than one texture coordinate per vertex is not supported!";
+		if (primitive.attributes["TEXCOORD_1"] != primitive.attributes["TEXCOORD_0"])	// if 0 and 1 are same, then so are all the others
+		{
+			std::cout << "IMPORTER::WARNING::More than one texture coordinate per vertex is not supported!" << std::endl;
+		}
 	}
 
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["TEXCOORD_0"]];
@@ -114,19 +206,23 @@ void Importer::getVertexTextureCoords(tinygltf::Model& model, tinygltf::Primitiv
 
 	float* texcoords = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
-	// convert to vec2 and store in vTexCoord vector
+	std::vector<float> vertexTextureCoords;
+	vertexTextureCoords.reserve(accessor.count);
+
 	for (unsigned int i = 0; i < accessor.count; i++)
 	{
-		vertexTextureCoords.push_back(glm::vec2(texcoords[i * 2 + 0], texcoords[i * 2 + 1]));
+		vertexTextureCoords.push_back(texcoords[i]);
 	}
+
+	return vertexTextureCoords;
 }
 
-void Importer::getVertexColors(tinygltf::Model& model, tinygltf::Primitive& primitive, std::vector<glm::vec4>& vertexColors)
+std::vector<float> Importer::getVertexColors(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	if (primitive.attributes.count("COLOR_0") == 0)
 	{
-		std::cout << "IMPORTER::INFO::Mesh primitve has no colors attribute";
-		return;
+		std::cout << "IMPORTER::INFO::Mesh has no colors attribute" << std::endl;
+		return std::vector<float>();
 	}
 
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["COLOR_0"]];
@@ -135,51 +231,82 @@ void Importer::getVertexColors(tinygltf::Model& model, tinygltf::Primitive& prim
 
 	float* colors = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
-	// convert to vec4 and store in vNorm vector
+	std::vector<float> vertexColors;
+	vertexColors.reserve(accessor.count);
+
 	for (unsigned int i = 0; i < accessor.count; i++)
 	{
-		vertexColors.push_back(glm::vec4(colors[i * 4 + 0], colors[i * 4 + 1], colors[i * 4 + 2], colors[i * 4 + 3]));
+		vertexColors.push_back(colors[i]);
 	}
+
+	return vertexColors;
 }
 
-void Importer::getVertexJoints(tinygltf::Model& model, tinygltf::Primitive& primitive, std::vector<glm::ivec4>& vertexJoints)
+std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	if (primitive.attributes.count("JOINTS_0") == 0)
 	{
-		std::cout << "IMPORTER::INFO::Mesh primitve has no joints attribute";
-		return;
+		std::cout << "IMPORTER::INFO::Mesh has no joints attribute" << std::endl;
+		return std::vector<unsigned short>();
 	}
 
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["JOINTS_0"]];
 	tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
 	tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
 
-	int* joints = reinterpret_cast<int*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+	unsigned short* joints = reinterpret_cast<unsigned short*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
-	// convert to vec4 and store in vJoints vector
+	std::vector<unsigned short> vertexJoints;
+	vertexJoints.reserve(accessor.count);
+
 	for (unsigned int i = 0; i < accessor.count; i++)
 	{
-		vertexJoints.push_back(glm::vec4(joints[i * 4 + 0], joints[i * 4 + 1], joints[i * 4 + 2], joints[i * 4 + 3]));
+		vertexJoints.push_back(joints[i]);
 	}
+
+	return vertexJoints;
 }
 
-void Importer::getVertexWeights(tinygltf::Model& model, tinygltf::Primitive& primitive, std::vector<glm::vec4>& vertexWeights)
+std::vector<float> Importer::getVertexWeights(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	if (primitive.attributes.count("WEIGHTS_0") == 0)
 	{
-		std::cout << "IMPORTER::INFO::Mesh primitve has no weights attribute";
-		return;
+		std::cout << "IMPORTER::INFO::Mesh has no weights attribute" << std::endl;
+		return std::vector<float>();
 	}
 
-	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["JOINTS_0"]];
+	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["WEIGHTS_0"]];
 	tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
 	tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
 
 	float* weights = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
-	// convert to vec4 and store in vWeights vector
+	std::vector<float> vertexWeights;
+	vertexWeights.reserve(accessor.count);
+
 	for (unsigned int i = 0; i < accessor.count; i++)
 	{
-		vertexWeights.push_back(glm::vec4(weights[i * 4 + 0], weights[i * 4 + 1], weights[i * 4 + 2], weights[i * 4 + 3]));
+		vertexWeights.push_back(weights[i]);
 	}
+
+	return vertexWeights;
+}
+
+std::vector<unsigned int> Importer::getIndices(tinygltf::Model& model, tinygltf::Primitive& primitive)
+{
+	tinygltf::Accessor& accessor = model.accessors[primitive.indices];
+	tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+	tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+
+	unsigned int* indices = reinterpret_cast<unsigned int*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+
+	std::vector<unsigned int> meshIndices;
+	meshIndices.reserve(accessor.count);
+
+	for (unsigned int i = 0; i < accessor.count; i++)
+	{
+		meshIndices.push_back(indices[i]);
+	}
+
+	return meshIndices;
 }

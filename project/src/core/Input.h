@@ -1,5 +1,5 @@
-#ifndef INPUT
-#define INPUT
+#ifndef INPUT_MANAGER
+#define INPUT_MANAGER
 
 #include "glfw/glfw3.h"
 
@@ -27,4 +27,4 @@ private:
 	void resetInput();
 };
 
-#endif // !INPUT
+#endif // !INPUT_MANAGER

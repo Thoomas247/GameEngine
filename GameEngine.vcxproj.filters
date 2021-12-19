@@ -39,6 +39,9 @@
     <ClCompile Include="project\src\importer\Importer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="project\include\glad\gl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project\src\renderer\Camera.h">
@@ -65,16 +68,16 @@
     <ClInclude Include="project\src\core\Data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="project\src\external\GLIncludes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="project\src\game\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="project\src\importer\Importer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Users\TM1\Downloads\json.hpp">
+    <ClInclude Include="project\include\simdjson\simdjson.cpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="project\src\renderer\Joint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

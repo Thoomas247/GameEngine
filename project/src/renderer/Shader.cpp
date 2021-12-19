@@ -4,6 +4,8 @@
 #include <sstream>
 #include <iostream>
 
+#include "glad/gl.h"
+
 // PUBLIC
 Shader::Shader()
 {

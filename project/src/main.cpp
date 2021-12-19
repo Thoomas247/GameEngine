@@ -1,7 +1,10 @@
 #include <iostream>
 #include <memory>
 
-#include "external/GLIncludes.h"
+#include "glad/gl.h"
+#include "glfw/glfw3.h"
+
+#include "importer/Importer.h"
 
 #include "game/GameObject.h"
 #include "game/Player.h"
@@ -12,8 +15,6 @@
 #include "renderer/Mesh.h"
 
 #include "core/Data.h"
-
-#include "importer/Importer.h"
 
 Data data;
 
@@ -44,11 +45,15 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// glad: load all OpenGL function pointers
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	int version = gladLoadGL(glfwGetProcAddress);
+	if (version == 0)
 	{
-		std::cout << "MAIN::ERROR::Failed to initialize GLAD!" << std::endl;
+		std::cout << "MAIN::ERROR::Failed to initialize OpenGL context!" << std::endl;
 		return -1;
 	}
+
+	// Successfully loaded OpenGL
+	std::cout << "MAIN::INFO::Loaded OpenGL " << GLAD_VERSION_MAJOR(version) << "." << GLAD_VERSION_MINOR(version) << std::endl;
 
 	// opengl: enable settings
 	glEnable(GL_DEPTH_TEST);
