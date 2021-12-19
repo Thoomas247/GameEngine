@@ -16,6 +16,7 @@
 #include "core/Root.h"
 #include "core/GameObject.h"
 #include "core/Data.h"
+#include "core/AssetManager.h"
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -63,17 +64,17 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// debug: import gltf file
-	Importer::ImportGLTF("Test", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
+	//Importer::ImportGLTF("Test", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 
 	// main: init variables
 	Root root;
 
 	// debug: create shader
-	Shader shader = Shader("C:/Users/TM1/source/repos/GameEngine/project/src/shaders/Base.vert", "C:/Users/TM1/source/repos/GameEngine/project/src/shaders/Base.frag");
+	Shader shader = Shader();
 
-	// debug: create triangle (in final code, creating a shared pointer will be handled by another function through object manager)
-	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(shader);
-	root.AddChild("Mesh1", mesh);
+	// debug: create triangle (in final code, creating a shared pointer will be handled by another function through asset manager)
+	std::shared_ptr<GameObject> bird = AssetManager::LoadModel("Test.GEM");
+	root.AddChild("Bird", bird);
 
 	// debug: create player and camera
 	std::shared_ptr<Player> player = std::make_shared<Player>();

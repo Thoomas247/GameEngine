@@ -57,7 +57,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)project\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -76,7 +76,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)project\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="project\src\core\AssetManager.cpp" />
     <ClCompile Include="project\include\glad\gl.c" />
     <ClCompile Include="project\src\core\Data.cpp" />
     <ClCompile Include="project\src\importer\Importer.cpp" />
@@ -105,6 +106,7 @@
     <ClCompile Include="project\src\core\Root.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="project\src\core\AssetManager.h" />
     <ClInclude Include="project\include\simdjson\simdjson.cpp" />
     <ClInclude Include="project\src\core\ProjectManager.h" />
     <ClInclude Include="project\src\importer\Importer.h" />
@@ -115,14 +117,15 @@
     <ClInclude Include="project\src\game\Settings.h" />
     <ClInclude Include="project\src\renderer\Camera.h" />
     <ClInclude Include="project\src\renderer\Joint.h" />
+    <ClInclude Include="project\src\renderer\Material.h" />
     <ClInclude Include="project\src\renderer\Mesh.h" />
     <ClInclude Include="project\src\renderer\Shader.h" />
     <ClInclude Include="project\src\renderer\Vertex.h" />
     <ClInclude Include="project\src\core\Root.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="project\src\shaders\Base.frag" />
-    <None Include="project\src\shaders\Base.vert" />
+    <None Include="test game\assets\shaders\Base.frag" />
+    <None Include="test game\assets\shaders\Base.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

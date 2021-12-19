@@ -11,14 +11,14 @@ Mesh::Mesh()
 
 Mesh::Mesh(const Shader& shader)
 {
-	ShaderProgram = shader;
+	m_ShaderProgram = shader;
 	makeTri();
 }
 
 Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Shader& shader)
 {
-	ShaderProgram = shader;
-	NumElements = indices.size();
+	m_ShaderProgram = shader;
+	m_NumElements = indices.size();
 	createMeshBuffers(vertices, indices);
 }
 
@@ -35,23 +35,23 @@ void Mesh::makeTri()
 	indices.push_back(1);
 	indices.push_back(2);
 
-	NumElements = 3;
+	m_NumElements = 3;
 
 	createMeshBuffers(vertices, indices);
 }
 
 void Mesh::createMeshBuffers(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
 {
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	glGenVertexArrays(1, &m_VAO);
+	glGenBuffers(1, &m_VBO);
+	glGenBuffers(1, &m_EBO);
 
-	glBindVertexArray(VAO);
+	glBindVertexArray(m_VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VAO);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
 	// vertex positions
@@ -75,12 +75,12 @@ void Mesh::onUpdate(const float& deltaTime)
 
 void Mesh::onDraw()
 {
-	glUseProgram(ShaderProgram.GetGLID());
+	glUseProgram(m_ShaderProgram.GetGLID());
 
-	ShaderProgram.SetMat4("model", m_GlobalTransform);
-	ShaderProgram.SetMat4("view_projection", Data::ViewProjectionMatrix);
+	m_ShaderProgram.SetMat4("model", m_GlobalTransform);
+	m_ShaderProgram.SetMat4("view_projection", Data::ViewProjectionMatrix);
 
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
+	glBindVertexArray(m_VAO);
+	glDrawElements(GL_TRIANGLES, m_NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
 	glBindVertexArray(0);	// unbind when done
 }

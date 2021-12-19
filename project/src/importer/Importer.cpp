@@ -94,29 +94,29 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		}
 
 		// vertices
-		j[mesh.name]["positions"] = getVertexPositions(model, primitive);
-		j[mesh.name]["normals"] = getVertexNormals(model, primitive);
-		j[mesh.name]["texCoords"] = getVertexTextureCoords(model, primitive);
-		j[mesh.name]["colors"] = getVertexColors(model, primitive);
-		j[mesh.name]["joints"] = getVertexJoints(model, primitive);
-		j[mesh.name]["weights"] = getVertexWeights(model, primitive);
+		j["meshes"][mesh.name]["positions"] = getVertexPositions(model, primitive);
+		j["meshes"][mesh.name]["normals"] = getVertexNormals(model, primitive);
+		j["meshes"][mesh.name]["texCoords"] = getVertexTextureCoords(model, primitive);
+		j["meshes"][mesh.name]["colors"] = getVertexColors(model, primitive);
+		j["meshes"][mesh.name]["joints"] = getVertexJoints(model, primitive);
+		j["meshes"][mesh.name]["weights"] = getVertexWeights(model, primitive);
 
 		// indices
-		j[mesh.name]["indices"] = getIndices(model, primitive);
+		j["meshes"][mesh.name]["indices"] = getIndices(model, primitive);
 
 		// material
 		int& materialIndex = primitive.material;
 		tinygltf::Material& material = model.materials[materialIndex];
 
-		j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["baseColorFactor"] = material.pbrMetallicRoughness.baseColorFactor;
-		//j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["baseColorTexture"] = material.pbrMetallicRoughness.baseColorTexture.index;
-		j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["metallicFactor"] = material.pbrMetallicRoughness.metallicFactor;
-		j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["roughnessFactor"] = material.pbrMetallicRoughness.roughnessFactor;
-		//j[mesh.name]["materials"][materialIndex]["metallicRoughness"]["metallicRoughnessTexture"] = material.pbrMetallicRoughness.metallicRoughnessTexture.index;
-		j[mesh.name]["materials"][materialIndex]["emissiveFactor"] = material.emissiveFactor;
-		//j[mesh.name]["materials"][materialIndex]["emissiveTexture"] = material.emissiveTexture.index;
-		//j[mesh.name]["materials"][materialIndex]["normalTexture"] = material.normalTexture.index;
-		//j[mesh.name]["materials"][materialIndex]["occlusionTexture"] = material.occlusionTexture.index;
+		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["baseColorFactor"] = material.pbrMetallicRoughness.baseColorFactor;
+		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["baseColorTexture"] = textureDict[material.pbrMetallicRoughness.baseColorTexture.index];
+		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["metallicFactor"] = material.pbrMetallicRoughness.metallicFactor;
+		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["roughnessFactor"] = material.pbrMetallicRoughness.roughnessFactor;
+		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["metallicRoughnessTexture"] = textureDict[material.pbrMetallicRoughness.metallicRoughnessTexture.index];
+		j["meshes"][mesh.name]["materials"][materialIndex]["emissiveFactor"] = material.emissiveFactor;
+		j["meshes"][mesh.name]["materials"][materialIndex]["emissiveTexture"] = textureDict[material.emissiveTexture.index];
+		j["meshes"][mesh.name]["materials"][materialIndex]["normalTexture"] = textureDict[material.normalTexture.index];
+		j["meshes"][mesh.name]["materials"][materialIndex]["occlusionTexture"] = textureDict[material.occlusionTexture.index];
 	}
 
 	// JOINTS
@@ -211,18 +211,6 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	std::vector<unsigned char> dataVec = json::to_bson(j);
 	fileOut.write(reinterpret_cast<const char*>(dataVec.data()), dataVec.size());
 	fileOut.close();
-
-	/*	READ FILE: Use simdjson in actual implementation, this is for TESTING only
-	std::streamsize size = std::filesystem::file_size("C:/Users/TM1/source/repos/GameEngine/project/TestModel.GEM");
-	std::vector<char> buffer;
-	buffer.reserve(size);
-
-	std::ifstream fileIn = std::ifstream("C:/Users/TM1/source/repos/GameEngine/project/TestModel.GEM", std::ios::in | std::ios::binary);
-	fileIn.read(buffer.data(), size);
-	fileIn.close();
-
-	json j2 = json::from_bson(buffer);
-	*/
 }
 
 std::vector<float> Importer::getVertexPositions(tinygltf::Model& model, tinygltf::Primitive& primitive)
@@ -234,9 +222,9 @@ std::vector<float> Importer::getVertexPositions(tinygltf::Model& model, tinygltf
 	float* positions = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
 	std::vector<float> vertexPositions;
-	vertexPositions.reserve(accessor.count);
+	vertexPositions.reserve(accessor.count * TINYGLTF_TYPE_VEC3);
 
-	for (unsigned int i = 0; i < accessor.count; i++)
+	for (unsigned int i = 0; i < accessor.count * TINYGLTF_TYPE_VEC3; i++)
 	{
 		vertexPositions.push_back(positions[i]);
 	}
@@ -249,7 +237,8 @@ std::vector<float> Importer::getVertexNormals(tinygltf::Model& model, tinygltf::
 	if (primitive.attributes.count("NORMAL") == 0)
 	{
 		std::cout << "IMPORTER::WARNING::Mesh has no normals attribute!" << std::endl;	// may need to change to error
-		return std::vector<float>();
+		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
+		return std::vector<float>(accessor.count * TINYGLTF_TYPE_VEC3, 1.0f);
 	}
 
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["NORMAL"]];
@@ -259,9 +248,9 @@ std::vector<float> Importer::getVertexNormals(tinygltf::Model& model, tinygltf::
 	float* normals = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
 	std::vector<float> vertexNormals;
-	vertexNormals.reserve(accessor.count);
+	vertexNormals.reserve(accessor.count * TINYGLTF_TYPE_VEC3);
 
-	for (unsigned int i = 0; i < accessor.count; i++)
+	for (unsigned int i = 0; i < accessor.count * TINYGLTF_TYPE_VEC3; i++)
 	{
 		vertexNormals.push_back(normals[i]);
 	}
@@ -274,7 +263,8 @@ std::vector<float> Importer::getVertexTextureCoords(tinygltf::Model& model, tiny
 	if (primitive.attributes.count("TEXCOORD_0") == 0)
 	{
 		std::cout << "IMPORTER::INFO::Mesh has no texture coordinates attribute" << std::endl;
-		return std::vector<float>();
+		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
+		return std::vector<float>(accessor.count * TINYGLTF_TYPE_VEC2, 1.0f);
 	}
 
 	if (primitive.attributes.count("TEXCOORD_1") > 0 || primitive.attributes.count("TEXCOORD_2") > 0 || primitive.attributes.count("TEXCOORD_3") > 0)
@@ -292,9 +282,9 @@ std::vector<float> Importer::getVertexTextureCoords(tinygltf::Model& model, tiny
 	float* texcoords = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
 	std::vector<float> vertexTextureCoords;
-	vertexTextureCoords.reserve(accessor.count);
+	vertexTextureCoords.reserve(accessor.count * TINYGLTF_TYPE_VEC2);
 
-	for (unsigned int i = 0; i < accessor.count; i++)
+	for (unsigned int i = 0; i < accessor.count * TINYGLTF_TYPE_VEC2; i++)
 	{
 		vertexTextureCoords.push_back(texcoords[i]);
 	}
@@ -307,7 +297,8 @@ std::vector<float> Importer::getVertexColors(tinygltf::Model& model, tinygltf::P
 	if (primitive.attributes.count("COLOR_0") == 0)
 	{
 		std::cout << "IMPORTER::INFO::Mesh has no colors attribute" << std::endl;
-		return std::vector<float>();
+		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
+		return std::vector<float>(accessor.count * TINYGLTF_TYPE_VEC4, 1.0f);
 	}
 
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["COLOR_0"]];
@@ -317,9 +308,9 @@ std::vector<float> Importer::getVertexColors(tinygltf::Model& model, tinygltf::P
 	float* colors = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
 	std::vector<float> vertexColors;
-	vertexColors.reserve(accessor.count);
+	vertexColors.reserve(accessor.count * TINYGLTF_TYPE_VEC4);
 
-	for (unsigned int i = 0; i < accessor.count; i++)
+	for (unsigned int i = 0; i < accessor.count * TINYGLTF_TYPE_VEC4; i++)
 	{
 		vertexColors.push_back(colors[i]);
 	}
@@ -332,7 +323,8 @@ std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, ti
 	if (primitive.attributes.count("JOINTS_0") == 0)
 	{
 		std::cout << "IMPORTER::INFO::Mesh has no joints attribute" << std::endl;
-		return std::vector<unsigned short>();
+		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
+		return std::vector<unsigned short>(accessor.count * TINYGLTF_TYPE_VEC4, 0);
 	}
 
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["JOINTS_0"]];
@@ -342,9 +334,9 @@ std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, ti
 	unsigned short* joints = reinterpret_cast<unsigned short*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
 	std::vector<unsigned short> vertexJoints;
-	vertexJoints.reserve(accessor.count);
+	vertexJoints.reserve(accessor.count * TINYGLTF_TYPE_VEC4);
 
-	for (unsigned int i = 0; i < accessor.count; i++)
+	for (unsigned int i = 0; i < accessor.count * TINYGLTF_TYPE_VEC4; i++)
 	{
 		vertexJoints.push_back(joints[i]);
 	}
@@ -357,7 +349,8 @@ std::vector<float> Importer::getVertexWeights(tinygltf::Model& model, tinygltf::
 	if (primitive.attributes.count("WEIGHTS_0") == 0)
 	{
 		std::cout << "IMPORTER::INFO::Mesh has no weights attribute" << std::endl;
-		return std::vector<float>();
+		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
+		return std::vector<float>(accessor.count * TINYGLTF_TYPE_VEC4, 0);
 	}
 
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["WEIGHTS_0"]];
@@ -367,9 +360,9 @@ std::vector<float> Importer::getVertexWeights(tinygltf::Model& model, tinygltf::
 	float* weights = reinterpret_cast<float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
 	std::vector<float> vertexWeights;
-	vertexWeights.reserve(accessor.count);
+	vertexWeights.reserve(accessor.count * TINYGLTF_TYPE_VEC4);
 
-	for (unsigned int i = 0; i < accessor.count; i++)
+	for (unsigned int i = 0; i < accessor.count * TINYGLTF_TYPE_VEC4; i++)
 	{
 		vertexWeights.push_back(weights[i]);
 	}

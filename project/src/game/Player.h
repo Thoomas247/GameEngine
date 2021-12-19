@@ -12,7 +12,7 @@
 class Player : public GameObject
 {
 private:
-	float Speed = 10.0f;	// m/s
+	float Speed = 100.0f;	// m/s
 
 public:
 	Player();

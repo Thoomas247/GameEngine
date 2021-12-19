@@ -48,6 +48,9 @@
     <ClCompile Include="project\src\core\Data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="project\src\core\AssetManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project\src\renderer\Camera.h">
@@ -92,9 +95,15 @@
     <ClInclude Include="project\src\core\ProjectManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="project\src\core\AssetManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="project\src\renderer\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="project\src\shaders\Base.vert" />
-    <None Include="project\src\shaders\Base.frag" />
+    <None Include="test game\assets\shaders\Base.vert" />
+    <None Include="test game\assets\shaders\Base.frag" />
   </ItemGroup>
 </Project>

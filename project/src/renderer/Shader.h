@@ -9,10 +9,10 @@
 class Shader
 {
 private:
-	std::unordered_map <std::string, int> UniformLocationCache;
-	unsigned int GLID = 0;	// opengl ID of shader after compilation
-	std::string VertexPath;
-	std::string FragmentPath;
+	std::unordered_map <std::string, int> m_UniformLocationCache;
+	unsigned int m_GLID = 0;	// opengl ID of shader after compilation
+	std::string m_VertexPath;
+	std::string m_FragmentPath;
 
 public:
 	Shader();
@@ -32,6 +32,7 @@ public:
 	void SetMat4(const std::string& uniformName, const glm::mat4& mat);
 
 private:
+	void loadShader(const std::string& vertexPath, const std::string& fragmentPath);
 	int getUniformLocation(const std::string& uniformName);
 	void checkCompileErrors(const unsigned int& shader, const std::string& type);
 };

@@ -6,15 +6,84 @@
 
 #include "glad/gl.h"
 
+#include "../core/ProjectManager.h"
+
 // PUBLIC
 Shader::Shader()
 {
+	loadShader(ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.vert", 
+		ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.frag");
 }
 
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
-	VertexPath = vertexPath;
-	FragmentPath = fragmentPath;
+	loadShader(vertexPath, fragmentPath);
+}
+
+Shader::Shader(const unsigned int& id, const std::string& vertexPath, const std::string& fragmentPath)
+{
+	m_GLID = id;
+	m_VertexPath = vertexPath;
+	m_FragmentPath = fragmentPath;
+}
+
+unsigned int Shader::GetGLID()
+{
+	return m_GLID;
+}
+
+void Shader::SetBool(const std::string& uniformName, const bool& value)
+{
+	glUniform1i(getUniformLocation(uniformName), (int)value);
+}
+
+void Shader::SetInt(const std::string& uniformName, const int& value)
+{
+	glUniform1i(getUniformLocation(uniformName), value);
+}
+
+void Shader::SetFloat(const std::string& uniformName, const float& value)
+{
+	glUniform1f(getUniformLocation(uniformName), value);
+}
+
+void Shader::SetVec2(const std::string& uniformName, const glm::vec2& value)
+{
+	glUniform2fv(getUniformLocation(uniformName), 1, &value[0]);
+}
+
+void Shader::SetVec3(const std::string& uniformName, const glm::vec3& value)
+{
+	glUniform3fv(getUniformLocation(uniformName), 1, &value[0]);
+}
+
+void Shader::SetVec4(const std::string& uniformName, const glm::vec4& value)
+{
+	glUniform4fv(getUniformLocation(uniformName), 1, &value[0]);
+}
+
+void Shader::SetMat2(const std::string& uniformName, const glm::mat2& mat)
+{
+	glUniformMatrix2fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
+}
+
+void Shader::SetMat3(const std::string& uniformName, const glm::mat3& mat)
+{
+	glUniformMatrix3fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
+}
+
+void Shader::SetMat4(const std::string& uniformName, const glm::mat4& mat)
+{
+	glUniformMatrix4fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
+}
+
+
+
+// PRIVATE
+void Shader::loadShader(const std::string& vertexPath, const std::string& fragmentPath)
+{
+	m_VertexPath = vertexPath;
+	m_FragmentPath = fragmentPath;
 
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string vertexCode;
@@ -63,84 +132,26 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 	checkCompileErrors(fragment, "FRAGMENT");
 
 	// shader Program
-	GLID = glCreateProgram();
-	glAttachShader(GLID, vertex);
-	glAttachShader(GLID, fragment);
-	glLinkProgram(GLID);
-	checkCompileErrors(GLID, "PROGRAM");
+	m_GLID = glCreateProgram();
+	glAttachShader(m_GLID, vertex);
+	glAttachShader(m_GLID, fragment);
+	glLinkProgram(m_GLID);
+	checkCompileErrors(m_GLID, "PROGRAM");
 
 	// delete the shaders as they're linked into our program now and no longer necessary
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 }
 
-Shader::Shader(const unsigned int& id, const std::string& vertexPath, const std::string& fragmentPath)
-{
-	GLID = id;
-	VertexPath = vertexPath;
-	FragmentPath = fragmentPath;
-}
-
-unsigned int Shader::GetGLID()
-{
-	return GLID;
-}
-
-void Shader::SetBool(const std::string& uniformName, const bool& value)
-{
-	glUniform1i(getUniformLocation(uniformName), (int)value);
-}
-
-void Shader::SetInt(const std::string& uniformName, const int& value)
-{
-	glUniform1i(getUniformLocation(uniformName), value);
-}
-
-void Shader::SetFloat(const std::string& uniformName, const float& value)
-{
-	glUniform1f(getUniformLocation(uniformName), value);
-}
-
-void Shader::SetVec2(const std::string& uniformName, const glm::vec2& value)
-{
-	glUniform2fv(getUniformLocation(uniformName), 1, &value[0]);
-}
-
-void Shader::SetVec3(const std::string& uniformName, const glm::vec3& value)
-{
-	glUniform3fv(getUniformLocation(uniformName), 1, &value[0]);
-}
-
-void Shader::SetVec4(const std::string& uniformName, const glm::vec4& value)
-{
-	glUniform4fv(getUniformLocation(uniformName), 1, &value[0]);
-}
-
-void Shader::SetMat2(const std::string& uniformName, const glm::mat2& mat)
-{
-	glUniformMatrix2fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
-}
-
-void Shader::SetMat3(const std::string& uniformName, const glm::mat3& mat)
-{
-	glUniformMatrix3fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
-}
-
-void Shader::SetMat4(const std::string& uniformName, const glm::mat4& mat)
-{
-	glUniformMatrix4fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
-}
-
-// PRIVATE
 int Shader::getUniformLocation(const std::string& uniformName)
 {
-	auto locationIterator = UniformLocationCache.find(uniformName);
-	if (locationIterator != UniformLocationCache.end())
+	auto locationIterator = m_UniformLocationCache.find(uniformName);
+	if (locationIterator != m_UniformLocationCache.end())
 	{
 		return locationIterator->second;
 	}
-	int location = glGetUniformLocation(GLID, uniformName.c_str());
-	UniformLocationCache[uniformName] = location;
+	int location = glGetUniformLocation(m_GLID, uniformName.c_str());
+	m_UniformLocationCache[uniformName] = location;
 	return location;
 }
 

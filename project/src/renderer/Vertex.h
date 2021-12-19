@@ -22,7 +22,7 @@ struct Vertex
 		Weights = glm::vec4(0.0f);
 	}
 
-	Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord)
+	Vertex(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texCoord)
 	{
 		Position = position;
 		Normal = normal;

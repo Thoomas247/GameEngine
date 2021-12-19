@@ -15,14 +15,16 @@
 #include "../core/Data.h"
 #include "Shader.h"
 #include "Vertex.h"
+#include "Material.h"
 
 class Mesh : public GameObject
 {
 private:
-	unsigned int VAO, VBO, EBO;
-	unsigned int NumElements;
+	unsigned int m_VAO, m_VBO, m_EBO;
+	unsigned int m_NumElements;
 
-	Shader ShaderProgram;
+	Shader m_ShaderProgram;
+	Material m_Material;
 
 public:
 	Mesh();
