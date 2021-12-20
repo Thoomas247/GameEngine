@@ -14,8 +14,8 @@
 #include "../core/GameObject.h"
 #include "../core/Data.h"
 #include "Shader.h"
-#include "Vertex.h"
-#include "Material.h"
+#include "../structs/Vertex.h"
+#include "../structs/Material.h"
 #include "RenderData.h"
 
 class Mesh : public GameObject

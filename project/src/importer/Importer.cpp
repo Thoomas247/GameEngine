@@ -11,7 +11,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtx/quaternion.hpp"
 
-#include "../core/ProjectManager.h"
+#include "../managers/ProjectManager.h"
 
 using json = nlohmann::json;
 

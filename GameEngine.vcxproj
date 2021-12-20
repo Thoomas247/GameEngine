@@ -92,7 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="project\src\core\AssetManager.cpp" />
+    <ClCompile Include="project\src\managers\AssetManager.cpp" />
     <ClCompile Include="project\include\glad\gl.c" />
     <ClCompile Include="project\src\core\Data.cpp" />
     <ClCompile Include="project\src\importer\Importer.cpp" />
@@ -108,9 +108,9 @@
     <ClCompile Include="project\src\renderer\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="project\src\core\AssetManager.h" />
+    <ClInclude Include="project\src\managers\AssetManager.h" />
     <ClInclude Include="project\include\simdjson\simdjson.cpp" />
-    <ClInclude Include="project\src\core\ProjectManager.h" />
+    <ClInclude Include="project\src\managers\ProjectManager.h" />
     <ClInclude Include="project\src\importer\Importer.h" />
     <ClInclude Include="project\src\core\GameObject.h" />
     <ClInclude Include="project\src\core\Data.h" />
@@ -118,12 +118,12 @@
     <ClInclude Include="project\src\game\Player.h" />
     <ClInclude Include="project\src\game\Settings.h" />
     <ClInclude Include="project\src\renderer\Camera.h" />
-    <ClInclude Include="project\src\renderer\Joint.h" />
-    <ClInclude Include="project\src\renderer\Material.h" />
+    <ClInclude Include="project\src\structs\Joint.h" />
+    <ClInclude Include="project\src\structs\Material.h" />
     <ClInclude Include="project\src\renderer\Mesh.h" />
     <ClInclude Include="project\src\renderer\RenderData.h" />
     <ClInclude Include="project\src\renderer\Shader.h" />
-    <ClInclude Include="project\src\renderer\Vertex.h" />
+    <ClInclude Include="project\src\structs\Vertex.h" />
     <ClInclude Include="project\src\core\Root.h" />
     <ClInclude Include="project\src\renderer\Renderer.h" />
   </ItemGroup>

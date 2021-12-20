@@ -17,7 +17,8 @@
 #include "core/Root.h"
 #include "core/GameObject.h"
 #include "core/Data.h"
-#include "core/AssetManager.h"
+
+#include "managers/AssetManager.h"
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {

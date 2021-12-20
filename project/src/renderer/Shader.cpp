@@ -6,7 +6,7 @@
 
 #include "glad/gl.h"
 
-#include "../core/ProjectManager.h"
+#include "../managers/ProjectManager.h"
 
 // PUBLIC
 Shader::Shader()

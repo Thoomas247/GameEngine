@@ -39,7 +39,7 @@ void Renderer::Draw()
 
 		// matrices
 		mesh->m_ShaderProgram.SetMat4("model", mesh->m_GlobalTransform);
-		mesh->m_ShaderProgram.SetMat4("view_projection", Data::ViewProjectionMatrix);
+		mesh->m_ShaderProgram.SetMat4("view_projection", camera->m_ViewProjectionMatrix);
 
 		glBindVertexArray(mesh->m_VAO);
 		glDrawElements(GL_TRIANGLES, mesh->m_NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices

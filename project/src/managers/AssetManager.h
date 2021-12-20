@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-#include "GameObject.h"
+#include "../core/GameObject.h"
 
 namespace AssetManager
 {
