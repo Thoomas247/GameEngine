@@ -12,12 +12,14 @@
 class Player : public GameObject
 {
 private:
-	float Speed = 100.0f;	// m/s
+	std::shared_ptr<GameObject> m_Camera;
+	float m_Speed = 100.0f;	// m/s
 
 public:
 	Player();
 
 private:
+	void onSetUp() override;
 	void onUpdate(const float& deltaTime) override;
 };
 

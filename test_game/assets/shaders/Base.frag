@@ -1,9 +1,14 @@
 #version 460 core
 
+// for color, if no textrue is present, assume texture is RGBA{1, 1, 1, 1} and multiply by COLOR_0 attribute of vertex
+
 out vec4 FragColor;
 
-// for color, if no textrue is present, assume texture is sRGB{1, 1, 1, 1} and multiply by COLOR_0 attribute of vertex
+in vec2 TexCoord;
 
-void main() {
-	FragColor = vec4(1.0, 0.6, 0.3, 1.0);
+uniform sampler2D base_texture;
+
+void main()
+{
+    FragColor = texture(base_texture, TexCoord);
 }

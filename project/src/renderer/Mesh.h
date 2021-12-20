@@ -16,10 +16,11 @@
 #include "Shader.h"
 #include "Vertex.h"
 #include "Material.h"
+#include "RenderData.h"
 
 class Mesh : public GameObject
 {
-private:
+public:
 	unsigned int m_VAO, m_VBO, m_EBO;
 	unsigned int m_NumElements;
 
@@ -28,15 +29,12 @@ private:
 
 public:
 	Mesh();
-	Mesh(const Shader& shader);
-	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Shader& shader);
+	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Shader& shader, const Material& material);
 
 private:
 	void createMeshBuffers(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
-	void makeTri();
 
 	void onUpdate(const float& deltaTime) override;
-	void onDraw() override;
 };
 
 #endif // !MESH

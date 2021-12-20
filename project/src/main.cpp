@@ -12,6 +12,7 @@
 #include "renderer/Camera.h"
 #include "renderer/Shader.h"
 #include "renderer/Mesh.h"
+#include "renderer/Renderer.h"
 
 #include "core/Root.h"
 #include "core/GameObject.h"
@@ -53,28 +54,22 @@ int main()
 	}
 	std::cout << "MAIN::INFO::Loaded OpenGL " << GLAD_VERSION_MAJOR(version) << "." << GLAD_VERSION_MINOR(version) << std::endl;
 
-	// opengl: enable settings
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-
-	// opengl: configure settings
-	glFrontFace(GL_CW);
-	glCullFace(GL_BACK);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
 
 	// debug: import gltf file
 	//Importer::ImportGLTF("Test", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
-
+	//Importer::ImportGLTF("Viking", "F:/Users/TM1/Downloads/viking_room/scene.gltf");
+	//Importer::ImportGLTF("Robot", "F:/Users/TM1/Downloads/lost_robot/scene.gltf");
+	
 	// main: init variables
 	Root root;
 
-	// debug: create shader
-	Shader shader = Shader();
-
-	// debug: create triangle (in final code, creating a shared pointer will be handled by another function through asset manager)
-	std::shared_ptr<GameObject> bird = AssetManager::LoadModel("Test.GEM");
-	root.AddChild("Bird", bird);
+	//std::shared_ptr<GameObject> bird = AssetManager::LoadModel("Test.GEM");
+	//root.AddChild("Bird", bird);
+	std::shared_ptr<GameObject> viking = AssetManager::LoadModel("Viking.GEM");
+	root.AddChild("Viking", viking);
+	//std::shared_ptr<GameObject> robot = AssetManager::LoadModel("Robot.GEM");
+	//root.AddChild("Robot", robot);
 
 	// debug: create player and camera
 	std::shared_ptr<Player> player = std::make_shared<Player>();
@@ -85,6 +80,10 @@ int main()
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
+	// main: setup
+	root.SetUp();
+	Renderer::SetUp();
+
 	// main: program loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -92,7 +91,7 @@ int main()
 		float currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		//std::cout << 1 / deltaTime << std::endl;	// fps count
+		std::cout << deltaTime << std::endl;	// frame time
 
 		// main: update input globals
 		Data::Inputs.Update(window);
@@ -107,10 +106,7 @@ int main()
 		root.Update(deltaTime);
 
 		// main: draw
-		glClearColor(0.8f, 0.3f, 0.7f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		camera->CalcViewProjectionMatrix();
-		root.Draw();
+		Renderer::Draw();
 
 		// main: swap buffers when done
 		glfwSwapBuffers(window);

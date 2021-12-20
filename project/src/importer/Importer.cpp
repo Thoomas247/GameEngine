@@ -8,6 +8,8 @@
 #include <filesystem>
 
 #include "json/json.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtx/quaternion.hpp"
 
 #include "../core/ProjectManager.h"
 
@@ -83,6 +85,39 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	}
 
 	// MESHES
+	/*
+	std::map<int, std::vector<double>> meshNodeTransforms;
+	for (tinygltf::Node& node : model.nodes)
+	{
+		if (node.mesh != -1)
+		{
+			if (node.matrix.size() != 0)
+			{
+				meshNodeTransforms[node.mesh] = node.matrix;
+			}
+			else if (node.translation.size() != 0)
+			{
+				glm::vec3 translation = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
+				glm::quat rotation = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+				glm::vec3 scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
+
+				glm::mat4 localtransform = glm::scale(glm::mat4(1.0f), scale);
+				localtransform = glm::mat4_cast(rotation) * localtransform;
+				localtransform = glm::translate(localtransform, translation);
+
+				meshNodeTransforms[node.mesh] = { localtransform[0][0], localtransform[1][0], localtransform[2][0], localtransform[3][0],
+												localtransform[0][1], localtransform[1][1], localtransform[2][1], localtransform[3][1],
+												localtransform[0][2], localtransform[1][2], localtransform[2][2], localtransform[3][2],
+												localtransform[0][3], localtransform[1][3], localtransform[2][3], localtransform[3][3] };
+			}
+			else
+			{
+				meshNodeTransforms[node.mesh] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+			}
+		}
+	}
+	*/
+
 	for (tinygltf::Mesh& mesh : model.meshes)
 	{
 		tinygltf::Primitive& primitive = mesh.primitives[0];
@@ -108,15 +143,15 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		int& materialIndex = primitive.material;
 		tinygltf::Material& material = model.materials[materialIndex];
 
-		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["baseColorFactor"] = material.pbrMetallicRoughness.baseColorFactor;
-		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["baseColorTexture"] = textureDict[material.pbrMetallicRoughness.baseColorTexture.index];
-		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["metallicFactor"] = material.pbrMetallicRoughness.metallicFactor;
-		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["roughnessFactor"] = material.pbrMetallicRoughness.roughnessFactor;
-		j["meshes"][mesh.name]["materials"][materialIndex]["metallicRoughness"]["metallicRoughnessTexture"] = textureDict[material.pbrMetallicRoughness.metallicRoughnessTexture.index];
-		j["meshes"][mesh.name]["materials"][materialIndex]["emissiveFactor"] = material.emissiveFactor;
-		j["meshes"][mesh.name]["materials"][materialIndex]["emissiveTexture"] = textureDict[material.emissiveTexture.index];
-		j["meshes"][mesh.name]["materials"][materialIndex]["normalTexture"] = textureDict[material.normalTexture.index];
-		j["meshes"][mesh.name]["materials"][materialIndex]["occlusionTexture"] = textureDict[material.occlusionTexture.index];
+		j["meshes"][mesh.name]["material"]["baseColorFactor"] = material.pbrMetallicRoughness.baseColorFactor;
+		j["meshes"][mesh.name]["material"]["baseColorTexture"] = textureDict[material.pbrMetallicRoughness.baseColorTexture.index];
+		j["meshes"][mesh.name]["material"]["metallicFactor"] = material.pbrMetallicRoughness.metallicFactor;
+		j["meshes"][mesh.name]["material"]["roughnessFactor"] = material.pbrMetallicRoughness.roughnessFactor;
+		j["meshes"][mesh.name]["material"]["metallicRoughnessTexture"] = textureDict[material.pbrMetallicRoughness.metallicRoughnessTexture.index];
+		j["meshes"][mesh.name]["material"]["emissiveFactor"] = material.emissiveFactor;
+		j["meshes"][mesh.name]["material"]["emissiveTexture"] = textureDict[material.emissiveTexture.index];
+		j["meshes"][mesh.name]["material"]["normalTexture"] = textureDict[material.normalTexture.index];
+		j["meshes"][mesh.name]["material"]["occlusionTexture"] = textureDict[material.occlusionTexture.index];
 	}
 
 	// JOINTS

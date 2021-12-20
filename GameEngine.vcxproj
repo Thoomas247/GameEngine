@@ -102,8 +102,10 @@
     <ClCompile Include="project\src\main.cpp" />
     <ClCompile Include="project\src\renderer\Camera.cpp" />
     <ClCompile Include="project\src\renderer\Mesh.cpp" />
+    <ClCompile Include="project\src\renderer\RenderData.cpp" />
     <ClCompile Include="project\src\renderer\Shader.cpp" />
     <ClCompile Include="project\src\core\Root.cpp" />
+    <ClCompile Include="project\src\renderer\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project\src\core\AssetManager.h" />
@@ -119,9 +121,11 @@
     <ClInclude Include="project\src\renderer\Joint.h" />
     <ClInclude Include="project\src\renderer\Material.h" />
     <ClInclude Include="project\src\renderer\Mesh.h" />
+    <ClInclude Include="project\src\renderer\RenderData.h" />
     <ClInclude Include="project\src\renderer\Shader.h" />
     <ClInclude Include="project\src\renderer\Vertex.h" />
     <ClInclude Include="project\src\core\Root.h" />
+    <ClInclude Include="project\src\renderer\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test game\assets\shaders\Base.frag" />

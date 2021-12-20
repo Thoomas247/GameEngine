@@ -27,11 +27,6 @@ Shader::Shader(const unsigned int& id, const std::string& vertexPath, const std:
 	m_FragmentPath = fragmentPath;
 }
 
-unsigned int Shader::GetGLID()
-{
-	return m_GLID;
-}
-
 void Shader::SetBool(const std::string& uniformName, const bool& value)
 {
 	glUniform1i(getUniformLocation(uniformName), (int)value);

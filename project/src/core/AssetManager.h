@@ -9,6 +9,7 @@
 namespace AssetManager
 {
 	std::shared_ptr<GameObject> LoadModel(const std::string& name);
+	int loadTexture(const std::string& name);
 }
 
 #endif // !ASSET_MANAGER

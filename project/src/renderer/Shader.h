@@ -8,7 +8,7 @@
 
 class Shader
 {
-private:
+public:
 	std::unordered_map <std::string, int> m_UniformLocationCache;
 	unsigned int m_GLID = 0;	// opengl ID of shader after compilation
 	std::string m_VertexPath;
@@ -18,8 +18,6 @@ public:
 	Shader();
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	Shader(const unsigned int& id, const std::string& vertexPath, const std::string& fragmentPath);
-
-	unsigned int GetGLID();
 
 	void SetBool(const std::string& uniformName, const bool& value);
 	void SetInt(const std::string& uniformName, const int& value);

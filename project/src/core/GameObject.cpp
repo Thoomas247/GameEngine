@@ -1,6 +1,18 @@
 #include "GameObject.h"
 
+
+
 // PUBLIC
+void GameObject::SetUp()
+{
+	onSetUp();
+
+	for (auto& [name, object] : m_Children)
+	{
+		object->SetUp();
+	}
+}
+
 void GameObject::Update(const float& deltaTime, const glm::mat4& parentTransform)
 {
 	onUpdate(deltaTime);
@@ -9,15 +21,6 @@ void GameObject::Update(const float& deltaTime, const glm::mat4& parentTransform
 	for (auto& [name, object] : m_Children)
 	{
 		object->Update(deltaTime, m_GlobalTransform);
-	}
-}
-
-void GameObject::Draw()
-{
-	onDraw();
-	for (auto& [name, object] : m_Children)
-	{
-		object->Draw();
 	}
 }
 
@@ -47,8 +50,14 @@ std::shared_ptr<GameObject> GameObject::GetChild(const std::string& path)
 }
 
 // PRIVATE
-inline void GameObject::calcTransforms(const glm::mat4& parentTransform)
+void GameObject::calcTransforms(const glm::mat4& parentTransform)
 {
+	if (m_LocalPosition == m_LastLocalPosition && m_LocalRotation == m_LastLocalRotation && m_LocalScale == m_LastLocalScale)
+	{
+		m_GlobalTransform = parentTransform * m_LocalTransform;
+		return;
+	}
+
 	m_LocalTransform = glm::scale(glm::mat4(1.0f), m_LocalScale);
 	m_LocalTransform = glm::mat4_cast(m_LocalRotation) * m_LocalTransform;
 	m_LocalTransform = glm::translate(m_LocalTransform, m_LocalPosition);
@@ -56,11 +65,12 @@ inline void GameObject::calcTransforms(const glm::mat4& parentTransform)
 	m_GlobalTransform = parentTransform * m_LocalTransform;
 }
 
-void GameObject::onUpdate(const float& deltaTime)
+void GameObject::onSetUp()
 {
 	// Does nothing by default
 }
 
-void GameObject::onDraw()
+void GameObject::onUpdate(const float& deltaTime)
 {
+	// Does nothing by default
 }
