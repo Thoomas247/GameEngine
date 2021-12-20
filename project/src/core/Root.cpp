@@ -9,16 +9,10 @@ void Root::SetUp()
 	}
 }
 
-void asyncUpdate(GameObject* object, const float deltaTime)
-{
-	object->Update(deltaTime);
-}
-
 void Root::Update(const float& deltaTime)
 {
 	for (auto& [name, object] : m_Children)
 	{
-		//m_Futures.push_back(std::async(std::launch::async, asyncUpdate, object.get(), deltaTime));
 		object->Update(deltaTime);
 	}
 }
