@@ -19,6 +19,7 @@
 #include "core/Data.h"
 
 #include "managers/AssetManager.h"
+#include "managers/AnimationManager.h"
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -65,10 +66,10 @@ int main()
 	// main: init variables
 	Root root;
 
-	//std::shared_ptr<GameObject> bird = AssetManager::LoadModel("Test.GEM");
-	//root.AddChild("Bird", bird);
-	std::shared_ptr<GameObject> viking = AssetManager::LoadModel("Viking.GEM");
-	root.AddChild("Viking", viking);
+	std::shared_ptr<GameObject> bird = AssetManager::LoadModel("Test.GEM");
+	root.AddChild("Bird", bird);
+	//std::shared_ptr<GameObject> viking = AssetManager::LoadModel("Viking.GEM");
+	//root.AddChild("Viking", viking);
 	//std::shared_ptr<GameObject> robot = AssetManager::LoadModel("Robot.GEM");
 	//root.AddChild("Robot", robot);
 
@@ -92,7 +93,7 @@ int main()
 		float currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		std::cout << deltaTime << std::endl;	// frame time
+		//std::cout << deltaTime << std::endl;	// frame time
 
 		// main: update input globals
 		Data::Inputs.Update(window);
@@ -103,8 +104,11 @@ int main()
 			glfwSetWindowShouldClose(window, true);
 		}
 
-		// main: update
+		// main: update game objects
 		root.Update(deltaTime);
+
+		// main: update animations
+		AnimationManager::Update(deltaTime);
 
 		// main: draw
 		Renderer::Draw();

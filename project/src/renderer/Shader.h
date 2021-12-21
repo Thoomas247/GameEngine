@@ -17,7 +17,6 @@ public:
 public:
 	Shader();
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
-	Shader(const unsigned int& id, const std::string& vertexPath, const std::string& fragmentPath);
 
 	void SetBool(const std::string& uniformName, const bool& value);
 	void SetInt(const std::string& uniformName, const int& value);

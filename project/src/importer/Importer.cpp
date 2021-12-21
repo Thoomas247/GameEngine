@@ -192,11 +192,18 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		}
 
 		// set joint parents
+		bool first = true;
 		for (int& jointIndex : skin.joints)
 		{
+			if (first)
+			{
+				j["joints"][indexDict[jointIndex]]["parentID"] = -1;
+				first = false;
+			}
 			for (int& childIndex : model.nodes[jointIndex].children)
 			{
-				j["joints"][indexDict[childIndex]]["parentID"] = indexDict[jointIndex];
+				int parentID = indexDict[jointIndex];
+				j["joints"][indexDict[childIndex]]["parentID"] = parentID;
 			}
 		}
 
@@ -218,8 +225,14 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 				tinygltf::Buffer& outputBuffer = model.buffers[outputBufferView.buffer];
 				float* animatedProperty = reinterpret_cast<float*>(&outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset]);
 
+
 				for (unsigned int i = 0; i < inputAccessor.count; i++)
 				{
+					// stupid fix for stupid gltf format
+					j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["translation"] = { 1.0f, 1.0f, 1.0f };
+					j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["rotation"] = { 1.0f, 1.0f, 1.0f, 1.0f };
+					j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["scale"] = { 1.0f, 1.0f, 1.0f };
+
 					if (channel.target_path == "translation")
 					{
 						j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["translation"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };

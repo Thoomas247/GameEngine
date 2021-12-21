@@ -11,6 +11,7 @@
 using json = nlohmann::json;
 
 #include "ProjectManager.h"
+#include "AnimationManager.h"
 #include "../renderer/Mesh.h"
 
 std::shared_ptr<GameObject> AssetManager::LoadModel(const std::string& name)
@@ -30,8 +31,70 @@ std::shared_ptr<GameObject> AssetManager::LoadModel(const std::string& name)
 
 	std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
 
+	
+	std::vector<Joint> skeletonJoints;
+	std::map<std::string, Animation> animations;
+	if (!j["joints"].is_null())
+	{
+		// skeleton
+		glm::mat4 matrix;
+		for (unsigned int i = 0; i < j["joints"].size(); i++)
+		{
+			std::vector<float> vec = j["joints"][i]["inverseBindMatrix"];
+			matrix = glm::mat4(vec[0], vec[1], vec[2], vec[3],
+				vec[4], vec[5], vec[6], vec[7],
+				vec[8], vec[9], vec[10], vec[11],
+				vec[12], vec[13], vec[14], vec[15]);
+
+
+			skeletonJoints.push_back(Joint(j["joints"][i]["parentID"], matrix));
+		}
+
+		// animations
+		for (auto& [name, anim] : j["animations"].items())
+		{
+			std::map<float, std::map<int, glm::mat4>> keyframes;	// timestamp, joint id, matrix transform
+			glm::mat4 transform;
+			for (auto& [time, targets] : anim.items())
+			{
+				for (int i = 0; i < targets.size(); i++)
+				{
+					json& target = targets[i];
+
+					if (target.is_null())
+					{
+						transform = glm::mat4(1.0f);
+					}
+					else
+					{
+						glm::vec3 translation = glm::vec3(target["translation"][0], target["translation"][1], target["translation"][2]);
+						glm::quat rotation = glm::quat(target["rotation"][0], target["rotation"][1], target["rotation"][2], target["rotation"][3]);
+						glm::vec3 scale = glm::vec3(target["scale"][0], target["scale"][1], target["scale"][2]);
+
+						transform = glm::mat4(1.0f);
+						transform = glm::scale(transform, scale);
+						transform = glm::mat4_cast(rotation) * transform;
+						transform = glm::translate(transform, translation);
+
+						keyframes[std::stof(time)][i] = transform;
+					}
+				}
+			}
+			animations[name] = Animation(keyframes);
+		}
+	}
+	else
+	{
+		std::cout << "ASSETMANAGER::WARNING::Model has no skeleton" << std::endl;
+	}
+
+	std::shared_ptr<Skeleton> skeleton = std::make_shared<Skeleton>(skeletonJoints, animations);
+	AnimationManager::Skeletons.push_back(skeleton);
+
+	// meshes
 	for (auto& [name, jmesh] : j["meshes"].items())
 	{
+		// vertices
 		std::vector<float> positions = jmesh["positions"];
 		std::vector<float> normals = jmesh["normals"];
 		std::vector<float> texCoords = jmesh["texCoords"];
@@ -55,8 +118,10 @@ std::shared_ptr<GameObject> AssetManager::LoadModel(const std::string& name)
 			vertices.push_back(v);
 		}
 
+		// indices
 		std::vector<unsigned int> indices = jmesh["indices"];
 
+		// material
 		Material material;
 		std::string path = jmesh["material"]["baseColorTexture"];
 		material.BaseColorTexture = loadTexture(path);
@@ -82,7 +147,7 @@ std::shared_ptr<GameObject> AssetManager::LoadModel(const std::string& name)
 		std::vector<float> emissiveColor = jmesh["material"]["emissiveFactor"];
 		material.EmissiveFactor = glm::vec3(emissiveColor[0], emissiveColor[1], emissiveColor[2]);
 
-		gameObject->AddChild(name, std::make_shared<Mesh>(vertices, indices, Shader(), material));
+		gameObject->AddChild(name, std::make_shared<Mesh>(vertices, indices, Shader(), material, skeleton));
 	}
 
 	return gameObject;

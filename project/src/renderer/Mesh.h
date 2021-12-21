@@ -13,10 +13,11 @@
 
 #include "../core/GameObject.h"
 #include "../core/Data.h"
-#include "Shader.h"
 #include "../structs/Vertex.h"
 #include "../structs/Material.h"
+#include "Shader.h"
 #include "RenderData.h"
+#include "Skeleton.h"
 
 class Mesh : public GameObject
 {
@@ -27,9 +28,12 @@ public:
 	Shader m_ShaderProgram;
 	Material m_Material;
 
+private:
+	std::shared_ptr<Skeleton> m_Skeleton;
+
 public:
 	Mesh();
-	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Shader& shader, const Material& material);
+	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Shader& shader, const Material& material, const std::shared_ptr<Skeleton>& skeleton);
 
 private:
 	void createMeshBuffers(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);

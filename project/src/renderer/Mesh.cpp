@@ -8,11 +8,12 @@ Mesh::Mesh()
 {
 }
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Shader& shader, const Material& material)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Shader& shader, const Material& material, const std::shared_ptr<Skeleton>& skeleton)
 {
 	m_Material = material;
 	m_ShaderProgram = shader;
 	m_NumElements = indices.size();
+	m_Skeleton = skeleton;
 	createMeshBuffers(vertices, indices);
 }
 

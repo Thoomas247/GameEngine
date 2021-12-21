@@ -13,18 +13,15 @@ Shader::Shader()
 {
 	loadShader(ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.vert", 
 		ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.frag");
+
+	m_UniformLocationCache.reserve(10);
 }
 
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
 	loadShader(vertexPath, fragmentPath);
-}
 
-Shader::Shader(const unsigned int& id, const std::string& vertexPath, const std::string& fragmentPath)
-{
-	m_GLID = id;
-	m_VertexPath = vertexPath;
-	m_FragmentPath = fragmentPath;
+	m_UniformLocationCache.reserve(10);
 }
 
 void Shader::SetBool(const std::string& uniformName, const bool& value)
@@ -71,8 +68,6 @@ void Shader::SetMat4(const std::string& uniformName, const glm::mat4& mat)
 {
 	glUniformMatrix4fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
 }
-
-
 
 // PRIVATE
 void Shader::loadShader(const std::string& vertexPath, const std::string& fragmentPath)
