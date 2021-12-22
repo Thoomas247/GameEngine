@@ -13,13 +13,12 @@
 #include "renderer/Shader.h"
 #include "renderer/Mesh.h"
 #include "renderer/Renderer.h"
+#include "renderer/Animator.h"
 
 #include "core/Root.h"
 #include "core/GameObject.h"
 #include "core/Data.h"
-
-#include "managers/AssetManager.h"
-#include "managers/AnimationManager.h"
+#include "core/ModelLoader.h"
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -56,7 +55,10 @@ int main()
 	}
 	std::cout << "MAIN::INFO::Loaded OpenGL " << GLAD_VERSION_MAJOR(version) << "." << GLAD_VERSION_MINOR(version) << std::endl;
 
-	
+
+	// main: reserve space in renderer/animator lists
+	Renderer::Reserve();
+	Animator::Reserve();
 
 	// debug: import gltf file
 	//Importer::ImportGLTF("Test", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
@@ -66,12 +68,18 @@ int main()
 	// main: init variables
 	Root root;
 
-	std::shared_ptr<GameObject> bird = AssetManager::LoadModel("Test.GEM");
-	root.AddChild("Bird", bird);
-	//std::shared_ptr<GameObject> viking = AssetManager::LoadModel("Viking.GEM");
-	//root.AddChild("Viking", viking);
-	//std::shared_ptr<GameObject> robot = AssetManager::LoadModel("Robot.GEM");
-	//root.AddChild("Robot", robot);
+	// debug: load meshes
+	std::shared_ptr<GameObject> viking = ModelLoader::LoadModel("Viking.GEM");
+	viking->m_LocalPosition = glm::vec3(20.0f, 0.0f, 0.0f);
+	viking->m_LocalScale = glm::vec3(2.0f, 2.0f, 2.0f);
+	root.AddChild("Viking", viking);
+
+	//std::shared_ptr<GameObject> bird = ModelLoader::LoadModel("Test.GEM");
+	//root.AddChild("Bird", bird);
+
+	std::shared_ptr<GameObject> robot = ModelLoader::LoadModel("Robot.GEM");
+	robot->m_LocalScale = glm::vec3(0.01f, 0.01f, 0.01f);
+	root.AddChild("Robot", robot);
 
 	// debug: create player and camera
 	std::shared_ptr<Player> player = std::make_shared<Player>();
@@ -89,13 +97,10 @@ int main()
 	// main: program loop
 	while (!glfwWindowShouldClose(window))
 	{
-		// main: update delta time
 		float currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		//std::cout << deltaTime << std::endl;	// frame time
 
-		// main: update input globals
 		Data::Inputs.Update(window);
 
 		// debug: detect if window should close
@@ -104,19 +109,13 @@ int main()
 			glfwSetWindowShouldClose(window, true);
 		}
 
-		// main: update game objects
 		root.Update(deltaTime);
-
-		// main: update animations
-		AnimationManager::Update(deltaTime);
-
-		// main: draw
+		// World::Update();
+		Animator::Update(deltaTime);
 		Renderer::Draw();
 
-		// main: swap buffers when done
 		glfwSwapBuffers(window);
 
-		// main: poll events
 		glfwPollEvents();
 	}
 	return 0;

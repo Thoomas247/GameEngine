@@ -48,19 +48,19 @@
     <ClCompile Include="project\src\core\Data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="project\src\managers\AssetManager.cpp">
+    <ClCompile Include="project\src\core\ModelLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="project\src\renderer\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="project\src\renderer\RenderData.cpp">
+    <ClCompile Include="project\src\renderer\Animator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="project\src\renderer\Skeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="project\src\managers\AnimationManager.cpp">
+    <ClCompile Include="project\src\renderer\MeshData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,10 +104,10 @@
     <ClInclude Include="project\src\core\Root.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="project\src\managers\ProjectManager.h">
+    <ClInclude Include="project\src\core\ProjectManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="project\src\managers\AssetManager.h">
+    <ClInclude Include="project\src\core\ModelLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="project\src\structs\Material.h">
@@ -116,7 +116,7 @@
     <ClInclude Include="project\src\renderer\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="project\src\renderer\RenderData.h">
+    <ClInclude Include="project\src\structs\RenderData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="project\src\renderer\Skeleton.h">
@@ -125,7 +125,10 @@
     <ClInclude Include="project\src\structs\Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="project\src\managers\AnimationManager.h">
+    <ClInclude Include="project\src\renderer\MeshData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="project\src\renderer\Animator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

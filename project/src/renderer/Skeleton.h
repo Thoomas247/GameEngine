@@ -8,20 +8,19 @@
 #include "../structs/Joint.h"
 #include "../structs/Animation.h"
 
-class Skeleton
+struct Skeleton
 {
-private:
-	std::vector<Joint> m_Joints;
-	std::map<std::string, Animation> m_Animations;
-	Animation* m_CurrentAnimation = nullptr;
+	std::vector<Joint> Joints;
+	std::map<std::string, Animation> Animations;
+	Animation* CurrentAnimation = nullptr;
 
-public:
+	int IndexInAnimatorList;
+
 	Skeleton();
+	~Skeleton();
 	Skeleton(const std::vector<Joint>& joints, const std::map<std::string, Animation>& animations);
 
-	void UpdateAnimation(const float& deltaTime);
 	void SetAnimation(const std::string& name);
-
 };
 
 #endif // !SKELETON

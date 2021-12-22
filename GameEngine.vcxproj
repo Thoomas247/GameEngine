@@ -92,9 +92,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="project\src\managers\AnimationManager.cpp" />
-    <ClCompile Include="project\src\renderer\Skeleton.cpp" />
-    <ClCompile Include="project\src\managers\AssetManager.cpp" />
+    <ClCompile Include="project\src\renderer\Animator.cpp" />
+    <ClCompile Include="project\src\core\ModelLoader.cpp" />
     <ClCompile Include="project\include\glad\gl.c" />
     <ClCompile Include="project\src\core\Data.cpp" />
     <ClCompile Include="project\src\importer\Importer.cpp" />
@@ -104,17 +103,18 @@
     <ClCompile Include="project\src\main.cpp" />
     <ClCompile Include="project\src\renderer\Camera.cpp" />
     <ClCompile Include="project\src\renderer\Mesh.cpp" />
-    <ClCompile Include="project\src\renderer\RenderData.cpp" />
+    <ClCompile Include="project\src\renderer\MeshData.cpp" />
     <ClCompile Include="project\src\renderer\Shader.cpp" />
     <ClCompile Include="project\src\core\Root.cpp" />
     <ClCompile Include="project\src\renderer\Renderer.cpp" />
+    <ClCompile Include="project\src\renderer\Skeleton.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="project\src\managers\AnimationManager.h" />
+    <ClInclude Include="project\src\renderer\Animator.h" />
     <ClInclude Include="project\src\renderer\Skeleton.h" />
-    <ClInclude Include="project\src\managers\AssetManager.h" />
+    <ClInclude Include="project\src\core\ModelLoader.h" />
     <ClInclude Include="project\include\simdjson\simdjson.cpp" />
-    <ClInclude Include="project\src\managers\ProjectManager.h" />
+    <ClInclude Include="project\src\core\ProjectManager.h" />
     <ClInclude Include="project\src\importer\Importer.h" />
     <ClInclude Include="project\src\core\GameObject.h" />
     <ClInclude Include="project\src\core\Data.h" />
@@ -126,8 +126,9 @@
     <ClInclude Include="project\src\structs\Joint.h" />
     <ClInclude Include="project\src\structs\Material.h" />
     <ClInclude Include="project\src\renderer\Mesh.h" />
-    <ClInclude Include="project\src\renderer\RenderData.h" />
+    <ClInclude Include="project\src\structs\RenderData.h" />
     <ClInclude Include="project\src\renderer\Shader.h" />
+    <ClInclude Include="project\src\renderer\MeshData.h" />
     <ClInclude Include="project\src\structs\Vertex.h" />
     <ClInclude Include="project\src\core\Root.h" />
     <ClInclude Include="project\src\renderer\Renderer.h" />

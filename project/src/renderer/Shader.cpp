@@ -6,7 +6,7 @@
 
 #include "glad/gl.h"
 
-#include "../managers/ProjectManager.h"
+#include "../core/ProjectManager.h"
 
 // PUBLIC
 Shader::Shader()
@@ -14,7 +14,7 @@ Shader::Shader()
 	loadShader(ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.vert", 
 		ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.frag");
 
-	m_UniformLocationCache.reserve(10);
+	m_UniformLocationCache.reserve(20);
 }
 
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)

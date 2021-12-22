@@ -9,35 +9,27 @@
 	Mesh class
 	Base class for anything which needs to be rendered
 	on screen
+	Should not be inherited from
 */
 
 #include "../core/GameObject.h"
-#include "../core/Data.h"
-#include "../structs/Vertex.h"
-#include "../structs/Material.h"
-#include "Shader.h"
-#include "RenderData.h"
+#include "../structs/RenderData.h"
+#include "MeshData.h"
 #include "Skeleton.h"
+
 
 class Mesh : public GameObject
 {
-public:
-	unsigned int m_VAO, m_VBO, m_EBO;
-	unsigned int m_NumElements;
-
-	Shader m_ShaderProgram;
-	Material m_Material;
-
 private:
-	std::shared_ptr<Skeleton> m_Skeleton;
+	RenderData m_RenderData;	// in a struct so it can easily be passed to the renderer through the MeshData each frame
+	std::shared_ptr<MeshData> m_MeshData;	// many mesh objects can have the same MeshData
+	std::shared_ptr<Skeleton> m_Skeleton;	// many mesh objects can have the same Skeleton
 
 public:
 	Mesh();
-	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Shader& shader, const Material& material, const std::shared_ptr<Skeleton>& skeleton);
+	Mesh(const RenderData& renderData, std::shared_ptr<MeshData> meshData, std::shared_ptr<Skeleton> skeleton);
 
 private:
-	void createMeshBuffers(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
-
 	void onUpdate(const float& deltaTime) override;
 };
 

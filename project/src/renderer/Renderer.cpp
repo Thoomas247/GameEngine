@@ -2,9 +2,17 @@
 
 #include "glad/gl.h"
 
-#include "RenderData.h"
 #include "Mesh.h"
-#include "Camera.h"
+
+#define MESH_DATA_LIST_RESERVE_AMOUNT 1000
+
+std::vector<MeshData*> Renderer::g_MeshDataList;
+Camera* Renderer::g_CurrentCamera;
+
+void Renderer::Reserve()
+{
+	g_MeshDataList.reserve(MESH_DATA_LIST_RESERVE_AMOUNT);
+}
 
 void Renderer::SetUp()
 {
@@ -23,28 +31,40 @@ void Renderer::Draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	Camera* camera = (Camera*)RenderData::CurrentCamera;
-	camera->CalcViewProjectionMatrix();
+	g_CurrentCamera->CalcViewProjectionMatrix();
 
-	for (auto& object : RenderData::Queue)
+	for (MeshData* meshData : g_MeshDataList)
 	{
-		Mesh* mesh = (Mesh*)object;
-		
-		glUseProgram(mesh->m_ShaderProgram.m_GLID);
+		for (RenderData* renderData : meshData->RenderData)	// change to instance rendering
+		{
+			glUseProgram(renderData->ShaderProgram.m_GLID);
 
-		// albedo texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mesh->m_Material.BaseColorTexture);
-		mesh->m_ShaderProgram.SetInt("base_texture", 0);
+			// albedo texture
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.BaseColorTexture);
+			renderData->ShaderProgram.SetInt("base_texture", 0);
 
-		// matrices
-		mesh->m_ShaderProgram.SetMat4("model", mesh->m_GlobalTransform);
-		mesh->m_ShaderProgram.SetMat4("view_projection", camera->m_ViewProjectionMatrix);
+			// matrices
+			renderData->ShaderProgram.SetMat4("model", *renderData->Transform);
+			renderData->ShaderProgram.SetMat4("view", g_CurrentCamera->m_ViewMatrix);
+			renderData->ShaderProgram.SetMat4("projection", g_CurrentCamera->m_ProjectionMatrix);
 
-		glBindVertexArray(mesh->m_VAO);
-		glDrawElements(GL_TRIANGLES, mesh->m_NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
-		glBindVertexArray(0);	// unbind when done
+			glBindVertexArray(meshData->VAO);
+			glDrawElements(GL_TRIANGLES, meshData->NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
+
+			glBindVertexArray(0);	// unbind when done
+		}
 	}
+}
 
-	RenderData::Queue.clear();
+int Renderer::AddMeshdata(MeshData* meshData)
+{
+	int index = g_MeshDataList.size();
+	g_MeshDataList.push_back(meshData);
+	return index;
+}
+
+void Renderer::RemoveMeshData(const int& index)
+{
+	g_MeshDataList.erase(g_MeshDataList.begin() + index);
 }

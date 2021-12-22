@@ -1,25 +1,24 @@
 #include "Skeleton.h"
 
-#include "../managers/AnimationManager.h"
+#include "Animator.h"
 
-// PUBLIC
-Skeleton::Skeleton()
+Skeleton::Skeleton() 
 {
+}
+
+Skeleton::~Skeleton()
+{
+	Animator::RemoveSkeleton(IndexInAnimatorList);
 }
 
 Skeleton::Skeleton(const std::vector<Joint>& joints, const std::map<std::string, Animation>& animations)
 {
-	m_Joints = joints;
-	m_Animations = animations;
-	//AnimationManager::Skeletons.push_back(std::shared_ptr<Skeleton>(this));
-}
-
-void Skeleton::UpdateAnimation(const float& deltaTime)
-{
-
+	Joints = joints;
+	Animations = animations;
+	IndexInAnimatorList = Animator::AddSkeleton(this);
 }
 
 void Skeleton::SetAnimation(const std::string& name)
 {
-	m_CurrentAnimation = &m_Animations[name];
+	CurrentAnimation = &Animations[name];
 }
