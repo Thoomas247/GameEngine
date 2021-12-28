@@ -24,7 +24,7 @@ void Renderer::SetUp()
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glClearColor(0.8f, 0.3f, 0.7f, 1.0f);
+	glClearColor(0.2f, 0.3f, 0.7f, 1.0f);
 }
 
 void Renderer::Draw()
