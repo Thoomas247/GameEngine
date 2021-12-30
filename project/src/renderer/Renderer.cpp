@@ -66,5 +66,7 @@ int Renderer::AddMeshdata(MeshData* meshData)
 
 void Renderer::RemoveMeshData(const int& index)
 {
-	g_MeshDataList.erase(g_MeshDataList.begin() + index);
+	g_MeshDataList[index] = g_MeshDataList[g_MeshDataList.size() - 1];
+	g_MeshDataList[index]->IndexInRendererList = index;
+	g_MeshDataList.erase(g_MeshDataList.end() - 1);
 }

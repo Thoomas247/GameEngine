@@ -17,7 +17,6 @@
 #include "MeshData.h"
 #include "Skeleton.h"
 
-
 class Mesh : public GameObject
 {
 private:
@@ -27,7 +26,7 @@ private:
 
 public:
 	Mesh();
-	Mesh(const RenderData& renderData, std::shared_ptr<MeshData> meshData, std::shared_ptr<Skeleton> skeleton);
+	Mesh(const RenderData& renderData, std::shared_ptr<MeshData> meshData, std::shared_ptr<Skeleton> skeleton, glm::mat4 transform = glm::mat4(1.0f));
 
 private:
 	void onUpdate(const float& deltaTime) override;

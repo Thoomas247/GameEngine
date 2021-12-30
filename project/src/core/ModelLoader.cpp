@@ -11,6 +11,8 @@
 #include "ProjectManager.h"
 #include "../renderer/Mesh.h"
 
+std::unordered_map<std::string, int> ModelLoader::g_TextureCache;
+
 std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
 {
 	std::string path = ProjectManager::ProjectPath + ProjectManager::DefaultModelPath + name;
@@ -32,7 +34,7 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
 	std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
 	
 	// skeleton (contains animations)
-	std::shared_ptr<Skeleton> skeleton = createSkeleton(j);
+	//std::shared_ptr<Skeleton> skeleton = createSkeleton(j);
 
 	// meshes
 	for (auto& [name, jmesh] : j["meshes"].items())
@@ -40,7 +42,14 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
 		RenderData renderData = createRenderData(jmesh);
 		std::shared_ptr<MeshData> meshData = createMeshData(jmesh);
 
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, skeleton);
+		std::vector<float> transformVec = jmesh["transform"];
+		glm::mat4 transform = { transformVec[0], transformVec[1], transformVec[2], transformVec[3],
+								transformVec[4], transformVec[5], transformVec[6], transformVec[7], 
+								transformVec[8], transformVec[9], transformVec[10], transformVec[11], 
+								transformVec[12], transformVec[13], transformVec[14], transformVec[15]};
+
+		//std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, skeleton);
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, nullptr, transform);
 
 		gameObject->AddChild(name, mesh);
 	}
@@ -50,6 +59,13 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
 
 int ModelLoader::loadTexture(const std::string& name)
 {
+	auto it = g_TextureCache.find(name);
+
+	if (it != g_TextureCache.end())
+	{
+		return it->second;
+	}
+
 	if (name == "")
 	{
 		return -1;	// TODO: make return default full white texture index
@@ -94,6 +110,8 @@ int ModelLoader::loadTexture(const std::string& name)
 		return -1;	// TODO: make return default full white texture index
 	}
 	stbi_image_free(data);
+
+	g_TextureCache[name] = texture;
 	return texture;
 }
 
@@ -159,28 +177,28 @@ RenderData ModelLoader::createRenderData(json& jmesh)
 {
 	// material
 	Material material;
-	std::string path = jmesh["material"]["baseColorTexture"];
+	std::string path = jmesh["baseColorTexture"];
 	material.BaseColorTexture = loadTexture(path);
 
-	path = jmesh["material"]["metallicRoughnessTexture"];
+	path = jmesh["metallicRoughnessTexture"];
 	material.MetallicRoughnessTexture = loadTexture(path);
 
-	path = jmesh["material"]["emissiveTexture"];
+	path = jmesh["emissiveTexture"];
 	material.EmissiveTexture = loadTexture(path);
 
-	path = jmesh["material"]["normalTexture"];
+	path = jmesh["normalTexture"];
 	material.Normaltexture = loadTexture(path);
 
-	path = jmesh["material"]["occlusionTexture"];
+	path = jmesh["occlusionTexture"];
 	material.OcclusionTexture = loadTexture(path);
 
-	std::vector<float> baseColor = jmesh["material"]["baseColorFactor"];
+	std::vector<float> baseColor = jmesh["baseColorFactor"];
 	material.BaseColorFactor = glm::vec4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]);
 
-	material.MetallicFactor = jmesh["material"]["metallicFactor"];
-	material.RoughnessFactor = jmesh["material"]["roughnessFactor"];
+	material.MetallicFactor = jmesh["metallicFactor"];
+	material.RoughnessFactor = jmesh["roughnessFactor"];
 
-	std::vector<float> emissiveColor = jmesh["material"]["emissiveFactor"];
+	std::vector<float> emissiveColor = jmesh["emissiveFactor"];
 	material.EmissiveFactor = glm::vec3(emissiveColor[0], emissiveColor[1], emissiveColor[2]);
 
 	return RenderData(material, Shader());	// return default shader for now
@@ -189,27 +207,20 @@ RenderData ModelLoader::createRenderData(json& jmesh)
 std::shared_ptr<MeshData> ModelLoader::createMeshData(json& jmesh)
 {
 	// vertices
-	std::vector<float> positions = jmesh["positions"];
-	std::vector<float> normals = jmesh["normals"];
-	std::vector<float> texCoords = jmesh["texCoords"];
-	std::vector<float> colors = jmesh["colors"];
-	std::vector<int> joints = jmesh["joints"];
-	std::vector<float> weights = jmesh["weights"];
+	std::vector<float> vertFloats = jmesh["vertices"];
 
 	std::vector<Vertex> vertices;
-	int arraySize = (int)positions.size() / 3; // 3 is num of components in the position vectors
+	int arraySize = vertFloats.size() / 20; // 20 is num of floats in a vertex
 	vertices.reserve(arraySize);
 
 	for (int i = 0; i < arraySize; i++)
 	{
-		Vertex v = Vertex(glm::vec3(positions[i * 3 + 0], positions[i * 3 + 1], positions[i * 3 + 2]),
-			glm::vec3(normals[i * 3 + 0], normals[i * 3 + 1], normals[i * 3 + 2]),
-			glm::vec2(texCoords[i * 2 + 0], texCoords[i * 2 + 1]),
-			glm::vec4(colors[i * 4 + 0], colors[i * 4 + 1], colors[i * 4 + 2], colors[i * 4 + 3]),
-			glm::ivec4(joints[i * 4 + 0], joints[i * 4 + 1], joints[i * 4 + 2], joints[i * 4 + 3]),
-			glm::vec4(weights[i * 4 + 0], weights[i * 4 + 1], weights[i * 4 + 2], weights[i * 4 + 3]));
-
-		vertices.push_back(v);
+		vertices.push_back(Vertex(glm::vec3(vertFloats[i * 20 + 0], vertFloats[i * 20 + 1], vertFloats[i * 20 + 2]),
+									glm::vec3(vertFloats[i * 20 + 3], vertFloats[i * 20 + 4], vertFloats[i * 20 + 5]),
+									glm::vec2(vertFloats[i * 20 + 6], vertFloats[i * 20 + 7]),
+									glm::vec4(vertFloats[i * 20 + 8], vertFloats[i * 20 + 9], vertFloats[i * 20 + 10], vertFloats[i * 20 + 11]),
+									glm::ivec4(vertFloats[i * 20 + 12], vertFloats[i * 20 + 13], vertFloats[i * 20 + 14], vertFloats[i * 20 + 15]),
+									glm::vec4(vertFloats[i * 20 + 16], vertFloats[i * 20 + 17], vertFloats[i * 20 + 18], vertFloats[i * 20 + 19])));
 	}
 
 	// indices

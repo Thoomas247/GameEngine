@@ -61,7 +61,7 @@ int main()
 	Animator::Reserve();
 
 	// debug: import gltf file
-	//Importer::ImportGLTF("Test", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
+	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Viking", "F:/Users/TM1/Downloads/viking_room/scene.gltf");
 	//Importer::ImportGLTF("Bat", "F:/Users/TM1/Downloads/batmobile_low_poly/scene.gltf");
 	
@@ -69,17 +69,16 @@ int main()
 	Root root;
 
 	// debug: load meshes
-	//std::shared_ptr<GameObject> viking = ModelLoader::LoadModel("Viking.GEM");
-	//viking->m_LocalPosition = glm::vec3(20.0f, 0.0f, 0.0f);
-	//viking->m_LocalScale = glm::vec3(2.0f, 2.0f, 2.0f);
-	//root.AddChild("Viking", viking);
+	std::shared_ptr<GameObject> viking = ModelLoader::LoadModel("Viking.GEM");
+	root.AddChild("Viking", viking);
 
-	std::shared_ptr<GameObject> bird = ModelLoader::LoadModel("Test.GEM");
+	std::shared_ptr<GameObject> bird = ModelLoader::LoadModel("Bird.GEM");
+	bird->m_LocalScale = glm::vec3(0.1f, 0.1f, 0.1f);
+	bird->m_LocalPosition = glm::vec3(0.0f, 40.0f, 0.0f);
 	root.AddChild("Bird", bird);
 
-	//std::shared_ptr<GameObject> robot = ModelLoader::LoadModel("Robot.GEM");
-	//robot->m_LocalScale = glm::vec3(0.1f, 0.1f, 0.1f);
-	//root.AddChild("Robot", robot);
+	//std::shared_ptr<GameObject> bat = ModelLoader::LoadModel("Bat.GEM");
+	//root.AddChild("Bat", bat);
 
 	// debug: create player and camera
 	std::shared_ptr<Player> player = std::make_shared<Player>();

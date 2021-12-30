@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <string>
-#include <vector>
+#include <unordered_map>
 
 #include "json/json.hpp"
 using json = nlohmann::json;
@@ -16,6 +16,8 @@ using json = nlohmann::json;
 
 namespace ModelLoader
 {
+	extern std::unordered_map<std::string, int> g_TextureCache;
+
 	std::shared_ptr<GameObject> LoadModel(const std::string& name);
 
 	int loadTexture(const std::string& name);

@@ -7,13 +7,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "json/json.hpp"
-#include "glm/glm.hpp"
-#include "glm/gtx/quaternion.hpp"
-
 #include "../core/ProjectManager.h"
-
-using json = nlohmann::json;
 
 void Importer::ImportGLTF(const std::string& name, const std::string& path)
 {
@@ -53,7 +47,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 	json j;
 
-	// TEXTURES
+	// textures
 	std::map<int, std::string> textureDict;
 	for (int i = 0; i < model.textures.size(); i++)
 	{
@@ -84,77 +78,164 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		}
 	}
 
-	// MESHES
-	/*
-	std::map<int, std::vector<double>> meshNodeTransforms;
-	for (tinygltf::Node& node : model.nodes)
+	// scenes
+	tinygltf::Scene& scene = model.scenes[model.defaultScene];	// only one scene is supported
+	std::map<int, glm::mat4> parentTransforms;	// index of child, compounded transform of parents
+	std::map<std::string, int> nameToIndex;	// for applying transforms later
+
+	// nodes
+	for (int nodeIndex : scene.nodes)
 	{
-		if (node.mesh != -1)
+		tinygltf::Node node = model.nodes[nodeIndex];
+
+		// transform
+		glm::mat4 transform = getNodeTransform(node);
+
+		for (int& childIndex : node.children)
 		{
-			if (node.matrix.size() != 0)
-			{
-				meshNodeTransforms[node.mesh] = node.matrix;
-			}
-			else if (node.translation.size() != 0)
-			{
-				glm::vec3 translation = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
-				glm::quat rotation = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
-				glm::vec3 scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
+			auto it = parentTransforms.find(childIndex);
 
-				glm::mat4 localtransform = glm::scale(glm::mat4(1.0f), scale);
-				localtransform = glm::mat4_cast(rotation) * localtransform;
-				localtransform = glm::translate(localtransform, translation);
-
-				meshNodeTransforms[node.mesh] = { localtransform[0][0], localtransform[1][0], localtransform[2][0], localtransform[3][0],
-												localtransform[0][1], localtransform[1][1], localtransform[2][1], localtransform[3][1],
-												localtransform[0][2], localtransform[1][2], localtransform[2][2], localtransform[3][2],
-												localtransform[0][3], localtransform[1][3], localtransform[2][3], localtransform[3][3] };
+			if (it != parentTransforms.end())
+			{
+				it->second = transform * it->second;
 			}
+
 			else
 			{
-				meshNodeTransforms[node.mesh] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+				parentTransforms[childIndex] = transform;
 			}
 		}
-	}
-	*/
 
+		// if node contains a mesh, make sure the transform is applied later
+		if (node.mesh != -1)
+		{
+			nameToIndex[model.meshes[node.mesh].name] = nodeIndex;
+		}
+	}
+
+	// meshes
 	for (tinygltf::Mesh& mesh : model.meshes)
 	{
+		// vertices
 		tinygltf::Primitive& primitive = mesh.primitives[0];
-		
+
 		if (primitive.mode != TINYGLTF_MODE_TRIANGLES && primitive.mode != TINYGLTF_MODE_TRIANGLE_FAN && primitive.mode != TINYGLTF_MODE_TRIANGLE_STRIP)
 		{
 			std::cout << "IMPORTER::ERROR::Primitive mode not supported!" << std::endl;
 			return;
 		}
 
-		// vertices
-		j["meshes"][mesh.name]["positions"] = getVertexPositions(model, primitive);
-		j["meshes"][mesh.name]["normals"] = getVertexNormals(model, primitive);
-		j["meshes"][mesh.name]["texCoords"] = getVertexTextureCoords(model, primitive);
-		j["meshes"][mesh.name]["colors"] = getVertexColors(model, primitive);
-		j["meshes"][mesh.name]["joints"] = getVertexJoints(model, primitive);
-		j["meshes"][mesh.name]["weights"] = getVertexWeights(model, primitive);
+		std::vector<float> positions = getVertexPositions(model, primitive);
+		std::vector<float> normals = getVertexNormals(model, primitive);
+		std::vector<float> texCoords = getVertexTextureCoords(model, primitive);
+		std::vector<float> colors = getVertexColors(model, primitive);
+		std::vector<unsigned short> joints = getVertexJoints(model, primitive);
+		std::vector<float> weights = getVertexWeights(model, primitive);
+
+		if (normals.size() == 0) 
+		{
+			normals = std::vector<float>(positions.size(), 1.0f);
+		}
+		if (texCoords.size() == 0)
+		{
+			texCoords = std::vector<float>((positions.size() / 3) * 2, 0.0f);
+		}
+		if (colors.size() == 0)
+		{
+			colors = std::vector<float>((positions.size() / 3) * 4, 1.0f);
+		}
+		if (joints.size() == 0)
+		{
+			joints = std::vector<unsigned short>((positions.size() / 3) * 4, 0);
+		}
+		if (weights.size() == 0)
+		{
+			weights = std::vector<float>((positions.size() / 3) * 4, 0.0f);
+		}
+
+		// interleave vertex data
+		std::vector<float> vertices;
+		vertices.reserve((positions.size() / 3) * 20);	// 20 floats per vertex
+		for (int i = 0; i < (positions.size() / 3); i++)
+		{
+			vertices.push_back(positions[i * 3 + 0]);
+			vertices.push_back(positions[i * 3 + 1]);
+			vertices.push_back(positions[i * 3 + 2]);
+
+			vertices.push_back(normals[i * 3 + 0]);
+			vertices.push_back(normals[i * 3 + 1]);
+			vertices.push_back(normals[i * 3 + 2]);
+
+			vertices.push_back(texCoords[i * 2 + 0]);
+			vertices.push_back(texCoords[i * 2 + 1]);
+
+			vertices.push_back(colors[i * 4 + 0]);
+			vertices.push_back(colors[i * 4 + 1]);
+			vertices.push_back(colors[i * 4 + 2]);
+			vertices.push_back(colors[i * 4 + 3]);
+
+			vertices.push_back(joints[i * 4 + 0]);
+			vertices.push_back(joints[i * 4 + 1]);
+			vertices.push_back(joints[i * 4 + 2]);
+			vertices.push_back(joints[i * 4 + 3]);
+
+			vertices.push_back(weights[i * 4 + 0]);
+			vertices.push_back(weights[i * 4 + 1]);
+			vertices.push_back(weights[i * 4 + 2]);
+			vertices.push_back(weights[i * 4 + 3]);
+		}
+
+		// check if mesh name already exists
+		std::string meshName = getNewName(mesh.name, j["meshes"], 0);
+
+		j["meshes"][meshName]["vertices"] = vertices;
 
 		// indices
-		j["meshes"][mesh.name]["indices"] = getIndices(model, primitive);
+		std::vector<unsigned int> indices = getIndices(model, primitive);
+		j["meshes"][meshName]["indices"] = indices;
 
 		// material
 		int& materialIndex = primitive.material;
 		tinygltf::Material& material = model.materials[materialIndex];
 
-		j["meshes"][mesh.name]["material"]["baseColorFactor"] = material.pbrMetallicRoughness.baseColorFactor;
-		j["meshes"][mesh.name]["material"]["baseColorTexture"] = textureDict[material.pbrMetallicRoughness.baseColorTexture.index];
-		j["meshes"][mesh.name]["material"]["metallicFactor"] = material.pbrMetallicRoughness.metallicFactor;
-		j["meshes"][mesh.name]["material"]["roughnessFactor"] = material.pbrMetallicRoughness.roughnessFactor;
-		j["meshes"][mesh.name]["material"]["metallicRoughnessTexture"] = textureDict[material.pbrMetallicRoughness.metallicRoughnessTexture.index];
-		j["meshes"][mesh.name]["material"]["emissiveFactor"] = material.emissiveFactor;
-		j["meshes"][mesh.name]["material"]["emissiveTexture"] = textureDict[material.emissiveTexture.index];
-		j["meshes"][mesh.name]["material"]["normalTexture"] = textureDict[material.normalTexture.index];
-		j["meshes"][mesh.name]["material"]["occlusionTexture"] = textureDict[material.occlusionTexture.index];
+		std::vector<double> baseColorFactor = material.pbrMetallicRoughness.baseColorFactor;
+		std::string			baseColorTexture = textureDict[material.pbrMetallicRoughness.baseColorTexture.index];
+		double				metallicFactor = material.pbrMetallicRoughness.metallicFactor;
+		double				roughnessFactor = material.pbrMetallicRoughness.roughnessFactor;
+		std::string			metallicRoughnessTexture = textureDict[material.pbrMetallicRoughness.metallicRoughnessTexture.index];
+		std::vector<double> emissiveFactor = material.emissiveFactor;
+		std::string			emissiveTexture = textureDict[material.emissiveTexture.index];
+		std::string			normalTexture = textureDict[material.normalTexture.index];
+		std::string			occlusionTexture = textureDict[material.occlusionTexture.index];
+
+		j["meshes"][meshName]["baseColorFactor"] = baseColorFactor;
+		j["meshes"][meshName]["baseColorTexture"] = baseColorTexture;
+		j["meshes"][meshName]["metallicFactor"] = metallicFactor;
+		j["meshes"][meshName]["roughnessFactor"] = roughnessFactor;
+		j["meshes"][meshName]["metallicRoughnessTexture"] = metallicRoughnessTexture;
+		j["meshes"][meshName]["emissiveFactor"] = emissiveFactor;
+		j["meshes"][meshName]["emissiveTexture"] = emissiveTexture;
+		j["meshes"][meshName]["normalTexture"] = normalTexture;
+		j["meshes"][meshName]["occlusionTexture"] = occlusionTexture;
+
+		// transform
+		glm::mat4 transform = glm::mat4(1.0f);
+
+		auto it = nameToIndex.find(meshName);
+		if (it != nameToIndex.end())
+		{
+			transform = parentTransforms[it->second];
+		}
+
+		std::vector<float> transformVec = { transform[0][0],  transform[1][0], transform[2][0], transform[3][0],
+												transform[0][1], transform[1][1], transform[2][1], transform[3][1],
+												transform[0][2], transform[1][2], transform[2][2], transform[3][2],
+												transform[0][3], transform[1][3], transform[2][3], transform[3][3] };
+
+		j["meshes"][meshName]["transform"] = transformVec;
 	}
 
-	// JOINTS
+	/*
 	if (model.skins.size() > 1)
 	{
 		std::cout << "IMPORTER::WARNING::More than one skin not supported" << std::endl;
@@ -249,6 +330,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 			}
 		}
 	}
+	*/
 
 	// WRITE to file - importing done
 	std::string modelDestPath = ProjectManager::ProjectPath + ProjectManager::DefaultModelPath;
@@ -259,6 +341,41 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	std::vector<unsigned char> dataVec = json::to_bson(j);
 	fileOut.write(reinterpret_cast<const char*>(dataVec.data()), dataVec.size());
 	fileOut.close();
+}
+
+std::string Importer::getNewName(const std::string& name, const json& j, const int& count)
+{
+	std::string newName = name + std::to_string(count);
+	if (j.count(newName) == 0)
+	{
+		return newName;
+	}
+	return getNewName(name, j, count + 1);
+}
+
+glm::mat4 Importer::getNodeTransform(const tinygltf::Node& node)
+{
+	if (node.matrix.size() != 0)
+	{
+		return glm::mat4(node.matrix[0], node.matrix[1], node.matrix[2], node.matrix[3],
+						node.matrix[4], node.matrix[5], node.matrix[6], node.matrix[7], 
+						node.matrix[8], node.matrix[9], node.matrix[10], node.matrix[11], 
+						node.matrix[12], node.matrix[13], node.matrix[14], node.matrix[15]);
+	}
+	else if (node.translation.size() != 0)
+	{
+		glm::vec3 translation = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
+		glm::quat rotation = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+		glm::vec3 scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
+
+		glm::mat4 localTransform = glm::translate(glm::mat4(1.0f), translation) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1.0f), scale);
+
+		return localTransform;
+	}
+	else
+	{
+		return glm::mat4(1.0f);
+	}
 }
 
 std::vector<float> Importer::getVertexPositions(tinygltf::Model& model, tinygltf::Primitive& primitive)
@@ -436,3 +553,4 @@ std::vector<unsigned int> Importer::getIndices(tinygltf::Model& model, tinygltf:
 
 	return meshIndices;
 }
+
