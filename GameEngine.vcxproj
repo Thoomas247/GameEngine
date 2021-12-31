@@ -105,9 +105,9 @@
     <ClCompile Include="project\src\renderer\Mesh.cpp" />
     <ClCompile Include="project\src\renderer\MeshData.cpp" />
     <ClCompile Include="project\src\renderer\Shader.cpp" />
-    <ClCompile Include="project\src\core\Root.cpp" />
     <ClCompile Include="project\src\renderer\Renderer.cpp" />
     <ClCompile Include="project\src\renderer\Skeleton.cpp" />
+    <ClCompile Include="project\src\core\World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project\src\renderer\Animator.h" />
@@ -130,8 +130,8 @@
     <ClInclude Include="project\src\renderer\Shader.h" />
     <ClInclude Include="project\src\renderer\MeshData.h" />
     <ClInclude Include="project\src\structs\Vertex.h" />
-    <ClInclude Include="project\src\core\Root.h" />
     <ClInclude Include="project\src\renderer\Renderer.h" />
+    <ClInclude Include="project\src\core\World.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test game\assets\shaders\Base.frag" />

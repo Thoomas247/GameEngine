@@ -15,7 +15,7 @@
 #include "renderer/Renderer.h"
 #include "renderer/Animator.h"
 
-#include "core/Root.h"
+#include "core/World.h"
 #include "core/GameObject.h"
 #include "core/Data.h"
 #include "core/ModelLoader.h"
@@ -64,33 +64,30 @@ int main()
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Viking", "F:/Users/TM1/Downloads/viking_room/scene.gltf");
 	//Importer::ImportGLTF("Bat", "F:/Users/TM1/Downloads/batmobile_low_poly/scene.gltf");
-	
-	// main: init variables
-	Root root;
 
 	// debug: load meshes
 	std::shared_ptr<GameObject> viking = ModelLoader::LoadModel("Viking.GEM");
-	root.AddChild("Viking", viking);
+	World::AddGameObject("Viking", viking);
 
 	std::shared_ptr<GameObject> bird = ModelLoader::LoadModel("Bird.GEM");
 	bird->m_LocalScale = glm::vec3(0.1f, 0.1f, 0.1f);
 	bird->m_LocalPosition = glm::vec3(0.0f, 40.0f, 0.0f);
-	root.AddChild("Bird", bird);
+	World::AddGameObject("Bird", bird);
 
 	//std::shared_ptr<GameObject> bat = ModelLoader::LoadModel("Bat.GEM");
-	//root.AddChild("Bat", bat);
+	//World::AddGameObject("Bat", bat);
 
 	// debug: create player and camera
 	std::shared_ptr<Player> player = std::make_shared<Player>();
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 	player->AddChild("Camera", camera);
-	root.AddChild("Player", player);
+	World::AddGameObject("Player", player);
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
 	// main: setup
-	root.SetUp();
+	World::SetUp();
 	Renderer::SetUp();
 
 	// main: program loop
@@ -108,8 +105,7 @@ int main()
 			glfwSetWindowShouldClose(window, true);
 		}
 
-		root.Update(deltaTime);
-		// World::Update();
+		World::Update(deltaTime);
 		Animator::Update(deltaTime);
 		Renderer::Draw();
 
