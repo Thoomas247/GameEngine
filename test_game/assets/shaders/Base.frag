@@ -8,6 +8,11 @@ in vec2 TexCoord;
 in vec4 Color;
 
 uniform sampler2D base_texture;
+uniform sampler2D emissive_texture;
+uniform sampler2D metallic_roughness_texture;
+uniform sampler2D normal_texture;
+uniform sampler2D occlusion_texture;
+
 
 void main()
 {

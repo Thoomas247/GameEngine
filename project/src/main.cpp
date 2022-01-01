@@ -64,6 +64,7 @@ int main()
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Viking", "F:/Users/TM1/Downloads/viking_room/scene.gltf");
 	//Importer::ImportGLTF("Bat", "F:/Users/TM1/Downloads/batmobile_low_poly/scene.gltf");
+	//Importer::ImportGLTF("Snowfox", "C:/Users/Thomas/Downloads/Snowfox/scene.gltf");
 
 	// debug: load meshes
 	std::shared_ptr<GameObject> viking = ModelLoader::LoadModel("Viking.GEM");
@@ -73,6 +74,10 @@ int main()
 	bird->m_LocalScale = glm::vec3(0.1f, 0.1f, 0.1f);
 	bird->m_LocalPosition = glm::vec3(0.0f, 40.0f, 0.0f);
 	World::AddGameObject("Bird", bird);
+
+	std::shared_ptr<GameObject> snowfox = ModelLoader::LoadModel("Snowfox.GEM");
+	snowfox->m_LocalPosition = glm::vec3(40.0f, 0.0f, 0.0f);
+	World::AddGameObject("Snowfox", snowfox);
 
 	//std::shared_ptr<GameObject> bat = ModelLoader::LoadModel("Bat.GEM");
 	//World::AddGameObject("Bat", bat);

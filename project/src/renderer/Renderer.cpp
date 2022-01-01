@@ -44,6 +44,26 @@ void Renderer::Draw()
 			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.BaseColorTexture);
 			renderData->ShaderProgram.SetInt("base_texture", 0);
 
+			// emissive texture
+			glActiveTexture(GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.EmissiveTexture);
+			renderData->ShaderProgram.SetInt("emissive_texture", 1);
+
+			// metallic roughness texture
+			glActiveTexture(GL_TEXTURE0 + 2);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.MetallicRoughnessTexture);
+			renderData->ShaderProgram.SetInt("metallic_roughness_texture", 2);
+
+			// normal texture
+			glActiveTexture(GL_TEXTURE0 + 3);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.Normaltexture);
+			renderData->ShaderProgram.SetInt("normal_texture", 3);
+
+			// emissive texture
+			glActiveTexture(GL_TEXTURE0 + 4);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.OcclusionTexture);
+			renderData->ShaderProgram.SetInt("occlusion_texture", 4);
+
 			// matrices
 			renderData->ShaderProgram.SetMat4("model", *renderData->Transform);
 			renderData->ShaderProgram.SetMat4("view", g_CurrentCamera->m_ViewMatrix);

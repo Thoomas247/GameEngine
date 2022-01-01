@@ -235,7 +235,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		j["meshes"][meshName]["transform"] = transformVec;
 	}
 
-	/*
+	// skin
 	if (model.skins.size() > 1)
 	{
 		std::cout << "IMPORTER::WARNING::More than one skin not supported" << std::endl;
@@ -243,7 +243,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 	if (model.skins.size() == 0)
 	{
-		std::cout << "IMPORTER::WARNING::Model has no skinning information" << std::endl;
+		std::cout << "IMPORTER::INFO::Model has no skinning information" << std::endl;
 	}
 
 	else
@@ -259,17 +259,10 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 		for (unsigned int i = 0; i < matrixAccessor.count; i++)
 		{
-			j["joints"][i]["inverseBindMatrix"] = { matrices[i * 16 + 0], matrices[i * 16 + 1], matrices[i * 16 + 2], matrices[i * 16 + 3],
+			j["joints"][skin.joints[i]]["inverseBindMatrix"] = { matrices[i * 16 + 0], matrices[i * 16 + 1], matrices[i * 16 + 2], matrices[i * 16 + 3],
 				matrices[i * 16 + 4], matrices[i * 16 + 5], matrices[i * 16 + 6], matrices[i * 16 + 7],
 				matrices[i * 16 + 8], matrices[i * 16 + 9], matrices[i * 16 + 10], matrices[i * 16 + 11],
 				matrices[i * 16 + 12], matrices[i * 16 + 13], matrices[i * 16 + 14], matrices[i * 16 + 15] };
-		}
-
-		// dict to translate from gltf indexes to own indexes
-		std::map<int, int> indexDict;
-		for (unsigned int i = 0; i < skin.joints.size(); i++)
-		{
-			indexDict[skin.joints[i]] = i;
 		}
 
 		// set joint parents
@@ -278,61 +271,60 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		{
 			if (first)
 			{
-				j["joints"][indexDict[jointIndex]]["parentID"] = -1;
+				j["joints"][jointIndex]["parentID"] = -1;
 				first = false;
 			}
 			for (int& childIndex : model.nodes[jointIndex].children)
 			{
-				int parentID = indexDict[jointIndex];
-				j["joints"][indexDict[childIndex]]["parentID"] = parentID;
+				int parentID = jointIndex;
+				j["joints"][childIndex]["parentID"] = parentID;
 			}
 		}
+	}
 
-		// ANIMATIONS
-		for (tinygltf::Animation& anim : model.animations)
+	// animations
+	for (tinygltf::Animation& anim : model.animations)
+	{
+		for (tinygltf::AnimationChannel& channel : anim.channels)
 		{
-			for (tinygltf::AnimationChannel& channel : anim.channels)
+			tinygltf::AnimationSampler& sampler = anim.samplers[channel.sampler];
+
+			// input
+			tinygltf::Accessor& inputAccessor = model.accessors[sampler.input];
+			tinygltf::BufferView& inputBufferView = model.bufferViews[inputAccessor.bufferView];
+			tinygltf::Buffer& inputBuffer = model.buffers[inputBufferView.buffer];
+			float* times = reinterpret_cast<float*>(&inputBuffer.data[inputBufferView.byteOffset + inputAccessor.byteOffset]);
+			// output
+			tinygltf::Accessor& outputAccessor = model.accessors[sampler.output];
+			tinygltf::BufferView& outputBufferView = model.bufferViews[outputAccessor.bufferView];
+			tinygltf::Buffer& outputBuffer = model.buffers[outputBufferView.buffer];
+			float* animatedProperty = reinterpret_cast<float*>(&outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset]);
+
+
+			for (unsigned int i = 0; i < inputAccessor.count; i++)
 			{
-				tinygltf::AnimationSampler& sampler = anim.samplers[channel.sampler];
+				// stupid fix for stupid gltf format
+				j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["translation"] = { 1.0f, 1.0f, 1.0f };
+				j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["rotation"] = { 1.0f, 1.0f, 1.0f, 1.0f };
+				j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["scale"] = { 1.0f, 1.0f, 1.0f };
 
-				// input
-				tinygltf::Accessor& inputAccessor = model.accessors[sampler.input];
-				tinygltf::BufferView& inputBufferView = model.bufferViews[inputAccessor.bufferView];
-				tinygltf::Buffer& inputBuffer = model.buffers[inputBufferView.buffer];
-				float* times = reinterpret_cast<float*>(&inputBuffer.data[inputBufferView.byteOffset + inputAccessor.byteOffset]);
-				// output
-				tinygltf::Accessor& outputAccessor = model.accessors[sampler.output];
-				tinygltf::BufferView& outputBufferView = model.bufferViews[outputAccessor.bufferView];
-				tinygltf::Buffer& outputBuffer = model.buffers[outputBufferView.buffer];
-				float* animatedProperty = reinterpret_cast<float*>(&outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset]);
-
-
-				for (unsigned int i = 0; i < inputAccessor.count; i++)
+				if (channel.target_path == "translation")
 				{
-					// stupid fix for stupid gltf format
-					j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["translation"] = { 1.0f, 1.0f, 1.0f };
-					j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["rotation"] = { 1.0f, 1.0f, 1.0f, 1.0f };
-					j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["scale"] = { 1.0f, 1.0f, 1.0f };
-
-					if (channel.target_path == "translation")
-					{
-						j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["translation"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };
-					}
-					else if (channel.target_path == "rotation")
-					{
-						j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["rotation"] = { animatedProperty[i * 4 + 0], animatedProperty[i * 4 + 1], animatedProperty[i * 4 + 2], animatedProperty[i * 4 + 3] };
-					}
-					else if (channel.target_path == "scale")
-					{
-						j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["scale"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };;
-					}
+					j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["translation"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };
+				}
+				else if (channel.target_path == "rotation")
+				{
+					j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["rotation"] = { animatedProperty[i * 4 + 0], animatedProperty[i * 4 + 1], animatedProperty[i * 4 + 2], animatedProperty[i * 4 + 3] };
+				}
+				else if (channel.target_path == "scale")
+				{
+					j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["scale"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };;
 				}
 			}
 		}
 	}
-	*/
 
-	// WRITE to file - importing done
+	// write to file - importing done
 	std::string modelDestPath = ProjectManager::ProjectPath + ProjectManager::DefaultModelPath;
 	std::filesystem::create_directories(modelDestPath);
 	modelDestPath += name + ".GEM";
@@ -365,8 +357,18 @@ glm::mat4 Importer::getNodeTransform(const tinygltf::Node& node)
 	else if (node.translation.size() != 0)
 	{
 		glm::vec3 translation = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
-		glm::quat rotation = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
-		glm::vec3 scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
+
+		glm::quat rotation = glm::quat(0.0f, 0.0f, 0.0f, 1.0f);
+		if (node.rotation.size() != 0)
+		{
+			rotation = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+		}
+		
+		glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+		if (node.scale.size() != 0)
+		{
+			scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
+		}
 
 		glm::mat4 localTransform = glm::translate(glm::mat4(1.0f), translation) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1.0f), scale);
 
