@@ -92,10 +92,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="project\src\core\Engine.cpp" />
+    <ClCompile Include="project\src\core\Window.cpp" />
     <ClCompile Include="project\src\renderer\Animator.cpp" />
     <ClCompile Include="project\src\core\ModelLoader.cpp" />
     <ClCompile Include="project\include\glad\gl.c" />
-    <ClCompile Include="project\src\core\Data.cpp" />
     <ClCompile Include="project\src\importer\Importer.cpp" />
     <ClCompile Include="project\src\core\GameObject.cpp" />
     <ClCompile Include="project\src\core\Input.cpp" />
@@ -110,6 +111,8 @@
     <ClCompile Include="project\src\core\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="project\src\core\Engine.h" />
+    <ClInclude Include="project\src\core\Window.h" />
     <ClInclude Include="project\src\renderer\Animator.h" />
     <ClInclude Include="project\src\renderer\Skeleton.h" />
     <ClInclude Include="project\src\core\ModelLoader.h" />
@@ -117,7 +120,6 @@
     <ClInclude Include="project\src\core\ProjectManager.h" />
     <ClInclude Include="project\src\importer\Importer.h" />
     <ClInclude Include="project\src\core\GameObject.h" />
-    <ClInclude Include="project\src\core\Data.h" />
     <ClInclude Include="project\src\core\Input.h" />
     <ClInclude Include="project\src\game\Player.h" />
     <ClInclude Include="project\src\game\Settings.h" />
