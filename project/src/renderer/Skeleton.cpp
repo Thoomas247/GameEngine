@@ -2,7 +2,7 @@
 
 #include "Animator.h"
 
-Skeleton::Skeleton() 
+Skeleton::Skeleton()
 {
 }
 

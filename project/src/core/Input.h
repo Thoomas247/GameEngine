@@ -3,28 +3,25 @@
 
 #include "glfw/glfw3.h"
 
-class Input
+namespace Input
 {
-public:
-	float MouseDeltaX = 0.0f;
-	float MouseDeltaY = 0.0f;
+	extern float g_MouseDeltaX;
+	extern float g_MouseDeltaY;
 
-	bool ActionEscape = false;
-	bool ActionMoveForward = false;
-	bool ActionMoveBack = false;
-	bool ActionMoveLeft = false;
-	bool ActionMoveRight = false;
+	extern float g_MouseLastXPos;
+	extern float g_MouseLastYPos;
+
+	extern bool g_ActionEscape;
+	extern bool g_ActionMoveForward;
+	extern bool g_ActionMoveBack;
+	extern bool g_ActionMoveLeft;
+	extern bool g_ActionMoveRight;
 	// don't forget to update functions when adding!
 
-private:
-	float MouseLastXPos = 0.0f;
-	float MouseLastYPos = 0.0f;
+	void Update();
 
-public:
-	void Update(GLFWwindow* window);
-
-private:
 	void resetInput();
-};
+	void setInput();
+}
 
 #endif // !INPUT_MANAGER

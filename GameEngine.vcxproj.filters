@@ -42,9 +42,6 @@
     <ClCompile Include="project\include\glad\gl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="project\src\core\Data.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="project\src\core\ModelLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,6 +58,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="project\src\core\World.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="project\src\core\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="project\src\core\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,9 +87,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="project\src\structs\Vertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="project\src\core\Data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="project\src\core\GameObject.h">
@@ -129,6 +129,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="project\src\core\World.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="project\src\core\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="project\src\core\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,7 +11,7 @@
 // PUBLIC
 Shader::Shader()
 {
-	loadShader(ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.vert", 
+	loadShader(ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.vert",
 		ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.frag");
 
 	m_UniformLocationCache.reserve(20);

@@ -70,7 +70,6 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 			{
 				textureDict[i] = name + "_textures" + uri.substr(uri.find_last_of("/"));	// store relative path of texture
 			}
-
 		}
 		else
 		{
@@ -132,7 +131,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		std::vector<unsigned short> joints = getVertexJoints(model, primitive);
 		std::vector<float> weights = getVertexWeights(model, primitive);
 
-		if (normals.size() == 0) 
+		if (normals.size() == 0)
 		{
 			normals = std::vector<float>(positions.size(), 1.0f);
 		}
@@ -300,7 +299,6 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 			tinygltf::Buffer& outputBuffer = model.buffers[outputBufferView.buffer];
 			float* animatedProperty = reinterpret_cast<float*>(&outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset]);
 
-
 			for (unsigned int i = 0; i < inputAccessor.count; i++)
 			{
 				// stupid fix for stupid gltf format
@@ -350,9 +348,9 @@ glm::mat4 Importer::getNodeTransform(const tinygltf::Node& node)
 	if (node.matrix.size() != 0)
 	{
 		return glm::mat4(node.matrix[0], node.matrix[1], node.matrix[2], node.matrix[3],
-						node.matrix[4], node.matrix[5], node.matrix[6], node.matrix[7], 
-						node.matrix[8], node.matrix[9], node.matrix[10], node.matrix[11], 
-						node.matrix[12], node.matrix[13], node.matrix[14], node.matrix[15]);
+			node.matrix[4], node.matrix[5], node.matrix[6], node.matrix[7],
+			node.matrix[8], node.matrix[9], node.matrix[10], node.matrix[11],
+			node.matrix[12], node.matrix[13], node.matrix[14], node.matrix[15]);
 	}
 	else if (node.translation.size() != 0)
 	{
@@ -363,7 +361,7 @@ glm::mat4 Importer::getNodeTransform(const tinygltf::Node& node)
 		{
 			rotation = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
 		}
-		
+
 		glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 		if (node.scale.size() != 0)
 		{
@@ -555,4 +553,3 @@ std::vector<unsigned int> Importer::getIndices(tinygltf::Model& model, tinygltf:
 
 	return meshIndices;
 }
-

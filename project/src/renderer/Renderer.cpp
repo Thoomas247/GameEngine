@@ -42,27 +42,27 @@ void Renderer::Draw()
 			// albedo texture
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.BaseColorTexture);
-			renderData->ShaderProgram.SetInt("base_texture", 0);
+			renderData->ShaderProgram.SetInt("base_texture", GL_TEXTURE0 + 0);
 
 			// emissive texture
 			glActiveTexture(GL_TEXTURE0 + 1);
 			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.EmissiveTexture);
-			renderData->ShaderProgram.SetInt("emissive_texture", 1);
+			renderData->ShaderProgram.SetInt("emissive_texture", GL_TEXTURE0 + 1);
 
 			// metallic roughness texture
 			glActiveTexture(GL_TEXTURE0 + 2);
 			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.MetallicRoughnessTexture);
-			renderData->ShaderProgram.SetInt("metallic_roughness_texture", 2);
+			renderData->ShaderProgram.SetInt("metallic_roughness_texture", GL_TEXTURE0 + 2);
 
 			// normal texture
 			glActiveTexture(GL_TEXTURE0 + 3);
 			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.Normaltexture);
-			renderData->ShaderProgram.SetInt("normal_texture", 3);
+			renderData->ShaderProgram.SetInt("normal_texture", GL_TEXTURE0 + 3);
 
 			// emissive texture
 			glActiveTexture(GL_TEXTURE0 + 4);
 			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.OcclusionTexture);
-			renderData->ShaderProgram.SetInt("occlusion_texture", 4);
+			renderData->ShaderProgram.SetInt("occlusion_texture", GL_TEXTURE0 + 4);
 
 			// matrices
 			renderData->ShaderProgram.SetMat4("model", *renderData->Transform);

@@ -32,7 +32,7 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
 
 	// create game object meshes will be bound to
 	std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
-	
+
 	// skeleton (contains animations)
 	//std::shared_ptr<Skeleton> skeleton = createSkeleton(j);
 
@@ -44,9 +44,9 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
 
 		std::vector<float> transformVec = jmesh["transform"];
 		glm::mat4 transform = { transformVec[0], transformVec[1], transformVec[2], transformVec[3],
-								transformVec[4], transformVec[5], transformVec[6], transformVec[7], 
-								transformVec[8], transformVec[9], transformVec[10], transformVec[11], 
-								transformVec[12], transformVec[13], transformVec[14], transformVec[15]};
+								transformVec[4], transformVec[5], transformVec[6], transformVec[7],
+								transformVec[8], transformVec[9], transformVec[10], transformVec[11],
+								transformVec[12], transformVec[13], transformVec[14], transformVec[15] };
 
 		//std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, skeleton);
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, nullptr, transform);
@@ -130,7 +130,6 @@ std::shared_ptr<Skeleton> ModelLoader::createSkeleton(json& j)
 				vec[4], vec[5], vec[6], vec[7],
 				vec[8], vec[9], vec[10], vec[11],
 				vec[12], vec[13], vec[14], vec[15]);
-
 
 			skeletonJoints.push_back(Joint(j["joints"][i]["parentID"], matrix));
 		}
@@ -216,11 +215,11 @@ std::shared_ptr<MeshData> ModelLoader::createMeshData(json& jmesh)
 	for (int i = 0; i < arraySize; i++)
 	{
 		vertices.push_back(Vertex(glm::vec3(vertFloats[i * 20 + 0], vertFloats[i * 20 + 1], vertFloats[i * 20 + 2]),
-									glm::vec3(vertFloats[i * 20 + 3], vertFloats[i * 20 + 4], vertFloats[i * 20 + 5]),
-									glm::vec2(vertFloats[i * 20 + 6], vertFloats[i * 20 + 7]),
-									glm::vec4(vertFloats[i * 20 + 8], vertFloats[i * 20 + 9], vertFloats[i * 20 + 10], vertFloats[i * 20 + 11]),
-									glm::ivec4(vertFloats[i * 20 + 12], vertFloats[i * 20 + 13], vertFloats[i * 20 + 14], vertFloats[i * 20 + 15]),
-									glm::vec4(vertFloats[i * 20 + 16], vertFloats[i * 20 + 17], vertFloats[i * 20 + 18], vertFloats[i * 20 + 19])));
+			glm::vec3(vertFloats[i * 20 + 3], vertFloats[i * 20 + 4], vertFloats[i * 20 + 5]),
+			glm::vec2(vertFloats[i * 20 + 6], vertFloats[i * 20 + 7]),
+			glm::vec4(vertFloats[i * 20 + 8], vertFloats[i * 20 + 9], vertFloats[i * 20 + 10], vertFloats[i * 20 + 11]),
+			glm::ivec4(vertFloats[i * 20 + 12], vertFloats[i * 20 + 13], vertFloats[i * 20 + 14], vertFloats[i * 20 + 15]),
+			glm::vec4(vertFloats[i * 20 + 16], vertFloats[i * 20 + 17], vertFloats[i * 20 + 18], vertFloats[i * 20 + 19])));
 	}
 
 	// indices

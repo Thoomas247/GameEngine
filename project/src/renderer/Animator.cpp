@@ -11,7 +11,6 @@ void Animator::Reserve()
 
 void Animator::Update(const float& deltaTime)
 {
-
 }
 
 int Animator::AddSkeleton(Skeleton* skeleton)

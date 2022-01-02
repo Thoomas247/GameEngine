@@ -1,7 +1,5 @@
 #include "GameObject.h"
 
-
-
 // PUBLIC
 void GameObject::SetUp()
 {

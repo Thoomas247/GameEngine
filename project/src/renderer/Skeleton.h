@@ -24,5 +24,3 @@ struct Skeleton
 };
 
 #endif // !SKELETON
-
-

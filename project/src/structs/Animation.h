@@ -20,4 +20,3 @@ struct Animation
 };
 
 #endif // !ANIMATION
-
