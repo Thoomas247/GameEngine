@@ -43,10 +43,10 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
 		std::shared_ptr<MeshData> meshData = createMeshData(jmesh);
 
 		std::vector<float> transformVec = jmesh["transform"];
-		glm::mat4 transform = { transformVec[0], transformVec[1], transformVec[2], transformVec[3],
-								transformVec[4], transformVec[5], transformVec[6], transformVec[7],
-								transformVec[8], transformVec[9], transformVec[10], transformVec[11],
-								transformVec[12], transformVec[13], transformVec[14], transformVec[15] };
+		glm::mat4 transform = { transformVec[0], transformVec[4], transformVec[8], transformVec[12],
+								transformVec[1], transformVec[5], transformVec[9], transformVec[13],
+								transformVec[2], transformVec[6], transformVec[10], transformVec[14],
+								transformVec[3], transformVec[7], transformVec[11], transformVec[15] };
 
 		//std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, skeleton);
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, nullptr, transform);

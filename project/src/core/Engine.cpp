@@ -8,6 +8,7 @@
 #include "../renderer/Animator.h"
 
 // for debug only:
+#include "../importer/Importer.h"
 #include "ModelLoader.h"
 #include "../game/Player.h";
 
@@ -31,13 +32,18 @@ int Engine::Run()
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Viking", "F:/Users/TM1/Downloads/viking_room/scene.gltf");
 	//Importer::ImportGLTF("Snowfox", "C:/Users/Thomas/Downloads/Snowfox/scene.gltf");
+	Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 
 	// ModelLoader::LoadModel() is called when the user wants to add an asset to the game world
 	//std::shared_ptr<GameObject> viking = ModelLoader::LoadModel("Viking.GEM");
 	//World::AddGameObject("Viking", viking);
 
-	std::shared_ptr<GameObject> bird = ModelLoader::LoadModel("Bird.GEM");
-	World::AddGameObject("Bird", bird);
+	std::shared_ptr<GameObject> tree = ModelLoader::LoadModel("Tree.GEM");
+	//tree->m_LocalScale = glm::vec3(0.01f, 0.01f, 0.01f);
+	World::AddGameObject("Tree", tree);
+
+	//std::shared_ptr<GameObject> bird = ModelLoader::LoadModel("Bird.GEM");
+	//World::AddGameObject("Bird", bird);
 
 	//std::shared_ptr<GameObject> snowfox = ModelLoader::LoadModel("Snowfox.GEM");
 	//World::AddGameObject("Snowfox", snowfox);

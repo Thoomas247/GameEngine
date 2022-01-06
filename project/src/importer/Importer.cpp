@@ -30,7 +30,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	}
 	else
 	{
-		std::cout << "IMPORTER::ERROR::Invalid GLTF format!" << std::endl;
+		std::cout << "IMPORTER::ERROR::Invalid file format!" << std::endl;
 		return;
 	}
 
@@ -60,7 +60,14 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 			std::filesystem::create_directories(destPath);
 
-			destPath += uri.substr(uri.find_last_of("/"));
+			size_t pos = uri.find_last_of("/");
+			std::string texName;
+			if (pos == uri.npos)
+				texName = uri;
+			else
+				texName = uri.substr(pos);
+
+			destPath += texName;
 
 			if (!std::filesystem::copy_file(texturePath, destPath, std::filesystem::copy_options::overwrite_existing))
 			{
@@ -68,7 +75,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 			}
 			else
 			{
-				textureDict[i] = name + "_textures" + uri.substr(uri.find_last_of("/"));	// store relative path of texture
+				textureDict[i] = name + "_textures" + texName;	// store relative path of texture
 			}
 		}
 		else
@@ -79,7 +86,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 	// scenes
 	tinygltf::Scene& scene = model.scenes[model.defaultScene];	// only one scene is supported
-	std::map<int, glm::mat4> parentTransforms;	// index of child, compounded transform of parents
+	std::map<int, glm::mat4> nodeTransforms;
 	std::map<std::string, int> nameToIndex;	// for applying transforms later
 
 	// nodes
@@ -87,28 +94,11 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	{
 		tinygltf::Node node = model.nodes[nodeIndex];
 
-		// transform
-		glm::mat4 transform = getNodeTransform(node);
-
-		for (int& childIndex : node.children)
-		{
-			auto it = parentTransforms.find(childIndex);
-
-			if (it != parentTransforms.end())
-			{
-				it->second = transform * it->second;
-			}
-
-			else
-			{
-				parentTransforms[childIndex] = transform;
-			}
-		}
-
-		// if node contains a mesh, make sure the transform is applied later
 		if (node.mesh != -1)
 		{
-			nameToIndex[model.meshes[node.mesh].name] = nodeIndex;
+			nameToIndex[getNewName(model.meshes[node.mesh].name, nameToIndex, 0)] = nodeIndex;
+			glm::mat4 transform = getNodeTransform(node);
+			nodeTransforms[nodeIndex] = transform;
 		}
 	}
 
@@ -223,7 +213,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		auto it = nameToIndex.find(meshName);
 		if (it != nameToIndex.end())
 		{
-			transform = parentTransforms[it->second];
+			transform = nodeTransforms[it->second];
 		}
 
 		std::vector<float> transformVec = { transform[0][0],  transform[1][0], transform[2][0], transform[3][0],
@@ -341,6 +331,16 @@ std::string Importer::getNewName(const std::string& name, const json& j, const i
 		return newName;
 	}
 	return getNewName(name, j, count + 1);
+}
+
+std::string Importer::getNewName(const std::string& name, const std::map<std::string, int>& map, const int& count)
+{
+	std::string newName = name + std::to_string(count);
+	if (map.count(newName) == 0)
+	{
+		return newName;
+	}
+	return getNewName(name, map, count + 1);
 }
 
 glm::mat4 Importer::getNodeTransform(const tinygltf::Node& node)
@@ -541,14 +541,27 @@ std::vector<unsigned int> Importer::getIndices(tinygltf::Model& model, tinygltf:
 	tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
 	tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
 
-	unsigned int* indices = reinterpret_cast<unsigned int*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
-
 	std::vector<unsigned int> meshIndices;
 	meshIndices.reserve(accessor.count);
 
-	for (unsigned int i = 0; i < accessor.count; i++)
+	if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT)
 	{
-		meshIndices.push_back(indices[i]);
+		unsigned int* indices = reinterpret_cast<unsigned int*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+
+		for (unsigned int i = 0; i < accessor.count; i++)
+		{
+			meshIndices.push_back(indices[i]);
+		}
+	}
+
+	else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT)
+	{
+		unsigned short* indices = reinterpret_cast<unsigned short*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+
+		for (unsigned int i = 0; i < accessor.count; i++)
+		{
+			meshIndices.push_back(indices[i]);
+		}
 	}
 
 	return meshIndices;

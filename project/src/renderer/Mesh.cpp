@@ -16,10 +16,13 @@ Mesh::Mesh(const RenderData& renderData, std::shared_ptr<MeshData> meshData, std
 	m_Skeleton = skeleton;
 
 	m_LocalTransform = transform;
+
 	// TODO: write own decompose function
 	glm::vec3 skew;
 	glm::vec4 perspective;
 	glm::decompose(m_LocalTransform, m_LocalScale, m_LocalRotation, m_LocalPosition, skew, perspective);
+
+	//m_LocalRotation = glm::conjugate(m_LocalRotation);
 
 	m_RenderData.Transform = &m_GlobalTransform;
 	m_MeshData->RenderData.push_back(&m_RenderData);

@@ -35,7 +35,7 @@ void Renderer::Draw()
 
 	for (MeshData* meshData : g_MeshDataList)
 	{
-		for (RenderData* renderData : meshData->RenderData)	// change to instance rendering
+		for (RenderData* renderData : meshData->RenderData)	// change to instanced rendering
 		{
 			glUseProgram(renderData->ShaderProgram.m_GLID);
 

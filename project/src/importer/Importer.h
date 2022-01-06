@@ -16,6 +16,7 @@ namespace Importer
 	void ImportGLTF(const std::string& name, const std::string& path);
 
 	std::string getNewName(const std::string& name, const json& j, const int& count);
+	std::string getNewName(const std::string& name, const std::map<std::string, int>& map, const int& count);
 	glm::mat4 getNodeTransform(const tinygltf::Node& node);
 
 	std::vector<float> getVertexPositions(tinygltf::Model& model, tinygltf::Primitive& primitive);
