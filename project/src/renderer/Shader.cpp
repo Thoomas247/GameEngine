@@ -13,60 +13,58 @@ Shader::Shader()
 {
 	loadShader(ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.vert",
 		ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.frag");
-
-	m_UniformLocationCache.reserve(20);
+	setUniformLocations();
 }
 
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
 	loadShader(vertexPath, fragmentPath);
-
-	m_UniformLocationCache.reserve(10);
+	setUniformLocations();
 }
 
-void Shader::SetBool(const std::string& uniformName, const bool& value)
+void Shader::SetBool(const int& uniformID, const bool& value)
 {
-	glUniform1i(getUniformLocation(uniformName), (int)value);
+	glUniform1i(uniformID, (int)value);
 }
 
-void Shader::SetInt(const std::string& uniformName, const int& value)
+void Shader::SetInt(const int& uniformID, const int& value)
 {
-	glUniform1i(getUniformLocation(uniformName), value);
+	glUniform1i(uniformID, value);
 }
 
-void Shader::SetFloat(const std::string& uniformName, const float& value)
+void Shader::SetFloat(const int& uniformID, const float& value)
 {
-	glUniform1f(getUniformLocation(uniformName), value);
+	glUniform1f(uniformID, value);
 }
 
-void Shader::SetVec2(const std::string& uniformName, const glm::vec2& value)
+void Shader::SetVec2(const int& uniformID, const glm::vec2& value)
 {
-	glUniform2fv(getUniformLocation(uniformName), 1, &value[0]);
+	glUniform2fv(uniformID, 1, &value[0]);
 }
 
-void Shader::SetVec3(const std::string& uniformName, const glm::vec3& value)
+void Shader::SetVec3(const int& uniformID, const glm::vec3& value)
 {
-	glUniform3fv(getUniformLocation(uniformName), 1, &value[0]);
+	glUniform3fv(uniformID, 1, &value[0]);
 }
 
-void Shader::SetVec4(const std::string& uniformName, const glm::vec4& value)
+void Shader::SetVec4(const int& uniformID, const glm::vec4& value)
 {
-	glUniform4fv(getUniformLocation(uniformName), 1, &value[0]);
+	glUniform4fv(uniformID, 1, &value[0]);
 }
 
-void Shader::SetMat2(const std::string& uniformName, const glm::mat2& mat)
+void Shader::SetMat2(const int& uniformID, const glm::mat2& mat)
 {
-	glUniformMatrix2fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
+	glUniformMatrix2fv(uniformID, 1, GL_FALSE, &mat[0][0]);
 }
 
-void Shader::SetMat3(const std::string& uniformName, const glm::mat3& mat)
+void Shader::SetMat3(const int& uniformID, const glm::mat3& mat)
 {
-	glUniformMatrix3fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
+	glUniformMatrix3fv(uniformID, 1, GL_FALSE, &mat[0][0]);
 }
 
-void Shader::SetMat4(const std::string& uniformName, const glm::mat4& mat)
+void Shader::SetMat4(const int& uniformID, const glm::mat4& mat)
 {
-	glUniformMatrix4fv(getUniformLocation(uniformName), 1, GL_FALSE, &mat[0][0]);
+	glUniformMatrix4fv(uniformID, 1, GL_FALSE, &mat[0][0]);
 }
 
 // PRIVATE
@@ -133,18 +131,6 @@ void Shader::loadShader(const std::string& vertexPath, const std::string& fragme
 	glDeleteShader(fragment);
 }
 
-int Shader::getUniformLocation(const std::string& uniformName)
-{
-	auto locationIterator = m_UniformLocationCache.find(uniformName);
-	if (locationIterator != m_UniformLocationCache.end())
-	{
-		return locationIterator->second;
-	}
-	int location = glGetUniformLocation(m_GLID, uniformName.c_str());
-	m_UniformLocationCache[uniformName] = location;
-	return location;
-}
-
 void Shader::checkCompileErrors(const unsigned int& shader, const std::string& type)
 {
 	int success;
@@ -163,4 +149,16 @@ void Shader::checkCompileErrors(const unsigned int& shader, const std::string& t
 			std::cout << "SHADER::ERROR::Shader linking failed!" << "\n" << type << ": " << infoLog << std::endl;
 		}
 	}
+}
+
+void Shader::setUniformLocations()
+{
+	m_ModelMatLocation = glGetUniformLocation(this->m_GLID, "model");
+	m_ViewMatLocation = glGetUniformLocation(this->m_GLID, "view");
+	m_ProjectionMatLocation = glGetUniformLocation(this->m_GLID, "projection");
+	m_AlbedoTextureLocation = glGetUniformLocation(this->m_GLID, "albedo_texture");
+	m_EmissiveTextureLocation = glGetUniformLocation(this->m_GLID, "emissive_texture");
+	m_MetallicRoughnessTextureLocation = glGetUniformLocation(this->m_GLID, "metallic_roughness_texture");
+	m_NormalTextureLocation = glGetUniformLocation(this->m_GLID, "normal_texture");
+	m_OcclusionTextureLocation = glGetUniformLocation(this->m_GLID, "occlusion_texture");
 }

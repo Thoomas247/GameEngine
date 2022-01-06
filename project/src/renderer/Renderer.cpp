@@ -37,37 +37,39 @@ void Renderer::Draw()
 	{
 		for (RenderData* renderData : meshData->RenderData)	// change to instanced rendering
 		{
-			glUseProgram(renderData->ShaderProgram.m_GLID);
+			glUseProgram(renderData->ShaderProgram->m_GLID);
 
 			// albedo texture
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.BaseColorTexture);
-			renderData->ShaderProgram.SetInt("base_texture", GL_TEXTURE0 + 0);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial->BaseColorTexture);
+			renderData->ShaderProgram->SetInt(renderData->ShaderProgram->m_AlbedoTextureLocation, GL_TEXTURE0 + 0);
 
+			/*
 			// emissive texture
 			glActiveTexture(GL_TEXTURE0 + 1);
-			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.EmissiveTexture);
-			renderData->ShaderProgram.SetInt("emissive_texture", GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial->EmissiveTexture);
+			renderData->ShaderProgram->SetInt(renderData->ShaderProgram->m_EmissiveTextureLocation, GL_TEXTURE0 + 1);
 
 			// metallic roughness texture
 			glActiveTexture(GL_TEXTURE0 + 2);
-			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.MetallicRoughnessTexture);
-			renderData->ShaderProgram.SetInt("metallic_roughness_texture", GL_TEXTURE0 + 2);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial->MetallicRoughnessTexture);
+			renderData->ShaderProgram->SetInt(renderData->ShaderProgram->m_MetallicRoughnessTextureLocation, GL_TEXTURE0 + 2);
 
 			// normal texture
 			glActiveTexture(GL_TEXTURE0 + 3);
-			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.Normaltexture);
-			renderData->ShaderProgram.SetInt("normal_texture", GL_TEXTURE0 + 3);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial->Normaltexture);
+			renderData->ShaderProgram->SetInt(renderData->ShaderProgram->m_NormalTextureLocation, GL_TEXTURE0 + 3);
 
 			// emissive texture
 			glActiveTexture(GL_TEXTURE0 + 4);
-			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial.OcclusionTexture);
-			renderData->ShaderProgram.SetInt("occlusion_texture", GL_TEXTURE0 + 4);
+			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial->OcclusionTexture);
+			renderData->ShaderProgram->SetInt(renderData->ShaderProgram->m_OcclusionTextureLocation, GL_TEXTURE0 + 4);
+			*/
 
 			// matrices
-			renderData->ShaderProgram.SetMat4("model", *renderData->Transform);
-			renderData->ShaderProgram.SetMat4("view", g_CurrentCamera->m_ViewMatrix);
-			renderData->ShaderProgram.SetMat4("projection", g_CurrentCamera->m_ProjectionMatrix);
+			renderData->ShaderProgram->SetMat4(renderData->ShaderProgram->m_ModelMatLocation, *renderData->Transform);
+			renderData->ShaderProgram->SetMat4(renderData->ShaderProgram->m_ViewMatLocation, g_CurrentCamera->m_ViewMatrix);
+			renderData->ShaderProgram->SetMat4(renderData->ShaderProgram->m_ProjectionMatLocation, g_CurrentCamera->m_ProjectionMatrix);
 
 			glBindVertexArray(meshData->VAO);
 			glDrawElements(GL_TRIANGLES, meshData->NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
@@ -86,6 +88,9 @@ int Renderer::AddMeshdata(MeshData* meshData)
 
 void Renderer::RemoveMeshData(const int& index)
 {
+	if (g_MeshDataList.size() == 0)
+		return;
+
 	g_MeshDataList[index] = g_MeshDataList[g_MeshDataList.size() - 1];
 	g_MeshDataList[index]->IndexInRendererList = index;
 	g_MeshDataList.erase(g_MeshDataList.end() - 1);

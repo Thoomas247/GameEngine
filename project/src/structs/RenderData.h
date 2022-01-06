@@ -1,6 +1,8 @@
 #ifndef RENDER_DATA
 #define RENDER_DATA
 
+#include <memory>
+
 #include "glm/glm.hpp"
 
 #include "Material.h"
@@ -9,14 +11,14 @@
 struct RenderData
 {
 	glm::mat4* Transform = nullptr;	// pointer to GameObject::m_GlobalTransform
-	Material RenderMaterial;
-	Shader ShaderProgram;
+	std::shared_ptr<Material> RenderMaterial;
+	std::shared_ptr<Shader> ShaderProgram;
 
 	RenderData()
 	{
 	}
 
-	RenderData(const Material& material, const Shader& shader)
+	RenderData(const std::shared_ptr<Material>& material, const std::shared_ptr<Shader>& shader)
 	{
 		RenderMaterial = material;
 		ShaderProgram = shader;

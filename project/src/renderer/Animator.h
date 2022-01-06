@@ -6,7 +6,7 @@
 
 namespace Animator
 {
-	extern std::vector<Skeleton*> SkeletonList;
+	extern std::vector<Skeleton*> g_SkeletonList;
 
 	void Reserve();
 	void Update(const float& deltaTime);

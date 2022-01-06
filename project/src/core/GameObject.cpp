@@ -58,6 +58,10 @@ void GameObject::calcTransforms(const glm::mat4& parentTransform)
 
 	m_LocalTransform = glm::translate(glm::mat4(1.0f), m_LocalPosition) * glm::mat4_cast(m_LocalRotation) * glm::scale(glm::mat4(1.0f), m_LocalScale);
 
+	m_LastLocalPosition = m_LocalPosition;
+	m_LastLocalRotation = m_LocalRotation;
+	m_LastLocalScale = m_LocalScale;
+
 	m_GlobalTransform = parentTransform * m_LocalTransform;
 }
 

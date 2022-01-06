@@ -12,10 +12,26 @@
 #include "../renderer/Mesh.h"
 
 std::unordered_map<std::string, int> ModelLoader::g_TextureCache;
+std::unordered_map<std::string, std::vector<std::unique_ptr<CacheData>>> ModelLoader::g_ModelCache;
 
-std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
+std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& modelName)
 {
-	std::string path = ProjectManager::ProjectPath + ProjectManager::DefaultModelPath + name;
+	auto it = g_ModelCache.find(modelName);
+
+	if (it != g_ModelCache.end())
+	{
+		std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
+
+		for (auto& cacheData : it->second)
+		{
+			std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(cacheData->RenderDataCache, std::shared_ptr<MeshData>(cacheData->MeshDataCache), std::shared_ptr<Skeleton>(cacheData->SkeletonCache), cacheData->Transform);
+			gameObject->AddChild(cacheData->MeshName, mesh);
+		}
+
+		return gameObject;
+	}
+
+	std::string path = ProjectManager::ProjectPath + ProjectManager::DefaultModelPath + modelName;
 
 	// get file size
 	std::streamsize size = std::filesystem::file_size(path);
@@ -34,7 +50,7 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
 	std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
 
 	// skeleton (contains animations)
-	//std::shared_ptr<Skeleton> skeleton = createSkeleton(j);
+	std::shared_ptr<Skeleton> skeleton = createSkeleton(j);
 
 	// meshes
 	for (auto& [name, jmesh] : j["meshes"].items())
@@ -48,8 +64,9 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& name)
 								transformVec[2], transformVec[6], transformVec[10], transformVec[14],
 								transformVec[3], transformVec[7], transformVec[11], transformVec[15] };
 
-		//std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, skeleton);
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, nullptr, transform);
+		g_ModelCache[modelName].push_back(std::make_unique<CacheData>(name, renderData, meshData, skeleton, transform));
+
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, skeleton, transform);
 
 		gameObject->AddChild(name, mesh);
 	}
@@ -175,32 +192,32 @@ std::shared_ptr<Skeleton> ModelLoader::createSkeleton(json& j)
 RenderData ModelLoader::createRenderData(json& jmesh)
 {
 	// material
-	Material material;
+	std::shared_ptr<Material> material = std::make_shared<Material>();
 	std::string path = jmesh["baseColorTexture"];
-	material.BaseColorTexture = loadTexture(path);
+	material->BaseColorTexture = loadTexture(path);
 
 	path = jmesh["metallicRoughnessTexture"];
-	material.MetallicRoughnessTexture = loadTexture(path);
+	material->MetallicRoughnessTexture = loadTexture(path);
 
 	path = jmesh["emissiveTexture"];
-	material.EmissiveTexture = loadTexture(path);
+	material->EmissiveTexture = loadTexture(path);
 
 	path = jmesh["normalTexture"];
-	material.Normaltexture = loadTexture(path);
+	material->Normaltexture = loadTexture(path);
 
 	path = jmesh["occlusionTexture"];
-	material.OcclusionTexture = loadTexture(path);
+	material->OcclusionTexture = loadTexture(path);
 
 	std::vector<float> baseColor = jmesh["baseColorFactor"];
-	material.BaseColorFactor = glm::vec4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]);
+	material->BaseColorFactor = glm::vec4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]);
 
-	material.MetallicFactor = jmesh["metallicFactor"];
-	material.RoughnessFactor = jmesh["roughnessFactor"];
+	material->MetallicFactor = jmesh["metallicFactor"];
+	material->RoughnessFactor = jmesh["roughnessFactor"];
 
 	std::vector<float> emissiveColor = jmesh["emissiveFactor"];
-	material.EmissiveFactor = glm::vec3(emissiveColor[0], emissiveColor[1], emissiveColor[2]);
+	material->EmissiveFactor = glm::vec3(emissiveColor[0], emissiveColor[1], emissiveColor[2]);
 
-	return RenderData(material, Shader());	// return default shader for now
+	return RenderData(material, std::make_shared<Shader>());	// return default shader for now
 }
 
 std::shared_ptr<MeshData> ModelLoader::createMeshData(json& jmesh)

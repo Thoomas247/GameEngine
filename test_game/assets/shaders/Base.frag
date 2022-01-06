@@ -7,7 +7,7 @@ out vec4 FragColor;
 in vec2 TexCoord;
 in vec4 Color;
 
-uniform sampler2D base_texture;
+uniform sampler2D albedo_texture;
 uniform sampler2D emissive_texture;
 uniform sampler2D metallic_roughness_texture;
 uniform sampler2D normal_texture;
@@ -16,6 +16,6 @@ uniform sampler2D occlusion_texture;
 
 void main()
 {
-    FragColor = texture(base_texture, TexCoord);
+    FragColor = texture(albedo_texture, TexCoord);
     //FragColor = Color;
 }
