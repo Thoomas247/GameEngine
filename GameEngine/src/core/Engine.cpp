@@ -24,7 +24,7 @@ int Engine::Run()
 		return -1;
 
 	// TODO: create menu for engine to create/load project
-	// debug: create project
+	///////////////////////////////////////////////////////////
 	ProjectManager::CreateProject("TestGame", "C:/Users/TM1/source/repos/GameEngine/GameEngine/TestGame/");
 
 	if (ProjectManager::g_CurrentProject == nullptr)
@@ -32,13 +32,10 @@ int Engine::Run()
 		std::cout << "ENGINE::ERROR::No project loaded!" << std::endl;
 		return -1;
 	}
-
-	// reserve space in renderer/animator lists
-	Renderer::Reserve();
-	Animator::Reserve();
+	///////////////////////////////////////////////////////////
 
 	// TODO: open GUI here
-	// debug:
+	///////////////////////////////////////////////////////////
 	//Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 	std::shared_ptr<GameObject> tree = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
 	World::AddGameObject("Tree", tree);
@@ -47,6 +44,11 @@ int Engine::Run()
 	auto camera = std::make_shared<Camera>();
 	player->AddChild("Camera", camera);
 	World::AddGameObject("Player", player);
+	///////////////////////////////////////////////////////////
+
+	// reserve space in renderer/animator lists
+	Renderer::Reserve();
+	Animator::Reserve();
 
 	// run setup functions
 	World::SetUp();
