@@ -11,8 +11,7 @@
 // PUBLIC
 Shader::Shader()
 {
-	loadShader(ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.vert",
-		ProjectManager::ProjectPath + ProjectManager::DefaultShadersPath + "Base.frag");
+	loadShader("assets/shaders/Base.vert", "assets/shaders/Base.frag");
 	setUniformLocations();
 }
 

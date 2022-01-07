@@ -56,11 +56,11 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		if (!uri.empty())
 		{
 			std::string texturePath = path.substr(0, path.find_last_of("/") + 1) + uri;
-			std::string destPath = ProjectManager::ProjectPath + ProjectManager::DefaultTexturesPath + name + "_textures";
+			std::string destPath = ProjectManager::GetTexturesPath() + name + "_textures/";
 
 			std::filesystem::create_directories(destPath);
 
-			size_t pos = uri.find_last_of("/");
+			size_t pos = uri.find_last_of("/") + 1;
 			std::string texName;
 			if (pos == uri.npos)
 				texName = uri;
@@ -75,7 +75,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 			}
 			else
 			{
-				textureDict[i] = name + "_textures" + texName;	// store relative path of texture
+				textureDict[i] = name + "_textures/" + texName;	// store relative path of texture
 			}
 		}
 		else
@@ -313,7 +313,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	}
 
 	// write to file - importing done
-	std::string modelDestPath = ProjectManager::ProjectPath + ProjectManager::DefaultModelPath;
+	std::string modelDestPath = ProjectManager::GetModelsPath();
 	std::filesystem::create_directories(modelDestPath);
 	modelDestPath += name + ".GEM";
 

@@ -93,6 +93,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
+    <ClCompile Include="src\core\ProjectManager.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\renderer\Animator.cpp" />
     <ClCompile Include="src\core\ModelLoader.cpp" />
@@ -111,6 +112,7 @@
     <ClCompile Include="src\core\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Project.h" />
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\renderer\Animator.h" />

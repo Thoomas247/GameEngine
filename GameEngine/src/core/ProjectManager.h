@@ -2,15 +2,27 @@
 #define PROJECT_MANAGER
 
 #include <string>
+#include <memory>
+
+#include "Project.h"
 
 namespace ProjectManager
 {
-	const std::string ProjectPath = "C:/Users/TM1/source/repos/GameEngine/test_game/";
-	const std::string DefaultModelPath = "assets/models/";
-	const std::string DefaultTexturesPath = "assets/textures/";
-	const std::string DefaultShadersPath = "assets/shaders/";
+	extern std::unique_ptr<Project> g_CurrentProject;
 
-	// TODO: handle creating/loading projects
+	void CreateProject(const std::string& name, const std::string& directory);
+	//void LoadProject();
+	//void SaveProject();
+
+	const std::string GetModelsPath();
+	const std::string GetTexturesPath();
+	const std::string GetShadersPath();
+
+	/*
+	void SetModelsPath(const std::string& relativePath);
+	void SetTexturesPath(const std::string& relativePath);
+	void SetShadersPath(const std::string& relativePath);
+	*/
 }
 
 #endif // !PROJECT_MANAGER

@@ -37,7 +37,7 @@ namespace ModelLoader
 	extern std::unordered_map<std::string, int> g_TextureCache;
 	extern std::unordered_map<std::string, std::vector<std::unique_ptr<CachedModel>>> g_ModelCache;
 
-	std::shared_ptr<GameObject> LoadModel(const std::string& name);
+	std::shared_ptr<GameObject> LoadModel(const std::string& modelPath);
 
 	int loadTexture(const std::string& name);
 	std::shared_ptr<Skeleton> createSkeleton(json& j);

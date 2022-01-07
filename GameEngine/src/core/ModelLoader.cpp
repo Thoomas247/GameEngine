@@ -14,8 +14,12 @@
 std::unordered_map<std::string, int> ModelLoader::g_TextureCache;
 std::unordered_map<std::string, std::vector<std::unique_ptr<CachedModel>>> ModelLoader::g_ModelCache;
 
-std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& modelName)
+std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& modelPath)
 {
+
+	std::string modelName = modelPath.substr(modelPath.find_last_of("/") + 1);
+	modelName.resize(modelName.find_last_of("."));
+
 	auto it = g_ModelCache.find(modelName);
 
 	if (it != g_ModelCache.end())
@@ -31,15 +35,13 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& modelName)
 		return gameObject;
 	}
 
-	std::string path = ProjectManager::ProjectPath + ProjectManager::DefaultModelPath + modelName;
-
 	// get file size
-	std::streamsize size = std::filesystem::file_size(path);
+	std::streamsize size = std::filesystem::file_size(modelPath);
 	std::vector<char> buffer;
 	buffer.resize(size);
 
 	// read file
-	std::ifstream fileIn = std::ifstream(path, std::ios::in | std::ios::binary);
+	std::ifstream fileIn = std::ifstream(modelPath, std::ios::in | std::ios::binary);
 	fileIn.read(&buffer[0], size);
 	fileIn.close();
 
@@ -74,21 +76,19 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& modelName)
 	return gameObject;
 }
 
-int ModelLoader::loadTexture(const std::string& name)
+int ModelLoader::loadTexture(const std::string& textureName)
 {
-	auto it = g_TextureCache.find(name);
+	auto it = g_TextureCache.find(textureName);
 
 	if (it != g_TextureCache.end())
 	{
 		return it->second;
 	}
 
-	if (name == "")
+	if (textureName == "")
 	{
 		return -1;	// TODO: make return default full white texture index
 	}
-
-	std::string path = ProjectManager::ProjectPath + ProjectManager::DefaultTexturesPath + name;
 
 	unsigned int texture;
 	glGenTextures(1, &texture);
@@ -102,7 +102,7 @@ int ModelLoader::loadTexture(const std::string& name)
 	// load image, create texture and generate mipmaps
 	int width, height, nrChannels;
 
-	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load((ProjectManager::GetTexturesPath() + textureName).c_str(), &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		GLenum format = GL_RED;
@@ -114,7 +114,7 @@ int ModelLoader::loadTexture(const std::string& name)
 			format = GL_RGBA;
 		else
 		{
-			std::cout << "ASSETMANAGER::ERROR::Texture format not supported!" << std::endl;
+			std::cout << "MODEL_LOADER::ERROR::Texture format not supported!" << std::endl;
 			return -1;	// TODO: make return default full white texture index
 		}
 
@@ -123,12 +123,12 @@ int ModelLoader::loadTexture(const std::string& name)
 	}
 	else
 	{
-		std::cout << "ASSETMANAGER::ERROR::Failed to load texture!" << std::endl;
+		std::cout << "MODEL_LOADER::ERROR::Failed to load texture!" << std::endl;
 		return -1;	// TODO: make return default full white texture index
 	}
 	stbi_image_free(data);
 
-	g_TextureCache[name] = texture;
+	g_TextureCache[textureName] = texture;
 	return texture;
 }
 
@@ -183,7 +183,7 @@ std::shared_ptr<Skeleton> ModelLoader::createSkeleton(json& j)
 	}
 	else
 	{
-		std::cout << "ASSETMANAGER::WARNING::Model has no skeleton" << std::endl;
+		std::cout << "MODEL_LOADER::WARNING::Model has no skeleton" << std::endl;
 	}
 
 	return std::make_shared<Skeleton>(skeletonJoints, animations);

@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+#include <iostream>
+
 #include "glad/gl.h"
 
 #include "Mesh.h"
@@ -29,6 +31,13 @@ void Renderer::SetUp()
 
 void Renderer::Draw()
 {
+	if (g_CurrentCamera == nullptr)
+	{
+		std::cout << "RENDERER::ERROR::Camera is null!" << std::endl;
+		return;
+	}
+
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	g_CurrentCamera->CalcViewProjectionMatrix();
