@@ -12,7 +12,7 @@
 #include "../renderer/Mesh.h"
 
 std::unordered_map<std::string, int> ModelLoader::g_TextureCache;
-std::unordered_map<std::string, std::vector<std::unique_ptr<CacheData>>> ModelLoader::g_ModelCache;
+std::unordered_map<std::string, std::vector<std::unique_ptr<CachedModel>>> ModelLoader::g_ModelCache;
 
 std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& modelName)
 {
@@ -64,7 +64,7 @@ std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& modelName)
 								transformVec[2], transformVec[6], transformVec[10], transformVec[14],
 								transformVec[3], transformVec[7], transformVec[11], transformVec[15] };
 
-		g_ModelCache[modelName].push_back(std::make_unique<CacheData>(name, renderData, meshData, skeleton, transform));
+		g_ModelCache[modelName].push_back(std::make_unique<CachedModel>(name, renderData, meshData, skeleton, transform));
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(renderData, meshData, skeleton, transform);
 

@@ -9,6 +9,8 @@ namespace ProjectManager
 	const std::string DefaultModelPath = "assets/models/";
 	const std::string DefaultTexturesPath = "assets/textures/";
 	const std::string DefaultShadersPath = "assets/shaders/";
+
+	// TODO: handle creating/loading projects
 }
 
 #endif // !PROJECT_MANAGER

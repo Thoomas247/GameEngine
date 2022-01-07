@@ -65,24 +65,15 @@ int Engine::Run()
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
+	float currentFrame = 0.0f;
 
 	int frameCount = 0;
 
 	// main engine loop
 	while (Window::g_IsOpen)
 	{
-		if (frameCount % 100 == 0)
-		{
-			std::shared_ptr<GameObject> tree1 = ModelLoader::LoadModel("Tree.GEM");
-			tree1->m_LocalPosition = glm::vec3(frameCount / 100.0f, 0.0f, 0.0f);
-			World::AddGameObject(std::to_string(frameCount / 100), tree1);
 
-			std::shared_ptr<GameObject> tree2 = ModelLoader::LoadModel("Tree.GEM");
-			tree2->m_LocalPosition = glm::vec3(0.0f, 0.0f, frameCount / 100.0f);
-			World::AddGameObject(std::to_string(-frameCount / 100), tree2);
-		}
-
-		float currentFrame = float(glfwGetTime());
+		currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 

@@ -14,7 +14,7 @@ using json = nlohmann::json;
 #include "../structs/Vertex.h"
 #include "../structs/RenderData.h"
 
-struct CacheData
+struct CachedModel
 {
 	std::string MeshName;
 	RenderData RenderDataCache;
@@ -22,7 +22,7 @@ struct CacheData
 	std::shared_ptr<Skeleton> SkeletonCache;
 	glm::mat4 Transform;
 
-	CacheData(const std::string& meshName, RenderData renderData /*copied*/, const std::shared_ptr<MeshData>& meshData, const std::shared_ptr<Skeleton>& skeleton, const glm::mat4& transform)
+	CachedModel(const std::string& meshName, RenderData renderData /*copied*/, const std::shared_ptr<MeshData>& meshData, const std::shared_ptr<Skeleton>& skeleton, const glm::mat4& transform)
 	{
 		MeshName = meshName;
 		RenderDataCache = renderData;
@@ -35,7 +35,7 @@ struct CacheData
 namespace ModelLoader
 {
 	extern std::unordered_map<std::string, int> g_TextureCache;
-	extern std::unordered_map<std::string, std::vector<std::unique_ptr<CacheData>>> g_ModelCache;
+	extern std::unordered_map<std::string, std::vector<std::unique_ptr<CachedModel>>> g_ModelCache;
 
 	std::shared_ptr<GameObject> LoadModel(const std::string& name);
 
