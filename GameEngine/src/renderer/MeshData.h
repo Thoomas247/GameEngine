@@ -1,5 +1,4 @@
-#ifndef MESH_DATA
-#define MESH_DATA
+#pragma once
 
 /*
 	Contains the buffer data needed to draw meshes
@@ -8,22 +7,18 @@
 
 #include <vector>
 
-#include "../structs/RenderData.h"
+#include "RenderData.h"
 
-struct MeshData
+class MeshData
 {
-	unsigned int VAO;
-	unsigned int VBO;
-	unsigned int EBO;
-	unsigned int NumElements;
+public:
+	unsigned int m_VAO;
+	unsigned int m_NumElements;
+	int m_IndexInRendererList;
+	std::vector<RenderData*> m_RenderData;	// points to render data in mesh objects
 
-	int IndexInRendererList;
-
-	std::vector<RenderData*> RenderData;	// points to render data in mesh objects
-
+public:
 	MeshData();
 	~MeshData();
-	MeshData(const unsigned int& vao, const unsigned int& vbo, const unsigned int& ebo, const unsigned int& numElements);
+	MeshData(const unsigned int& vao, const unsigned int& numElements);
 };
-
-#endif // !MESH_DATA

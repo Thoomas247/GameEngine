@@ -1,5 +1,4 @@
-#ifndef INPUT_MANAGER
-#define INPUT_MANAGER
+#pragma once
 
 #include "glfw/glfw3.h"
 
@@ -23,5 +22,3 @@ namespace Input
 	void resetInput();
 	void setInput();
 }
-
-#endif // !INPUT_MANAGER

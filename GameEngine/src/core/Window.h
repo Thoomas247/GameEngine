@@ -1,5 +1,4 @@
-#ifndef GLFW_WINDOW
-#define GLFW_WINDOW
+#pragma once
 
 #include "glad/gl.h"
 #include "glfw/glfw3.h"
@@ -20,5 +19,3 @@ namespace Window
 
 	void frameBufferSizeCallback(GLFWwindow* window, int width, int height);
 }
-
-#endif // !GLFW_WINDOW

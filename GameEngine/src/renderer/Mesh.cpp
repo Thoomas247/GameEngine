@@ -24,8 +24,8 @@ Mesh::Mesh(const RenderData& renderData, std::shared_ptr<MeshData> meshData, std
 
 	//m_LocalRotation = glm::conjugate(m_LocalRotation);
 
-	m_RenderData.Transform = &m_GlobalTransform;
-	m_MeshData->RenderData.push_back(&m_RenderData);
+	m_RenderData.m_Transform = &m_GlobalTransform;
+	m_MeshData->m_RenderData.push_back(&m_RenderData);
 }
 
 // PRIVATE

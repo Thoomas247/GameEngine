@@ -95,7 +95,6 @@
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\ProjectManager.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
-    <ClCompile Include="src\renderer\Animator.cpp" />
     <ClCompile Include="src\core\ModelLoader.cpp" />
     <ClCompile Include="include\glad\gl.c" />
     <ClCompile Include="src\importer\Importer.cpp" />
@@ -110,12 +109,12 @@
     <ClCompile Include="src\renderer\Renderer.cpp" />
     <ClCompile Include="src\renderer\Skeleton.cpp" />
     <ClCompile Include="src\core\World.cpp" />
+    <ClCompile Include="src\renderer\RenderData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Project.h" />
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
-    <ClInclude Include="src\renderer\Animator.h" />
     <ClInclude Include="src\renderer\Skeleton.h" />
     <ClInclude Include="src\core\ModelLoader.h" />
     <ClInclude Include="include\simdjson\simdjson.cpp" />
@@ -130,7 +129,7 @@
     <ClInclude Include="src\structs\Joint.h" />
     <ClInclude Include="src\structs\Material.h" />
     <ClInclude Include="src\renderer\Mesh.h" />
-    <ClInclude Include="src\structs\RenderData.h" />
+    <ClInclude Include="src\renderer\RenderData.h" />
     <ClInclude Include="src\renderer\Shader.h" />
     <ClInclude Include="src\renderer\MeshData.h" />
     <ClInclude Include="src\structs\Vertex.h" />

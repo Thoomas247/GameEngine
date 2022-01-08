@@ -8,17 +8,14 @@ MeshData::MeshData()
 
 MeshData::~MeshData()
 {
-	Renderer::RemoveMeshData(IndexInRendererList);
+	Renderer::RemoveMeshData(m_IndexInRendererList);
 }
 
-MeshData::MeshData(const unsigned int& vao, const unsigned int& vbo, const unsigned int& ebo, const unsigned int& numElements)
+MeshData::MeshData(const unsigned int& vao, const unsigned int& numElements)
 {
-	VAO = vao;
-	VBO = vbo;
-	EBO = ebo;
-	NumElements = numElements;
+	m_VAO = vao;
+	m_NumElements = numElements;
+	m_IndexInRendererList = Renderer::AddMeshdata(this);
 
-	IndexInRendererList = Renderer::AddMeshdata(this);
-
-	RenderData.reserve(1000);
+	m_RenderData.reserve(1000);
 }

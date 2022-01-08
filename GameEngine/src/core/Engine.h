@@ -1,9 +1,6 @@
-#ifndef ENGINE
-#define ENGINE
+#pragma once
 
 namespace Engine
 {
 	int Run();
 }
-
-#endif // !ENGINE

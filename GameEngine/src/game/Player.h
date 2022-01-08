@@ -1,5 +1,4 @@
-#ifndef PLAYER
-#define PLAYER
+#pragma once
 
 /*
 	Player class
@@ -22,5 +21,3 @@ private:
 	void onSetUp() override;
 	void onUpdate(const float& deltaTime) override;
 };
-
-#endif // !PLAYER

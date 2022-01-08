@@ -1,5 +1,4 @@
-#ifndef SHADER
-#define SHADER
+#pragma once
 
 #include <string>
 #include <map>
@@ -43,5 +42,3 @@ private:
 	void setUniformLocations();
 	void checkCompileErrors(const unsigned int& shader, const std::string& type);
 };
-
-#endif // !SHADER

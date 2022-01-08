@@ -8,7 +8,6 @@
 #include "ProjectManager.h"
 
 #include "../renderer/Renderer.h"
-#include "../renderer/Animator.h"
 
 // debug:
 #include "../game/Player.h"
@@ -36,9 +35,18 @@ int Engine::Run()
 
 	// TODO: open GUI here
 	///////////////////////////////////////////////////////////
+	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
+	
 	std::shared_ptr<GameObject> tree = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
 	World::AddGameObject("Tree", tree);
+
+	std::shared_ptr<GameObject> tree2 = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
+	tree2->m_LocalPosition = glm::vec3(30.0f, 0.0f, 0.0f);
+	World::AddGameObject("Tree2", tree2);
+
+	std::shared_ptr<GameObject> bird = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Bird.GEM");
+	World::AddGameObject("Bird", bird);
 
 	auto player = std::make_shared<Player>();
 	auto camera = std::make_shared<Camera>();
@@ -48,7 +56,6 @@ int Engine::Run()
 
 	// reserve space in renderer/animator lists
 	Renderer::Reserve();
-	Animator::Reserve();
 
 	// run setup functions
 	World::SetUp();
@@ -76,7 +83,6 @@ int Engine::Run()
 		}
 
 		World::Update(deltaTime);
-		Animator::Update(deltaTime);
 		Renderer::Draw();
 		Window::SwapBuffers();
 		Window::PollEvents();

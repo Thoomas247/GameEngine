@@ -1,26 +1,28 @@
-#ifndef SKELETON
-#define SKELETON
+#pragma once
 
 #include <vector>
 #include <map>
 #include <string>
+#include <memory>
+
+#include "../core/GameObject.h"
 
 #include "../structs/Joint.h"
 #include "../structs/Animation.h"
 
-struct Skeleton
+class Skeleton : public GameObject
 {
-	std::vector<Joint> Joints;
-	std::map<std::string, Animation> Animations;
-	Animation* CurrentAnimation = nullptr;
+public:
+	Animation* m_CurrentAnimation = nullptr;
 
-	int IndexInAnimatorList;
+private:
+	std::vector<Joint> m_Joints;
+	std::map<std::string, Animation> m_Animations;
 
+public:
 	Skeleton();
-	~Skeleton();
 	Skeleton(const std::vector<Joint>& joints, const std::map<std::string, Animation>& animations);
 
-	void SetAnimation(const std::string& name);
+private:
+	void onUpdate(const float& deltaTime) override;
 };
-
-#endif // !SKELETON

@@ -1,5 +1,4 @@
-#ifndef IMPORTER
-#define IMPORTER
+#pragma once
 
 #include <string>
 #include <vector>
@@ -23,10 +22,8 @@ namespace Importer
 	std::vector<float> getVertexNormals(tinygltf::Model& model, tinygltf::Primitive& primitive);
 	std::vector<float> getVertexTextureCoords(tinygltf::Model& model, tinygltf::Primitive& primitive);
 	std::vector<float> getVertexColors(tinygltf::Model& model, tinygltf::Primitive& primitive);
-	std::vector<unsigned short> getVertexJoints(tinygltf::Model& model, tinygltf::Primitive& primitive);
+	std::vector<unsigned short> getVertexJoints(tinygltf::Model& model, tinygltf::Primitive& primitive, std::map<unsigned int, unsigned int> indexDict);
 	std::vector<float> getVertexWeights(tinygltf::Model& model, tinygltf::Primitive& primitive);
 
 	std::vector<unsigned int> getIndices(tinygltf::Model& model, tinygltf::Primitive& primitive);
 }
-
-#endif // !IMPORTER

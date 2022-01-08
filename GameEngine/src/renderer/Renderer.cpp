@@ -44,14 +44,14 @@ void Renderer::Draw()
 
 	for (MeshData* meshData : g_MeshDataList)
 	{
-		for (RenderData* renderData : meshData->RenderData)	// change to instanced rendering
+		for (RenderData* renderData : meshData->m_RenderData)	// change to instanced rendering
 		{
-			glUseProgram(renderData->ShaderProgram->m_GLID);
+			glUseProgram(renderData->m_Shader->m_GLID);
 
 			// albedo texture
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, renderData->RenderMaterial->BaseColorTexture);
-			renderData->ShaderProgram->SetInt(renderData->ShaderProgram->m_AlbedoTextureLocation, GL_TEXTURE0 + 0);
+			glBindTexture(GL_TEXTURE_2D, renderData->m_Material->BaseColorTexture);
+			renderData->m_Shader->SetInt(renderData->m_Shader->m_AlbedoTextureLocation, GL_TEXTURE0 + 0);
 
 			/*
 			// emissive texture
@@ -76,12 +76,12 @@ void Renderer::Draw()
 			*/
 
 			// matrices
-			renderData->ShaderProgram->SetMat4(renderData->ShaderProgram->m_ModelMatLocation, *renderData->Transform);
-			renderData->ShaderProgram->SetMat4(renderData->ShaderProgram->m_ViewMatLocation, g_CurrentCamera->m_ViewMatrix);
-			renderData->ShaderProgram->SetMat4(renderData->ShaderProgram->m_ProjectionMatLocation, g_CurrentCamera->m_ProjectionMatrix);
+			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ModelMatLocation, *renderData->m_Transform);
+			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ViewMatLocation, g_CurrentCamera->m_ViewMatrix);
+			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ProjectionMatLocation, g_CurrentCamera->m_ProjectionMatrix);
 
-			glBindVertexArray(meshData->VAO);
-			glDrawElements(GL_TRIANGLES, meshData->NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
+			glBindVertexArray(meshData->m_VAO);
+			glDrawElements(GL_TRIANGLES, meshData->m_NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
 
 			glBindVertexArray(0);	// unbind when done
 		}
@@ -101,6 +101,6 @@ void Renderer::RemoveMeshData(const int& index)
 		return;
 
 	g_MeshDataList[index] = g_MeshDataList[g_MeshDataList.size() - 1];
-	g_MeshDataList[index]->IndexInRendererList = index;
+	g_MeshDataList[index]->m_IndexInRendererList = index;
 	g_MeshDataList.erase(g_MeshDataList.end() - 1);
 }

@@ -1,5 +1,4 @@
-#ifndef GAME_PROJECT
-#define GAME_PROJECT
+#pragma once
 
 #include <string>
 
@@ -18,5 +17,3 @@ struct Project
 		ProjectDir = projectDir;
 	}
 };
-
-#endif // !GAME_PROJECT

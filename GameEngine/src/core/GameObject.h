@@ -1,5 +1,4 @@
-#ifndef GAME_OBJECT
-#define GAME_OBJECT
+#pragma once
 
 #include <unordered_map>
 #include <string>
@@ -39,5 +38,3 @@ private:
 	virtual void onSetUp();
 	virtual void onUpdate(const float& deltaTime);	// Implemented by sub-classes
 };
-
-#endif // !GAME_OBJECT

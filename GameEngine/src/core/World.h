@@ -1,5 +1,4 @@
-#ifndef WORLD
-#define WORLD
+#pragma once
 
 #include <map>
 #include <string>
@@ -17,5 +16,3 @@ namespace World
 	void AddGameObject(const std::string& name, const std::shared_ptr<GameObject>& object);
 	std::shared_ptr<GameObject> GetGameObject(const std::string& path);
 }
-
-#endif // !WORLD

@@ -1,5 +1,4 @@
-#ifndef CAMERA
-#define CAMERA
+#pragma once
 
 /*
 	Camera class
@@ -31,4 +30,3 @@ private:
 	void onUpdate(const float& deltaTime) override;
 };
 
-#endif // !CAMERA

@@ -1,5 +1,4 @@
-#ifndef ANIMATION
-#define ANIMATION
+#pragma once
 
 #include <map>
 
@@ -18,5 +17,3 @@ struct Animation
 		Keyframes = keyframes;
 	}
 };
-
-#endif // !ANIMATION

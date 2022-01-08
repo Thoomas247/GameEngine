@@ -1,5 +1,4 @@
-#ifndef JOINT
-#define JOINT
+#pragma once
 
 #include "glm/glm.hpp"
 
@@ -21,5 +20,3 @@ struct Joint
 		InvBindMatrix = invBindMatrix;
 	}
 };
-
-#endif // !JOINT

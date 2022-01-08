@@ -1,5 +1,4 @@
-#ifndef MATERIAL
-#define MATERIAL
+#pragma once
 
 #include "glm/glm.hpp"
 
@@ -18,5 +17,3 @@ struct Material
 	int Normaltexture = -1;
 	int OcclusionTexture = -1;
 };
-
-#endif // !MATERIAL

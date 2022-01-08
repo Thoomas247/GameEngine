@@ -1,5 +1,4 @@
-#ifndef MESH
-#define MESH
+#pragma once
 
 #include <vector>
 
@@ -13,7 +12,7 @@
 */
 
 #include "../core/GameObject.h"
-#include "../structs/RenderData.h"
+#include "RenderData.h"
 #include "MeshData.h"
 #include "Skeleton.h"
 
@@ -31,5 +30,3 @@ public:
 private:
 	void onUpdate(const float& deltaTime) override;
 };
-
-#endif // !MESH

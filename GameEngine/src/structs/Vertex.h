@@ -1,5 +1,4 @@
-#ifndef VERTEX
-#define VERTEX
+#pragma once
 
 #include "glm/glm.hpp"
 
@@ -42,5 +41,3 @@ struct Vertex
 		Weights = weights;
 	}
 };
-
-#endif // !VERTEX

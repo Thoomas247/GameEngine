@@ -102,6 +102,59 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		}
 	}
 
+	// skin
+	std::map<unsigned int, unsigned int> indexDict;	// gltf indices to my indices
+
+	if (model.skins.size() > 1)
+	{
+		std::cout << "IMPORTER::WARNING::More than one skin not supported" << std::endl;
+	}
+
+	if (model.skins.size() == 0)
+	{
+		std::cout << "IMPORTER::INFO::Model has no skinning information" << std::endl;
+	}
+
+	else
+	{
+		tinygltf::Skin skin = model.skins[0];
+
+		// read invBindMatrices and assign them to their joints
+		tinygltf::Accessor& matrixAccessor = model.accessors[skin.inverseBindMatrices];
+		tinygltf::BufferView& matrixBufferView = model.bufferViews[matrixAccessor.bufferView];
+		tinygltf::Buffer& matrixBuffer = model.buffers[matrixBufferView.buffer];
+
+		float* matrices = reinterpret_cast<float*>(&matrixBuffer.data[matrixBufferView.byteOffset + matrixAccessor.byteOffset]);
+
+		for (unsigned int i = 0; i < matrixAccessor.count; i++)
+		{
+			indexDict[skin.joints[i]] = i;
+
+			j["joints"][i]["inverseBindMatrix"] = { matrices[i * 16 + 0], matrices[i * 16 + 1], matrices[i * 16 + 2], matrices[i * 16 + 3],
+				matrices[i * 16 + 4], matrices[i * 16 + 5], matrices[i * 16 + 6], matrices[i * 16 + 7],
+				matrices[i * 16 + 8], matrices[i * 16 + 9], matrices[i * 16 + 10], matrices[i * 16 + 11],
+				matrices[i * 16 + 12], matrices[i * 16 + 13], matrices[i * 16 + 14], matrices[i * 16 + 15] };
+
+			j["joints"][i]["index"] = skin.joints[i];
+		}
+
+		// set joint parents
+		bool first = true;
+		for (int& jointIndex : skin.joints)
+		{
+			if (first)
+			{
+				j["joints"][indexDict[jointIndex]]["parentID"] = -1;
+				first = false;
+			}
+			for (int& childIndex : model.nodes[jointIndex].children)
+			{
+				int parentID = indexDict[jointIndex];
+				j["joints"][indexDict[childIndex]]["parentID"] = parentID;
+			}
+		}
+	}
+
 	// meshes
 	for (tinygltf::Mesh& mesh : model.meshes)
 	{
@@ -118,7 +171,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		std::vector<float> normals = getVertexNormals(model, primitive);
 		std::vector<float> texCoords = getVertexTextureCoords(model, primitive);
 		std::vector<float> colors = getVertexColors(model, primitive);
-		std::vector<unsigned short> joints = getVertexJoints(model, primitive);
+		std::vector<unsigned short> joints = getVertexJoints(model, primitive, indexDict);
 		std::vector<float> weights = getVertexWeights(model, primitive);
 
 		if (normals.size() == 0)
@@ -224,53 +277,6 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		j["meshes"][meshName]["transform"] = transformVec;
 	}
 
-	// skin
-	if (model.skins.size() > 1)
-	{
-		std::cout << "IMPORTER::WARNING::More than one skin not supported" << std::endl;
-	}
-
-	if (model.skins.size() == 0)
-	{
-		std::cout << "IMPORTER::INFO::Model has no skinning information" << std::endl;
-	}
-
-	else
-	{
-		tinygltf::Skin skin = model.skins[0];
-
-		// read invBindMatrices and assign them to their joints
-		tinygltf::Accessor& matrixAccessor = model.accessors[skin.inverseBindMatrices];
-		tinygltf::BufferView& matrixBufferView = model.bufferViews[matrixAccessor.bufferView];
-		tinygltf::Buffer& matrixBuffer = model.buffers[matrixBufferView.buffer];
-
-		float* matrices = reinterpret_cast<float*>(&matrixBuffer.data[matrixBufferView.byteOffset + matrixAccessor.byteOffset]);
-
-		for (unsigned int i = 0; i < matrixAccessor.count; i++)
-		{
-			j["joints"][skin.joints[i]]["inverseBindMatrix"] = { matrices[i * 16 + 0], matrices[i * 16 + 1], matrices[i * 16 + 2], matrices[i * 16 + 3],
-				matrices[i * 16 + 4], matrices[i * 16 + 5], matrices[i * 16 + 6], matrices[i * 16 + 7],
-				matrices[i * 16 + 8], matrices[i * 16 + 9], matrices[i * 16 + 10], matrices[i * 16 + 11],
-				matrices[i * 16 + 12], matrices[i * 16 + 13], matrices[i * 16 + 14], matrices[i * 16 + 15] };
-		}
-
-		// set joint parents
-		bool first = true;
-		for (int& jointIndex : skin.joints)
-		{
-			if (first)
-			{
-				j["joints"][jointIndex]["parentID"] = -1;
-				first = false;
-			}
-			for (int& childIndex : model.nodes[jointIndex].children)
-			{
-				int parentID = jointIndex;
-				j["joints"][childIndex]["parentID"] = parentID;
-			}
-		}
-	}
-
 	// animations
 	for (tinygltf::Animation& anim : model.animations)
 	{
@@ -289,25 +295,68 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 			tinygltf::Buffer& outputBuffer = model.buffers[outputBufferView.buffer];
 			float* animatedProperty = reinterpret_cast<float*>(&outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset]);
 
-			for (unsigned int i = 0; i < inputAccessor.count; i++)
+			if (channel.target_path == "translation")
 			{
-				// stupid fix for stupid gltf format
-				j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["translation"] = { 1.0f, 1.0f, 1.0f };
-				j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["rotation"] = { 1.0f, 1.0f, 1.0f, 1.0f };
-				j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["scale"] = { 1.0f, 1.0f, 1.0f };
+				for (unsigned int i = 0; i < inputAccessor.count; i++)
+				{
+					j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["translation"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };
+				}
+			}
+			else if (channel.target_path == "rotation")
+			{
+				for (unsigned int i = 0; i < inputAccessor.count; i++)
+				{
+					j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["rotation"] = { animatedProperty[i * 4 + 0], animatedProperty[i * 4 + 1], animatedProperty[i * 4 + 2], animatedProperty[i * 4 + 3] };
+				}
+			}
+			else if (channel.target_path == "scale")
+			{
+				for (unsigned int i = 0; i < inputAccessor.count; i++)
+				{
+					j["animations"][anim.name][std::to_string(times[i])][indexDict[channel.target_node]]["scale"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };
+				}
+			}
+		}
+	}
 
-				if (channel.target_path == "translation")
+	// animation repair
+	std::vector<float> lastTranslation = { 1.0f, 1.0f, 1.0f };
+	std::vector<float> lastRotation = { 0.0f, 0.0f, 0.0f, 1.0f};
+	std::vector<float> lastScale = { 1.0f, 1.0f, 1.0f };
+
+	for (auto& animation : j["animations"])
+	{
+		for (auto& time : animation)
+		{
+			for (auto& target : time)
+			{
+				if (target["translation"].is_null())
 				{
-					j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["translation"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };
+					target["translation"] = lastTranslation;
 				}
-				else if (channel.target_path == "rotation")
+
+				lastTranslation[0] = target["translation"][0];
+				lastTranslation[1] = target["translation"][1];
+				lastTranslation[2] = target["translation"][2];
+
+				if (target["rotation"].is_null())
 				{
-					j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["rotation"] = { animatedProperty[i * 4 + 0], animatedProperty[i * 4 + 1], animatedProperty[i * 4 + 2], animatedProperty[i * 4 + 3] };
+					target["rotation"] = lastRotation;
 				}
-				else if (channel.target_path == "scale")
+
+				lastRotation[0] = target["rotation"][0];
+				lastRotation[1] = target["rotation"][1];
+				lastRotation[2] = target["rotation"][2];
+				lastRotation[3] = target["rotation"][3];
+
+				if (target["scale"].is_null())
 				{
-					j["animations"][anim.name][std::to_string(times[i])][channel.target_node]["scale"] = { animatedProperty[i * 3 + 0], animatedProperty[i * 3 + 1], animatedProperty[i * 3 + 2] };;
+					target["scale"] = lastScale;
 				}
+
+				lastScale[0] = target["scale"][0];
+				lastScale[1] = target["scale"][1];
+				lastScale[2] = target["scale"][2];
 			}
 		}
 	}
@@ -483,7 +532,7 @@ std::vector<float> Importer::getVertexColors(tinygltf::Model& model, tinygltf::P
 	return vertexColors;
 }
 
-std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, tinygltf::Primitive& primitive)
+std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, tinygltf::Primitive& primitive, std::map<unsigned int, unsigned int> indexDict)
 {
 	if (primitive.attributes.count("JOINTS_0") == 0)
 	{
@@ -503,7 +552,7 @@ std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, ti
 
 	for (unsigned int i = 0; i < accessor.count * TINYGLTF_TYPE_VEC4; i++)
 	{
-		vertexJoints.push_back(joints[i]);
+		vertexJoints.push_back(indexDict[joints[i]]);
 	}
 
 	return vertexJoints;

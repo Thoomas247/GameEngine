@@ -1,5 +1,4 @@
-#ifndef RENDERER
-#define RENDERER
+#pragma once
 
 #include <vector>
 
@@ -18,5 +17,3 @@ namespace Renderer
 	int AddMeshdata(MeshData* meshData);
 	void RemoveMeshData(const int& index);
 }
-
-#endif // !RENDERER

@@ -1,5 +1,4 @@
-#ifndef PROJECT_MANAGER
-#define PROJECT_MANAGER
+#pragma once
 
 #include <string>
 #include <memory>
@@ -24,5 +23,3 @@ namespace ProjectManager
 	void SetShadersPath(const std::string& relativePath);
 	*/
 }
-
-#endif // !PROJECT_MANAGER
