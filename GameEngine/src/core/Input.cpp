@@ -18,10 +18,10 @@ void Input::Update()
 {
 	double xpos, ypos;
 	glfwGetCursorPos(Window::g_WindowPtr, &xpos, &ypos);
-	g_MouseDeltaX = float(xpos) - g_MouseLastXPos;
-	g_MouseDeltaY = g_MouseLastYPos - float(ypos);
-	g_MouseLastXPos = xpos;
-	g_MouseLastYPos = ypos;
+	g_MouseDeltaX = (float)xpos - g_MouseLastXPos;
+	g_MouseDeltaY = g_MouseLastYPos - (float)ypos;
+	g_MouseLastXPos = (float)xpos;
+	g_MouseLastYPos = (float)ypos;
 
 	resetInput();
 	setInput();

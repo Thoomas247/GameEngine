@@ -221,10 +221,6 @@ Model::SkeletonCache ModelLoader::createSkeleton(json& j)
 	{
 		// skeleton
 		glm::mat4 matrix;
-		for (auto& joint : j["joints"])
-		{
-
-		}
 		for (unsigned int i = 0; i < j["joints"].size(); i++)
 		{
 			std::vector<float> vec = j["joints"][i]["inverseBindMatrix"];

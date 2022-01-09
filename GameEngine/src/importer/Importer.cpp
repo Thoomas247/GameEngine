@@ -198,7 +198,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		// interleave vertex data
 		std::vector<float> vertices;
 		vertices.reserve((positions.size() / 3) * 20);	// 20 floats per vertex
-		for (int i = 0; i < (positions.size() / 3); i++)
+		for (unsigned int i = 0; i < (positions.size() / 3); i++)
 		{
 			vertices.push_back(positions[i * 3 + 0]);
 			vertices.push_back(positions[i * 3 + 1]);
@@ -408,7 +408,7 @@ glm::mat4 Importer::getNodeTransform(const tinygltf::Node& node)
 		glm::quat rotation = glm::quat(0.0f, 0.0f, 0.0f, 1.0f);
 		if (node.rotation.size() != 0)
 		{
-			rotation = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+			rotation = glm::quat((float)node.rotation[0], (float)node.rotation[1], (float)node.rotation[2], (float)node.rotation[3]);
 		}
 
 		glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -552,7 +552,7 @@ std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, ti
 
 	for (unsigned int i = 0; i < accessor.count * TINYGLTF_TYPE_VEC4; i++)
 	{
-		vertexJoints.push_back(indexDict[joints[i]]);
+		vertexJoints.push_back((unsigned short)indexDict[joints[i]]);
 	}
 
 	return vertexJoints;
