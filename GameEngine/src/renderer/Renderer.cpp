@@ -11,13 +11,10 @@
 std::vector<MeshData*> Renderer::g_MeshDataList;
 Camera* Renderer::g_CurrentCamera;
 
-void Renderer::Reserve()
+void Renderer::Init()
 {
 	g_MeshDataList.reserve(MESH_DATA_LIST_RESERVE_AMOUNT);
-}
 
-void Renderer::SetUp()
-{
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);

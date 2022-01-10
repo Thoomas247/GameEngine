@@ -10,8 +10,7 @@ namespace Renderer
 	extern std::vector<MeshData*> g_MeshDataList;
 	extern Camera* g_CurrentCamera;
 
-	void Reserve();
-	void SetUp();
+	void Init();
 	void Draw();
 
 	int AddMeshdata(MeshData* meshData);

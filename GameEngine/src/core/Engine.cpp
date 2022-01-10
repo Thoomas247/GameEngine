@@ -3,9 +3,10 @@
 #include <iostream>
 
 #include "Window.h"
+#include "ProjectManager.h"
+#include "EngineGUI.h"
 #include "World.h"
 #include "Input.h"
-#include "ProjectManager.h"
 
 #include "../renderer/Renderer.h"
 
@@ -54,12 +55,10 @@ int Engine::Run()
 	World::AddGameObject("Player", player);
 	///////////////////////////////////////////////////////////
 
-	// reserve space in renderer/animator lists
-	Renderer::Reserve();
+	EngineGUI::Init();
+	Renderer::Init();
 
-	// run setup functions
 	World::SetUp();
-	Renderer::SetUp();
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -70,25 +69,30 @@ int Engine::Run()
 	// main engine loop
 	while (Window::g_IsOpen)
 	{
-		currentFrame = float(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-
-		Input::Update();
-
 		// detect if window should close
 		if (Input::g_ActionEscape)
 		{
 			Window::CloseWindow();
 		}
 
+		currentFrame = float(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		Input::Update();
 		World::Update(deltaTime);
+
 		Renderer::Draw();
+		EngineGUI::Draw();
+
 		Window::SwapBuffers();
 		Window::PollEvents();
 
 		frameCount += 1;
 	}
+
+	EngineGUI::CleanUp();
+	Window::CleanUp();
 
 	return 0;
 }

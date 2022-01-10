@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-GLFWwindow* Window::g_WindowPtr;
+GLFWwindow* Window::g_WindowPtr = nullptr;
 
 unsigned int Window::g_WindowWidth = 1600;
 unsigned int Window::g_WindowHeight = 1200;
@@ -28,7 +28,7 @@ void Window::InitWindow()
 	glfwMakeContextCurrent(g_WindowPtr);
 
 	glfwSetFramebufferSizeCallback(g_WindowPtr, frameBufferSizeCallback);
-	glfwSetInputMode(g_WindowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(g_WindowPtr, GLFW_CURSOR, /*GLFW_CURSOR_DISABLED*/ GLFW_CURSOR_NORMAL);
 
 	// glad: load all OpenGL function pointers
 	int version = gladLoadGL(glfwGetProcAddress);
@@ -41,11 +41,10 @@ void Window::InitWindow()
 	g_IsOpen = true;
 }
 
-void Window::frameBufferSizeCallback(GLFWwindow* window, int width, int height)
+void Window::GUIFixWindow(GLFWwindow* newWindow)
 {
-	g_WindowWidth = width;
-	g_WindowHeight = height;
-	glViewport(0, 0, g_WindowWidth, g_WindowHeight);
+	g_WindowPtr = newWindow;
+	glfwMakeContextCurrent(g_WindowPtr);
 }
 
 void Window::CloseWindow()
@@ -62,4 +61,16 @@ void Window::SwapBuffers()
 void Window::PollEvents()
 {
 	glfwPollEvents();
+}
+
+void Window::CleanUp()
+{
+	glfwTerminate();
+}
+
+void Window::frameBufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	g_WindowWidth = width;
+	g_WindowHeight = height;
+	glViewport(0, 0, g_WindowWidth, g_WindowHeight);
 }

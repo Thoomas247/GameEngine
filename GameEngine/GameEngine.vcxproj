@@ -94,6 +94,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\core\EngineGUI.cpp" />
+    <ClCompile Include="include\imgui\imgui.cpp" />
+    <ClCompile Include="include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="include\imgui\imgui_tables.cpp" />
+    <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\ProjectManager.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
@@ -114,12 +122,12 @@
     <ClCompile Include="src\renderer\RenderData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\EngineGUI.h" />
     <ClInclude Include="src\core\Project.h" />
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\renderer\Skeleton.h" />
     <ClInclude Include="src\core\ModelLoader.h" />
-    <ClInclude Include="include\simdjson\simdjson.cpp" />
     <ClInclude Include="src\core\ProjectManager.h" />
     <ClInclude Include="src\importer\Importer.h" />
     <ClInclude Include="src\core\GameObject.h" />
