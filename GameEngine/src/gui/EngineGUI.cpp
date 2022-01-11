@@ -6,10 +6,19 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-#include "Window.h"
+// debug
+#include "ViewPort.h"
+
+std::map<std::string, std::unique_ptr<Panel>> EngineGUI::Panels;
 
 void EngineGUI::Init()
 {
+	//////////////////////////////////////////
+
+	Panels["ViewPort"] = std::make_unique<ViewPort>();
+
+	//////////////////////////////////////////
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -27,9 +36,14 @@ void EngineGUI::Init()
 	}
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForOpenGL(Window::g_WindowPtr, true);
+	ImGui_ImplGlfw_InitForOpenGL(Window::WindowPtr, true);
 	const char* glsl_version = "#version 130";
 	ImGui_ImplOpenGL3_Init(glsl_version);
+
+	for (const auto& [name, panel] : Panels)
+	{
+		panel->Init();
+	}
 }
 
 void EngineGUI::Draw()
@@ -38,7 +52,11 @@ void EngineGUI::Draw()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	drawTestWindow();	// TODO: create imgui tab class
+	for (const auto& [name, panel] : Panels)
+	{
+		panel->Update();
+	}
+	//ImGui::ShowDemoWindow();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -49,7 +67,8 @@ void EngineGUI::Draw()
 		GLFWwindow* backup_current_context = glfwGetCurrentContext();
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		Window::GUIFixWindow(backup_current_context);
+		Window::WindowPtr = backup_current_context;
+		glfwMakeContextCurrent(backup_current_context);
 	}
 }
 
@@ -58,16 +77,4 @@ void EngineGUI::CleanUp()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-}
-
-void EngineGUI::drawTestWindow()
-{
-	ImGui::Begin("Hello World!");
-
-	ImGui::Text("It works!");
-	if (ImGui::Button("Button"))	// buttons return true when clicked
-		std::cout << "ENGINE_GUI::INFO::Button clicked" << std::endl;
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-	ImGui::End();
 }

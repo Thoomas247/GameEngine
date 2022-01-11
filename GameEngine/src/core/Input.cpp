@@ -2,26 +2,26 @@
 
 #include "Window.h"
 
-float Input::g_MouseDeltaX = 0.0f;
-float Input::g_MouseDeltaY = 0.0f;
-float Input::g_MouseLastXPos = 0.0f;
-float Input::g_MouseLastYPos = 0.0f;
+float Input::MouseDeltaX = 0.0f;
+float Input::MouseDeltaY = 0.0f;
+float Input::MouseLastXPos = 0.0f;
+float Input::MouseLastYPos = 0.0f;
 
-bool Input::g_ActionEscape = false;
-bool Input::g_ActionMoveForward = false;
-bool Input::g_ActionMoveBack = false;
-bool Input::g_ActionMoveLeft = false;
-bool Input::g_ActionMoveRight = false;
+bool Input::ActionEscape = false;
+bool Input::ActionMoveForward = false;
+bool Input::ActionMoveBack = false;
+bool Input::ActionMoveLeft = false;
+bool Input::ActionMoveRight = false;
 
 // defines the keybinds
 void Input::Update()
 {
 	double xpos, ypos;
-	glfwGetCursorPos(Window::g_WindowPtr, &xpos, &ypos);
-	g_MouseDeltaX = (float)xpos - g_MouseLastXPos;
-	g_MouseDeltaY = g_MouseLastYPos - (float)ypos;
-	g_MouseLastXPos = (float)xpos;
-	g_MouseLastYPos = (float)ypos;
+	glfwGetCursorPos(Window::WindowPtr, &xpos, &ypos);
+	MouseDeltaX = (float)xpos - MouseLastXPos;
+	MouseDeltaY = MouseLastYPos - (float)ypos;
+	MouseLastXPos = (float)xpos;
+	MouseLastYPos = (float)ypos;
 
 	resetInput();
 	setInput();
@@ -29,37 +29,37 @@ void Input::Update()
 
 void Input::resetInput()
 {
-	g_ActionEscape = false;
-	g_ActionMoveForward = false;
-	g_ActionMoveBack = false;
-	g_ActionMoveLeft = false;
-	g_ActionMoveRight = false;
+	ActionEscape = false;
+	ActionMoveForward = false;
+	ActionMoveBack = false;
+	ActionMoveLeft = false;
+	ActionMoveRight = false;
 }
 
 void Input::setInput()
 {
-	if (glfwGetKey(Window::g_WindowPtr, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
-		g_ActionEscape = true;
+		ActionEscape = true;
 	}
 
-	if (glfwGetKey(Window::g_WindowPtr, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		g_ActionMoveForward = true;
+		ActionMoveForward = true;
 	}
 
-	if (glfwGetKey(Window::g_WindowPtr, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		g_ActionMoveBack = true;
+		ActionMoveBack = true;
 	}
 
-	if (glfwGetKey(Window::g_WindowPtr, GLFW_KEY_A) == GLFW_PRESS)
+	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		g_ActionMoveLeft = true;
+		ActionMoveLeft = true;
 	}
 
-	if (glfwGetKey(Window::g_WindowPtr, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		g_ActionMoveRight = true;
+		ActionMoveRight = true;
 	}
 }

@@ -4,11 +4,14 @@
 
 #include "Window.h"
 #include "ProjectManager.h"
-#include "EngineGUI.h"
 #include "World.h"
 #include "Input.h"
-
 #include "../renderer/Renderer.h"
+
+//#undef DEV_MODE	// remove to run in "engine" mode which enables the EngineGUI
+#ifdef DEV_MODE
+#include "../gui/EngineGUI.h"
+#endif // DEV_MODE
 
 // debug:
 #include "../game/Player.h"
@@ -18,13 +21,15 @@
 
 int Engine::Run()
 {
-	// init window
-	Window::InitWindow();
-	if (!Window::g_IsOpen)
-		return -1;
+	Window::InitWindow(1920, 1080);
+
+#ifdef DEV_MODE
+	EngineGUI::Init();
+#endif // DEV_MODE
+
+	Renderer::Init();
 
 	// TODO: create menu for engine to create/load project
-	///////////////////////////////////////////////////////////
 	ProjectManager::CreateProject("TestGame", "C:/Users/TM1/source/repos/GameEngine/GameEngine/TestGame/");
 
 	if (ProjectManager::g_CurrentProject == nullptr)
@@ -32,9 +37,7 @@ int Engine::Run()
 		std::cout << "ENGINE::ERROR::No project loaded!" << std::endl;
 		return -1;
 	}
-	///////////////////////////////////////////////////////////
 
-	// TODO: open GUI here
 	///////////////////////////////////////////////////////////
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
@@ -55,22 +58,19 @@ int Engine::Run()
 	World::AddGameObject("Player", player);
 	///////////////////////////////////////////////////////////
 
-	EngineGUI::Init();
-	Renderer::Init();
-
-	World::SetUp();
-
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 	float currentFrame = 0.0f;
 
 	int frameCount = 0;
 
+	World::SetUp();
+
 	// main engine loop
-	while (Window::g_IsOpen)
+	while (!Window::ShouldClose)
 	{
 		// detect if window should close
-		if (Input::g_ActionEscape)
+		if (Input::ActionEscape)
 		{
 			Window::CloseWindow();
 		}
@@ -82,8 +82,11 @@ int Engine::Run()
 		Input::Update();
 		World::Update(deltaTime);
 
-		Renderer::Draw();
+#ifdef DEV_MODE
 		EngineGUI::Draw();
+#else
+		Renderer::Draw();
+#endif // DEV_MODE
 
 		Window::SwapBuffers();
 		Window::PollEvents();
@@ -91,8 +94,11 @@ int Engine::Run()
 		frameCount += 1;
 	}
 
-	EngineGUI::CleanUp();
 	Window::CleanUp();
+
+#ifdef DEV_MODE
+	EngineGUI::CleanUp();
+#endif // DEV_MODE
 
 	return 0;
 }

@@ -2,14 +2,15 @@
 
 #include <iostream>
 
-GLFWwindow* Window::g_WindowPtr = nullptr;
+GLFWwindow* Window::WindowPtr = nullptr;
+bool Window::ShouldClose = false;
 
-unsigned int Window::g_WindowWidth = 1600;
-unsigned int Window::g_WindowHeight = 1200;
+void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
 
-bool Window::g_IsOpen = false;
-
-void Window::InitWindow()
+void Window::InitWindow(const int& width, const int& height)
 {
 	// glfw: initialize and configure
 	glfwInit();
@@ -18,17 +19,17 @@ void Window::InitWindow()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// glfw: window creation
-	g_WindowPtr = glfwCreateWindow(g_WindowWidth, g_WindowHeight, "Game Engine", NULL, NULL);
-	if (g_WindowPtr == NULL)
+	WindowPtr = glfwCreateWindow(width, height, "Game Engine", NULL, NULL);
+	if (WindowPtr == NULL)
 	{
 		std::cout << "MAIN::ERROR::Failed to create GLFW window!" << std::endl;
 		glfwTerminate();
 		return;
 	}
-	glfwMakeContextCurrent(g_WindowPtr);
+	glfwMakeContextCurrent(WindowPtr);
 
-	glfwSetFramebufferSizeCallback(g_WindowPtr, frameBufferSizeCallback);
-	glfwSetInputMode(g_WindowPtr, GLFW_CURSOR, /*GLFW_CURSOR_DISABLED*/ GLFW_CURSOR_NORMAL);
+	glfwSetFramebufferSizeCallback(WindowPtr, frameBufferSizeCallback);
+	glfwSetInputMode(WindowPtr, GLFW_CURSOR, /*GLFW_CURSOR_DISABLED*/ GLFW_CURSOR_NORMAL);
 
 	// glad: load all OpenGL function pointers
 	int version = gladLoadGL(glfwGetProcAddress);
@@ -38,24 +39,17 @@ void Window::InitWindow()
 		return;
 	}
 	std::cout << "MAIN::INFO::Loaded OpenGL " << GLAD_VERSION_MAJOR(version) << "." << GLAD_VERSION_MINOR(version) << std::endl;
-	g_IsOpen = true;
-}
-
-void Window::GUIFixWindow(GLFWwindow* newWindow)
-{
-	g_WindowPtr = newWindow;
-	glfwMakeContextCurrent(g_WindowPtr);
 }
 
 void Window::CloseWindow()
 {
-	glfwSetWindowShouldClose(g_WindowPtr, true);
-	g_IsOpen = false;
+	glfwSetWindowShouldClose(WindowPtr, true);
+	ShouldClose = true;
 }
 
 void Window::SwapBuffers()
 {
-	glfwSwapBuffers(g_WindowPtr);
+	glfwSwapBuffers(WindowPtr);
 }
 
 void Window::PollEvents()
@@ -66,11 +60,4 @@ void Window::PollEvents()
 void Window::CleanUp()
 {
 	glfwTerminate();
-}
-
-void Window::frameBufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-	g_WindowWidth = width;
-	g_WindowHeight = height;
-	glViewport(0, 0, g_WindowWidth, g_WindowHeight);
 }

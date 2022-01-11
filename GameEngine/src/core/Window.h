@@ -5,19 +5,13 @@
 
 namespace Window
 {
-	extern GLFWwindow* g_WindowPtr;
+	extern GLFWwindow* WindowPtr;
 
-	extern unsigned int g_WindowWidth;
-	extern unsigned int g_WindowHeight;
+	extern bool ShouldClose;
 
-	extern bool g_IsOpen;
-
-	void InitWindow();
-	void GUIFixWindow(GLFWwindow* newWindow);
+	void InitWindow(const int& width, const int& height);
 	void CloseWindow();
 	void SwapBuffers();
 	void PollEvents();
 	void CleanUp();
-
-	void frameBufferSizeCallback(GLFWwindow* window, int width, int height);
 }
