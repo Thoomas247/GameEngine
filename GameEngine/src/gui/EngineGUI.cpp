@@ -6,19 +6,13 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-// debug
-#include "ViewPort.h"
+#include "SceneView.h"
+#include "Console.h"
 
-std::map<std::string, std::unique_ptr<Panel>> EngineGUI::Panels;
+std::vector<std::unique_ptr<Panel>> EngineGUI::Panels;	// change back to map to support multiple panels of the same type
 
 void EngineGUI::Init()
 {
-	//////////////////////////////////////////
-
-	Panels["ViewPort"] = std::make_unique<ViewPort>();
-
-	//////////////////////////////////////////
-
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -40,10 +34,13 @@ void EngineGUI::Init()
 	const char* glsl_version = "#version 130";
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	for (const auto& [name, panel] : Panels)
-	{
-		panel->Init();
-	}
+	//////////////////////////////////////////
+
+	Panels.push_back(std::make_unique<SceneView>());
+	Panels.push_back(std::make_unique<Console>());
+
+	//////////////////////////////////////////
+
 }
 
 void EngineGUI::Draw()
@@ -52,7 +49,30 @@ void EngineGUI::Draw()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	for (const auto& [name, panel] : Panels)
+	// dock space setup
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->WorkPos);
+	ImGui::SetNextWindowSize(viewport->WorkSize);
+	ImGui::SetNextWindowViewport(viewport->ID);
+
+	ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_PassthruCentralNode;
+	ImGuiWindowFlags hostWindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking |
+										ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	if (dockSpaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
+		hostWindowFlags |= ImGuiWindowFlags_NoBackground;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::Begin("DockSpace", nullptr, hostWindowFlags);
+	ImGui::PopStyleVar(3);
+
+	ImGuiID dockSpaceID = ImGui::GetID("DockSpace");
+	ImGui::DockSpace(dockSpaceID, ImVec2(0.0f, 0.0f), dockSpaceFlags, nullptr);
+	ImGui::End();
+
+	
+	for (const auto& panel : Panels)
 	{
 		panel->Update();
 	}

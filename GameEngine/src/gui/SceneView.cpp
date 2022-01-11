@@ -1,17 +1,16 @@
-#include "ViewPort.h"
-
-#include <iostream>
+#include "SceneView.h"
 
 #include "imgui/imgui.h"
 #include "glad/gl.h"
 
 #include "../renderer/Renderer.h"
+#include "../core/Log.h"
 
 constexpr auto VIEWPORT_RENDER_RESOLUTION_WIDTH = 1920;
 constexpr auto VIEWPORT_RENDER_RESOLUTION_HEIGHT = 1080;
 
 // PUBLIC
-void ViewPort::Init()
+SceneView::SceneView()
 {
 	glGenFramebuffers(1, &m_FrameBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBuffer);
@@ -48,21 +47,27 @@ void ViewPort::Init()
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		std::cout << "RENDERER::ERROR::Failed to set up rendering to ImGui!" << std::endl;
+		LOG_ERROR("SCENE_VIEW::Failed to set up rendering to ImGui!")
 		return;
 	}
 }
 
-void ViewPort::Update()
+void SceneView::Update()
 {
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+
 	drawTexture();
-	ImGui::Begin("Viewport");
+	ImGui::Begin("Scene View", (bool*)0, flags);
 	ImGui::Image((void*)m_Texture, ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));	// image is inverted
 	ImGui::End();
 }
 
 // PRIVATE
-void ViewPort::drawTexture()
+void SceneView::destroy()
+{
+}
+
+void SceneView::drawTexture()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBuffer);
 	glViewport(0, 0, VIEWPORT_RENDER_RESOLUTION_WIDTH, VIEWPORT_RENDER_RESOLUTION_HEIGHT);
@@ -70,4 +75,5 @@ void ViewPort::drawTexture()
 	Renderer::Draw();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

@@ -2,11 +2,11 @@
 
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 #include "glad/gl.h"
 
 #include "../core/ProjectManager.h"
+#include "../core/Log.h"
 
 // PUBLIC
 Shader::Shader()
@@ -97,7 +97,7 @@ void Shader::loadShader(const std::string& vertexPath, const std::string& fragme
 		fragmentCode = fShaderStream.str();
 	}
 	catch (std::ifstream::failure& e) {
-		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		LOG_ERROR("SHADER::FILE_NOT_SUCCESFULLY_READ")
 	}
 
 	const char* vShaderCode = vertexCode.c_str();
@@ -138,14 +138,14 @@ void Shader::checkCompileErrors(const unsigned int& shader, const std::string& t
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 		if (!success) {
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER::ERROR::Shader compilation failed!" << "\n" << type << ": " << infoLog << std::endl;
+			LOG_ERROR("SHADER::Shader compilation failed!" + std::string(" - " + type + ": " + infoLog))
 		}
 	}
 	else {
 		glGetProgramiv(shader, GL_LINK_STATUS, &success);
 		if (!success) {
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER::ERROR::Shader linking failed!" << "\n" << type << ": " << infoLog << std::endl;
+			LOG_ERROR("SHADER::Shader linking failed!" + std::string(" - " + type + ": " + infoLog))
 		}
 	}
 }

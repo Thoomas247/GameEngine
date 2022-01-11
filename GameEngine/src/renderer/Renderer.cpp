@@ -1,10 +1,9 @@
 #include "Renderer.h"
 
-#include <iostream>
-
 #include "glad/gl.h"
 
 #include "Mesh.h"
+#include "../core/Log.h"
 
 #define MESH_DATA_LIST_RESERVE_AMOUNT 1000
 
@@ -30,7 +29,7 @@ void Renderer::Draw()
 {
 	if (CurrentCamera == nullptr)
 	{
-		std::cout << "RENDERER::ERROR::Camera is null!" << std::endl;
+		LOG_ERROR("RENDERER::Camera is null!")
 		return;
 	}
 

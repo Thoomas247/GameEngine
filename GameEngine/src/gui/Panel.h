@@ -3,6 +3,11 @@
 class Panel
 {
 public:
-	virtual void Init();
+	Panel();
+	~Panel();
+
 	virtual void Update();
+
+protected:
+	virtual void destroy();
 };

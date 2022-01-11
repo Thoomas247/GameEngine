@@ -8,6 +8,7 @@
 #include <filesystem>
 
 #include "../core/ProjectManager.h"
+#include "../core/Log.h"
 
 void Importer::ImportGLTF(const std::string& name, const std::string& path)
 {
@@ -30,18 +31,18 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	}
 	else
 	{
-		std::cout << "IMPORTER::ERROR::Invalid file format!" << std::endl;
+		LOG_ERROR("IMPORTER::Invalid file format!")
 		return;
 	}
 
 	if (!warn.empty()) {
-		std::cout << "IMPORTER::WARNING::" << warn << std::endl;
+		LOG_WARN("IMPORTER::" + warn);
 	}
 	if (!err.empty()) {
-		std::cout << "IMPORTER::ERROR::" << err << std::endl;
+		LOG_ERROR("IMPORTER::Invalid file format!")
 	}
 	if (!ret) {
-		std::cout << "IMPORTER::ERROR::Failed to parse GLTF!" << std::endl;
+		LOG_ERROR("IMPORTER::Failed to parse GLTF!")
 		return;
 	}
 
@@ -71,7 +72,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 			if (!std::filesystem::copy_file(texturePath, destPath, std::filesystem::copy_options::overwrite_existing))
 			{
-				std::cout << "IMPORTER::ERROR::Texture could not be copied! (" << uri << ")" << std::endl;
+				LOG_ERROR("IMPORTER::Texture could not be copied! (" + uri + ")")
 			}
 			else
 			{
@@ -80,7 +81,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		}
 		else
 		{
-			std::cout << "IMPORTER::WARNING::Texture does not have uri, not importing" << std::endl;
+			LOG_WARN("IMPORTER::Texture does not have uri, not importing")
 		}
 	}
 
@@ -107,12 +108,12 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 	if (model.skins.size() > 1)
 	{
-		std::cout << "IMPORTER::WARNING::More than one skin not supported" << std::endl;
+		LOG_WARN("IMPORTER::More than one skin not supported")
 	}
 
 	if (model.skins.size() == 0)
 	{
-		std::cout << "IMPORTER::INFO::Model has no skinning information" << std::endl;
+		LOG_INFO("IMPORTER::Model has no skinning information")
 	}
 
 	else
@@ -163,7 +164,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 		if (primitive.mode != TINYGLTF_MODE_TRIANGLES && primitive.mode != TINYGLTF_MODE_TRIANGLE_FAN && primitive.mode != TINYGLTF_MODE_TRIANGLE_STRIP)
 		{
-			std::cout << "IMPORTER::ERROR::Primitive mode not supported!" << std::endl;
+			LOG_ERROR("IMPORTER::Primitive mode not supported!")
 			return;
 		}
 
@@ -450,7 +451,7 @@ std::vector<float> Importer::getVertexNormals(tinygltf::Model& model, tinygltf::
 {
 	if (primitive.attributes.count("NORMAL") == 0)
 	{
-		std::cout << "IMPORTER::WARNING::Mesh has no normals attribute!" << std::endl;	// may need to change to error
+		LOG_WARN("IMPORTER::Mesh has no normals attribute!")
 		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
 		return std::vector<float>(accessor.count * TINYGLTF_TYPE_VEC3, 1.0f);
 	}
@@ -476,7 +477,7 @@ std::vector<float> Importer::getVertexTextureCoords(tinygltf::Model& model, tiny
 {
 	if (primitive.attributes.count("TEXCOORD_0") == 0)
 	{
-		std::cout << "IMPORTER::INFO::Mesh has no texture coordinates attribute" << std::endl;
+		LOG_INFO("IMPORTER::Mesh has no texture coordinates attribute")
 		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
 		return std::vector<float>(accessor.count * TINYGLTF_TYPE_VEC2, 1.0f);
 	}
@@ -485,7 +486,7 @@ std::vector<float> Importer::getVertexTextureCoords(tinygltf::Model& model, tiny
 	{
 		if (primitive.attributes["TEXCOORD_1"] != primitive.attributes["TEXCOORD_0"])	// if 0 and 1 are same, then so are all the others
 		{
-			std::cout << "IMPORTER::WARNING::More than one texture coordinate per vertex is not supported!" << std::endl;
+			LOG_WARN("IMPORTER::More than one texture coordinate per vertex is not supported!")
 		}
 	}
 
@@ -510,7 +511,7 @@ std::vector<float> Importer::getVertexColors(tinygltf::Model& model, tinygltf::P
 {
 	if (primitive.attributes.count("COLOR_0") == 0)
 	{
-		std::cout << "IMPORTER::INFO::Mesh has no colors attribute" << std::endl;
+		LOG_INFO("IMPORTER::Mesh has no colors attribute")
 		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
 		return std::vector<float>(accessor.count * TINYGLTF_TYPE_VEC4, 1.0f);
 	}
@@ -536,7 +537,7 @@ std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, ti
 {
 	if (primitive.attributes.count("JOINTS_0") == 0)
 	{
-		std::cout << "IMPORTER::INFO::Mesh has no joints attribute" << std::endl;
+		LOG_INFO("IMPORTER::Mesh has no joints attribute")
 		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
 		return std::vector<unsigned short>(accessor.count * TINYGLTF_TYPE_VEC4, 0);
 	}
@@ -562,7 +563,7 @@ std::vector<float> Importer::getVertexWeights(tinygltf::Model& model, tinygltf::
 {
 	if (primitive.attributes.count("WEIGHTS_0") == 0)
 	{
-		std::cout << "IMPORTER::INFO::Mesh has no weights attribute" << std::endl;
+		LOG_INFO("IMPORTER::Mesh has no weights attribute")
 		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
 		return std::vector<float>(accessor.count * TINYGLTF_TYPE_VEC4, 0);
 	}

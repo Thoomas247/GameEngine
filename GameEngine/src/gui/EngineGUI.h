@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <vector>
 #include <string>
 #include <memory>
 
@@ -9,7 +9,7 @@
 
 namespace EngineGUI
 {
-	extern std::map<std::string, std::unique_ptr<Panel>> Panels;
+	extern std::vector<std::unique_ptr<Panel>> Panels;
 
 	void Init();
 	void Draw();

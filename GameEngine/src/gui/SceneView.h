@@ -4,18 +4,19 @@
 
 // TODO: Add camera and accept input
 
-class ViewPort : public Panel
+class SceneView : public Panel
 {
 private:
 	unsigned int m_FrameBuffer;
 	unsigned int m_Texture;
-	unsigned int m_Width;
-	unsigned int m_Height;
 
 public:
-	void Init() override;
+	SceneView();
+
 	void Update() override;
+	
 
 private:
+	void destroy() override;
 	void drawTexture();
 };

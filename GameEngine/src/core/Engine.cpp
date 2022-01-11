@@ -6,6 +6,7 @@
 #include "ProjectManager.h"
 #include "Input.h"
 #include "World.h"
+#include "Log.h"
 
 #include "../renderer/Renderer.h"
 
@@ -21,7 +22,7 @@
 
 int Engine::Run()
 {
-	Window::InitWindow(1920, 1080);
+	Window::InitWindow(2200, 1300);
 
 #ifdef DEV_MODE
 	EngineGUI::Init();
@@ -34,7 +35,7 @@ int Engine::Run()
 
 	if (ProjectManager::CurrentProject == nullptr)
 	{
-		std::cout << "ENGINE::ERROR::No project loaded!" << std::endl;
+		LOG_ERROR("ENGINE::No project loaded!")
 		return -1;
 	}
 
@@ -72,6 +73,7 @@ int Engine::Run()
 		if (Input::ActionEscape)
 		{
 			Window::CloseWindow();
+			continue;	// window might not close right away
 		}
 
 		currentFrame = float(glfwGetTime());

@@ -94,8 +94,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\gui\Console.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\core\Log.cpp" />
     <ClCompile Include="src\gui\Panel.cpp" />
     <ClCompile Include="src\core\Game.cpp" />
     <ClCompile Include="src\gui\EngineGUI.cpp" />
@@ -122,9 +124,11 @@
     <ClCompile Include="src\renderer\Skeleton.cpp" />
     <ClCompile Include="src\core\World.cpp" />
     <ClCompile Include="src\renderer\RenderData.cpp" />
-    <ClCompile Include="src\gui\ViewPort.cpp" />
+    <ClCompile Include="src\gui\SceneView.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\gui\Console.h" />
+    <ClInclude Include="src\core\Log.h" />
     <ClInclude Include="src\gui\Panel.h" />
     <ClInclude Include="src\core\Game.h" />
     <ClInclude Include="src\gui\EngineGUI.h" />
@@ -150,7 +154,7 @@
     <ClInclude Include="src\structs\Vertex.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
     <ClInclude Include="src\core\World.h" />
-    <ClInclude Include="src\gui\ViewPort.h" />
+    <ClInclude Include="src\gui\SceneView.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test game\assets\shaders\Base.frag" />

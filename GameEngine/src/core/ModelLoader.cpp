@@ -1,12 +1,13 @@
 #include "ModelLoader.h"
 
 #include <fstream>
-#include <iostream>
+//#include <iostream>
 
 #include "glad/gl.h"
 #include "stb/stb_image.h"
 
 #include "ProjectManager.h"
+#include "Log.h"
 #include "../renderer/Mesh.h"
 
 std::map<std::string, int> ModelLoader::g_TextureCache;	// TODO: Move to TextureLibrary
@@ -97,7 +98,7 @@ int ModelLoader::loadTexture(const std::string& textureName)
 			format = GL_RGBA;
 		else
 		{
-			std::cout << "MODEL_LOADER::ERROR::Texture format not supported!" << std::endl;
+			LOG_ERROR("MODEL_LOADER::Texture format not supported!")
 			return -1;	// TODO: make return default full white texture index
 		}
 
@@ -106,7 +107,7 @@ int ModelLoader::loadTexture(const std::string& textureName)
 	}
 	else
 	{
-		std::cout << "MODEL_LOADER::ERROR::Failed to load texture!" << std::endl;
+		LOG_ERROR("MODEL_LOADER::Failed to load texture!")
 		return -1;	// TODO: make return default full white texture index
 	}
 	stbi_image_free(data);
@@ -264,7 +265,7 @@ Model::SkeletonCache ModelLoader::createSkeleton(json& j)
 	}
 	else
 	{
-		std::cout << "MODEL_LOADER::WARNING::Model has no skeleton" << std::endl;
+		LOG_WARN("MODEL_LOADER::Model has no skeleton")
 	}
 
 	return Model::SkeletonCache(skeletonJoints, animations);
