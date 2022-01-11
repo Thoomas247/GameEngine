@@ -29,4 +29,3 @@ public:
 private:
 	void onUpdate(const float& deltaTime) override;
 };
-

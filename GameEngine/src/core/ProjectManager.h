@@ -7,7 +7,7 @@
 
 namespace ProjectManager
 {
-	extern std::unique_ptr<Project> g_CurrentProject;
+	extern std::unique_ptr<Project> CurrentProject;
 
 	void CreateProject(const std::string& name, const std::string& directory);
 	//void LoadProject();

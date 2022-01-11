@@ -28,5 +28,5 @@ void Camera::CalcViewProjectionMatrix()
 // PRIVATE
 void Camera::onUpdate(const float& deltaTime)
 {
-	Renderer::g_CurrentCamera = this;	// TODO: Remove this and set camera in GUI
+	Renderer::CurrentCamera = this;	// TODO: Remove this and set camera in GUI
 }

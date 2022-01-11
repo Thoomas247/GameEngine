@@ -7,8 +7,8 @@
 
 namespace Renderer
 {
-	extern std::vector<MeshData*> g_MeshDataList;
-	extern Camera* g_CurrentCamera;
+	extern std::vector<MeshData*> MeshDataList;
+	extern Camera* CurrentCamera;
 
 	void Init();
 	void Draw();

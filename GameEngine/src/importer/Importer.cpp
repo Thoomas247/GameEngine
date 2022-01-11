@@ -321,7 +321,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 	// animation repair
 	std::vector<float> lastTranslation = { 1.0f, 1.0f, 1.0f };
-	std::vector<float> lastRotation = { 0.0f, 0.0f, 0.0f, 1.0f};
+	std::vector<float> lastRotation = { 0.0f, 0.0f, 0.0f, 1.0f };
 	std::vector<float> lastScale = { 1.0f, 1.0f, 1.0f };
 
 	for (auto& animation : j["animations"])

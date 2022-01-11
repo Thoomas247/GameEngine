@@ -4,11 +4,11 @@
 
 #include "Window.h"
 #include "ProjectManager.h"
-#include "World.h"
 #include "Input.h"
+#include "World.h"
+
 #include "../renderer/Renderer.h"
 
-//#undef DEV_MODE	// remove to run in "engine" mode which enables the EngineGUI
 #ifdef DEV_MODE
 #include "../gui/EngineGUI.h"
 #endif // DEV_MODE
@@ -32,7 +32,7 @@ int Engine::Run()
 	// TODO: create menu for engine to create/load project
 	ProjectManager::CreateProject("TestGame", "C:/Users/TM1/source/repos/GameEngine/GameEngine/TestGame/");
 
-	if (ProjectManager::g_CurrentProject == nullptr)
+	if (ProjectManager::CurrentProject == nullptr)
 	{
 		std::cout << "ENGINE::ERROR::No project loaded!" << std::endl;
 		return -1;
@@ -41,7 +41,7 @@ int Engine::Run()
 	///////////////////////////////////////////////////////////
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
-	
+
 	std::shared_ptr<GameObject> tree = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
 	World::AddGameObject("Tree", tree);
 
@@ -62,8 +62,7 @@ int Engine::Run()
 	float lastFrame = 0.0f;
 	float currentFrame = 0.0f;
 
-	int frameCount = 0;
-
+	// TODO: Separate engine loop from game loop (use Game namespace)
 	World::SetUp();
 
 	// main engine loop
@@ -90,8 +89,6 @@ int Engine::Run()
 
 		Window::SwapBuffers();
 		Window::PollEvents();
-
-		frameCount += 1;
 	}
 
 	Window::CleanUp();

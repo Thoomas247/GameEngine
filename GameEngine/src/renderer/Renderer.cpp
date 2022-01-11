@@ -8,12 +8,12 @@
 
 #define MESH_DATA_LIST_RESERVE_AMOUNT 1000
 
-std::vector<MeshData*> Renderer::g_MeshDataList;
-Camera* Renderer::g_CurrentCamera;
+std::vector<MeshData*> Renderer::MeshDataList;
+Camera* Renderer::CurrentCamera;
 
 void Renderer::Init()
 {
-	g_MeshDataList.reserve(MESH_DATA_LIST_RESERVE_AMOUNT);
+	MeshDataList.reserve(MESH_DATA_LIST_RESERVE_AMOUNT);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -28,18 +28,17 @@ void Renderer::Init()
 
 void Renderer::Draw()
 {
-	if (g_CurrentCamera == nullptr)
+	if (CurrentCamera == nullptr)
 	{
 		std::cout << "RENDERER::ERROR::Camera is null!" << std::endl;
 		return;
 	}
 
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	g_CurrentCamera->CalcViewProjectionMatrix();
+	CurrentCamera->CalcViewProjectionMatrix();
 
-	for (MeshData* meshData : g_MeshDataList)
+	for (MeshData* meshData : MeshDataList)
 	{
 		for (RenderData* renderData : meshData->m_RenderData)	// change to instanced rendering
 		{
@@ -74,8 +73,8 @@ void Renderer::Draw()
 
 			// matrices
 			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ModelMatLocation, *renderData->m_Transform);
-			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ViewMatLocation, g_CurrentCamera->m_ViewMatrix);
-			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ProjectionMatLocation, g_CurrentCamera->m_ProjectionMatrix);
+			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ViewMatLocation, CurrentCamera->m_ViewMatrix);
+			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ProjectionMatLocation, CurrentCamera->m_ProjectionMatrix);
 
 			glBindVertexArray(meshData->m_VAO);
 			glDrawElements(GL_TRIANGLES, meshData->m_NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
@@ -87,17 +86,17 @@ void Renderer::Draw()
 
 int Renderer::AddMeshdata(MeshData* meshData)
 {
-	int index = g_MeshDataList.size();
-	g_MeshDataList.push_back(meshData);
+	int index = MeshDataList.size();
+	MeshDataList.push_back(meshData);
 	return index;
 }
 
 void Renderer::RemoveMeshData(const int& index)
 {
-	if (g_MeshDataList.size() == 0)
+	if (MeshDataList.size() == 0)
 		return;
 
-	g_MeshDataList[index] = g_MeshDataList[g_MeshDataList.size() - 1];
-	g_MeshDataList[index]->m_IndexInRendererList = index;
-	g_MeshDataList.erase(g_MeshDataList.end() - 1);
+	MeshDataList[index] = MeshDataList[MeshDataList.size() - 1];
+	MeshDataList[index]->m_IndexInRendererList = index;
+	MeshDataList.erase(MeshDataList.end() - 1);
 }
