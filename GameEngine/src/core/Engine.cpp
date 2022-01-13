@@ -10,9 +10,7 @@
 
 #include "../renderer/Renderer.h"
 
-#ifdef DEV_MODE
 #include "../gui/EngineGUI.h"
-#endif // DEV_MODE
 
 // debug:
 #include "../game/Player.h"
@@ -23,11 +21,7 @@
 int Engine::Run()
 {
 	Window::InitWindow(2200, 1300);
-
-#ifdef DEV_MODE
 	EngineGUI::Init();
-#endif // DEV_MODE
-
 	Renderer::Init();
 
 	// TODO: create menu for engine to create/load project
@@ -83,21 +77,15 @@ int Engine::Run()
 		Input::Update();
 		World::Update(deltaTime);
 
-#ifdef DEV_MODE
 		EngineGUI::Draw();
-#else
-		Renderer::Draw();
-#endif // DEV_MODE
+		//Renderer::Draw(); // not needed here in engine mode
 
 		Window::SwapBuffers();
 		Window::PollEvents();
 	}
 
 	Window::CleanUp();
-
-#ifdef DEV_MODE
 	EngineGUI::CleanUp();
-#endif // DEV_MODE
 
 	return 0;
 }

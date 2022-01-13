@@ -24,9 +24,6 @@ void SceneHierarchy::destroy()
 
 void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_ptr<GameObject>>& children)
 {
-	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-	ImGuiTreeNodeFlags leafFlags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
 	for (const auto& [name, object] : children)
 	{
 		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -52,6 +49,10 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 			nodeFlags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
 			bool expanded = ImGui::TreeNodeEx(name.c_str(), nodeFlags);
+			if (ImGui::IsItemClicked())
+			{
+				Selected = object;
+			}
 			if (expanded)
 			{
 				addChildrenToTree(object->Children);
