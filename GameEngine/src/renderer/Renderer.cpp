@@ -72,8 +72,8 @@ void Renderer::Draw()
 
 			// matrices
 			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ModelMatLocation, *renderData->m_Transform);
-			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ViewMatLocation, CurrentCamera->m_ViewMatrix);
-			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ProjectionMatLocation, CurrentCamera->m_ProjectionMatrix);
+			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ViewMatLocation, CurrentCamera->ViewMatrix);
+			renderData->m_Shader->SetMat4(renderData->m_Shader->m_ProjectionMatLocation, CurrentCamera->ProjectionMatrix);
 
 			glBindVertexArray(meshData->m_VAO);
 			glDrawElements(GL_TRIANGLES, meshData->m_NumElements, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices

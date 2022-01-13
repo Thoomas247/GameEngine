@@ -11,7 +11,7 @@
 class RenderData
 {
 public:
-	glm::mat4* m_Transform = nullptr;	// pointer to GameObject::m_GlobalTransform in Mesh
+	glm::mat4* m_Transform = nullptr;	// pointer to GameObject::GlobalTransform in Mesh
 	std::shared_ptr<Material> m_Material;
 	std::shared_ptr<Shader> m_Shader;
 	std::shared_ptr<Skeleton> m_Skeleton;

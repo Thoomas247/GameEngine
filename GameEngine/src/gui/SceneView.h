@@ -2,7 +2,7 @@
 
 #include "Panel.h"
 
-// TODO: Add camera and accept input
+// TODO: Add scene camera
 
 class SceneView : public Panel
 {
@@ -12,9 +12,7 @@ private:
 
 public:
 	SceneView();
-
 	void Update() override;
-	
 
 private:
 	void destroy() override;

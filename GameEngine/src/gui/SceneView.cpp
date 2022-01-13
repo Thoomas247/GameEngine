@@ -56,9 +56,13 @@ void SceneView::Update()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
 
-	drawTexture();
 	ImGui::Begin("Scene View", (bool*)0, flags);
-	ImGui::Image((void*)m_Texture, ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));	// image is inverted
+	ImVec2 size = ImGui::GetContentRegionAvail();
+	//////// temp fix: set current camera aspect ratio ////////
+	Renderer::CurrentCamera->AspectRatio = size.x / size.y;
+	///////////////////////////////////////////////////////////
+	drawTexture();
+	ImGui::Image((void*)m_Texture, size, ImVec2(0, 1), ImVec2(1, 0));	// image needs to be inverted
 	ImGui::End();
 }
 
