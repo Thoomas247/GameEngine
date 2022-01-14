@@ -160,4 +160,5 @@ void Shader::setUniformLocations()
 	m_MetallicRoughnessTextureLocation = glGetUniformLocation(this->m_GLID, "metallic_roughness_texture");
 	m_NormalTextureLocation = glGetUniformLocation(this->m_GLID, "normal_texture");
 	m_OcclusionTextureLocation = glGetUniformLocation(this->m_GLID, "occlusion_texture");
+	m_IsSelectedLocation = glGetUniformLocation(this->m_GLID, "is_selected");	// temp
 }

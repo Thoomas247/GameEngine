@@ -2,17 +2,14 @@
 
 #include <vector>
 
-#include "MeshData.h"
+#include "Mesh.h"
 #include "Camera.h"
 
 namespace Renderer
 {
-	extern std::vector<MeshData*> MeshDataList;
+	extern std::vector<Mesh*> DrawList;
 	extern Camera* CurrentCamera;
 
 	void Init();
 	void Draw();
-
-	int AddMeshdata(MeshData* meshData);
-	void RemoveMeshData(const int& index);
 }

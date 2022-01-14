@@ -12,6 +12,8 @@ void SceneHierarchy::Update()
 	ImGui::Begin("Scene Hierarchy", (bool*)0, windowFlags);
 
 	addChildrenToTree(World::GameObjects);
+	if (Selected)	// temp
+		Selected->m_isSelected = true;
 
 	ImGui::End();
 }
@@ -33,7 +35,7 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
 
-		if (object->Children.size() == 0)
+		if (object->m_Children.size() == 0)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
@@ -55,7 +57,7 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 			}
 			if (expanded)
 			{
-				addChildrenToTree(object->Children);
+				addChildrenToTree(object->m_Children);
 				ImGui::TreePop();
 			}
 		}

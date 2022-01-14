@@ -14,6 +14,8 @@ uniform sampler2D metallic_roughness_texture;
 uniform sampler2D normal_texture;
 uniform sampler2D occlusion_texture;
 
+uniform int is_selected;    // 1 or 0
+
 void main()
 {
     vec3 ambientStrength = vec3(0.4);
@@ -23,7 +25,7 @@ void main()
 
     float directionalLight = max(dot(norm, direction), 0.0);
 
-    FragColor = texture(albedo_texture, TexCoord) * (vec4(ambientStrength, 1.0) + directionalLight);
+    FragColor = texture(albedo_texture, TexCoord) * (vec4(ambientStrength, 1.0) + directionalLight) + (vec4(0.3, 0.0, 0.0, 0.0) * is_selected);
 
     //FragColor = Color;
 }

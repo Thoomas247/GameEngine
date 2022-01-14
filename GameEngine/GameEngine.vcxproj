@@ -119,12 +119,10 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer\Camera.cpp" />
     <ClCompile Include="src\renderer\Mesh.cpp" />
-    <ClCompile Include="src\renderer\MeshData.cpp" />
     <ClCompile Include="src\renderer\Shader.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
     <ClCompile Include="src\renderer\Skeleton.cpp" />
     <ClCompile Include="src\core\World.cpp" />
-    <ClCompile Include="src\renderer\RenderData.cpp" />
     <ClCompile Include="src\gui\SceneView.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -150,9 +148,8 @@
     <ClInclude Include="src\structs\Joint.h" />
     <ClInclude Include="src\structs\Material.h" />
     <ClInclude Include="src\renderer\Mesh.h" />
-    <ClInclude Include="src\renderer\RenderData.h" />
     <ClInclude Include="src\renderer\Shader.h" />
-    <ClInclude Include="src\renderer\MeshData.h" />
+    <ClInclude Include="src\structs\BufferData.h" />
     <ClInclude Include="src\structs\Vertex.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
     <ClInclude Include="src\core\World.h" />

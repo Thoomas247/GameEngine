@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "../core/Window.h"
+#include "../core/GameObject.h"
 #include "Panel.h"
 
 namespace EngineGUI

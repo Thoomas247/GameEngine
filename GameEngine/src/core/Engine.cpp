@@ -20,7 +20,7 @@
 
 int Engine::Run()
 {
-	Window::InitWindow(2200, 1300);
+	Window::InitWindow(3200, 1800);
 	EngineGUI::Init();
 	Renderer::Init();
 
@@ -41,7 +41,7 @@ int Engine::Run()
 	World::AddGameObject("Tree", tree);
 
 	std::shared_ptr<GameObject> tree2 = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
-	tree2->LocalPosition = glm::vec3(30.0f, 0.0f, 0.0f);
+	tree2->m_LocalPosition = glm::vec3(30.0f, 0.0f, 0.0f);
 	World::AddGameObject("Tree2", tree2);
 
 	std::shared_ptr<GameObject> bird = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Bird.GEM");

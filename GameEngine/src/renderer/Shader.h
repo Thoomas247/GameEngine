@@ -22,6 +22,7 @@ public:
 	int m_MetallicRoughnessTextureLocation = -1;
 	int m_NormalTextureLocation = -1;
 	int m_OcclusionTextureLocation = -1;
+	int m_IsSelectedLocation = -1;	// temp
 
 public:
 	Shader();

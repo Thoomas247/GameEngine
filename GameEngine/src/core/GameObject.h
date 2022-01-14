@@ -11,13 +11,15 @@
 class GameObject
 {
 public:
-	glm::vec3 LocalPosition = glm::vec3(0.0f);
-	glm::quat LocalRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-	glm::vec3 LocalScale = glm::vec3(1.0f);
+	glm::vec3 m_LocalPosition = glm::vec3(0.0f);
+	glm::quat m_LocalRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	glm::vec3 m_LocalScale = glm::vec3(1.0f);
 
-	glm::mat4 GlobalTransform = glm::mat4(1.0f);
+	glm::mat4 m_GlobalTransform = glm::mat4(1.0f);
 
-	std::map<std::string, std::shared_ptr<GameObject>> Children;
+	std::map<std::string, std::shared_ptr<GameObject>> m_Children;
+
+	bool m_isSelected = false;	// temp
 
 protected:
 	glm::vec3 m_LastLocalPosition = glm::vec3(0.0f);
