@@ -3,17 +3,21 @@
 #include "imgui/imgui.h"
 
 #include "../core/World.h"
+#include "../core/Log.h"
 
 // PUBLIC
 void SceneHierarchy::Update()
 {
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
-
 	ImGui::Begin("Scene Hierarchy", (bool*)0, windowFlags);
 
 	addChildrenToTree(World::GameObjects);
-	if (Selected)	// temp
-		Selected->m_isSelected = true;
+
+	if (Selected)
+	{
+		Selected->m_IsSelected = true;
+		setChildrenAsSelected(Selected->m_Children);
+	}
 
 	ImGui::End();
 }
@@ -61,5 +65,14 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 				ImGui::TreePop();
 			}
 		}
+	}
+}
+
+void SceneHierarchy::setChildrenAsSelected(const std::map<std::string, std::shared_ptr<GameObject>>& children)
+{
+	for (auto& [name, child] : children)
+	{
+		child->m_IsSelected = true;
+		setChildrenAsSelected(child->m_Children);
 	}
 }

@@ -13,6 +13,7 @@ namespace ProjectManager
 	//void LoadProject();
 	//void SaveProject();
 
+	const std::string GetProjectDir();
 	const std::string GetModelsPath();
 	const std::string GetTexturesPath();
 	const std::string GetShadersPath();

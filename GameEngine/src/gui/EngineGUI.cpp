@@ -9,6 +9,7 @@
 #include "SceneView.h"
 #include "Console.h"
 #include "SceneHierarchy.h"
+#include "FileBrowser.h"
 
 std::vector<std::unique_ptr<Panel>> EngineGUI::Panels;	// change back to map to support multiple panels of the same type
 
@@ -40,6 +41,7 @@ void EngineGUI::Init()
 	Panels.push_back(std::make_unique<SceneView>());
 	Panels.push_back(std::make_unique<Console>());
 	Panels.push_back(std::make_unique<SceneHierarchy>());
+	Panels.push_back(std::make_unique<FileBrowser>());
 
 	//////////////////////////////////////////
 
@@ -78,7 +80,7 @@ void EngineGUI::Draw()
 	{
 		panel->Update();
 	}
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

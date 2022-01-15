@@ -68,15 +68,8 @@ void Renderer::Draw()
 		*/
 
 		// is selected?				// temp
-		if (mesh->m_isSelected)
-		{
-			mesh->m_Shader->SetInt(mesh->m_Shader->m_IsSelectedLocation, 1);
-		}
-		else
-		{
-			mesh->m_Shader->SetInt(mesh->m_Shader->m_IsSelectedLocation, 0);
-		}
-		mesh->m_isSelected = false;
+		mesh->m_Shader->SetInt(mesh->m_Shader->m_IsSelectedLocation, mesh->m_IsSelected);
+		mesh->m_IsSelected = false;	// reset for next frame
 
 		// matrices
 		mesh->m_Shader->SetMat4(mesh->m_Shader->m_ModelMatLocation, mesh->m_GlobalTransform);

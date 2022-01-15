@@ -21,8 +21,6 @@
 int Engine::Run()
 {
 	Window::InitWindow(3200, 1800);
-	EngineGUI::Init();
-	Renderer::Init();
 
 	// TODO: create menu for engine to create/load project
 	ProjectManager::CreateProject("TestGame", "C:/Users/TM1/source/repos/GameEngine/GameEngine/TestGame/");
@@ -33,7 +31,11 @@ int Engine::Run()
 		return -1;
 	}
 
+	EngineGUI::Init();
+	Renderer::Init();
+
 	///////////////////////////////////////////////////////////
+	
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 
@@ -51,6 +53,7 @@ int Engine::Run()
 	auto camera = std::make_shared<Camera>();
 	player->AddChild("Camera", camera);
 	World::AddGameObject("Player", player);
+
 	///////////////////////////////////////////////////////////
 
 	float deltaTime = 0.0f;

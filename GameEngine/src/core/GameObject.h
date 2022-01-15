@@ -19,7 +19,7 @@ public:
 
 	std::map<std::string, std::shared_ptr<GameObject>> m_Children;
 
-	bool m_isSelected = false;	// temp
+	bool m_IsSelected = false;	// temp
 
 protected:
 	glm::vec3 m_LastLocalPosition = glm::vec3(0.0f);

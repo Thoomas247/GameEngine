@@ -23,21 +23,6 @@ Console::Console()
 	m_ScrollToBottom = false;
 }
 
-// PRIVATE
-void Console::destroy()
-{
-	clearLog();
-	for (int i = 0; i < m_History.Size; i++)
-		free(m_History[i]);
-}
-
-void Console::clearLog()
-{
-	for (int i = 0; i < Log::Items.Size; i++)
-		free(Log::Items[i]);
-	Log::Items.clear();
-}
-
 void Console::Update()
 {
 	ImGui::Begin("Console");
@@ -76,7 +61,6 @@ void Console::Update()
 	{
 		const char* item = Log::Items[i];
 
-
 		//if (!m_Filter.PassFilter(item))
 		//	continue;
 
@@ -87,7 +71,7 @@ void Console::Update()
 			color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f);	// red
 			has_color = true;
 		}
-		else if (strstr(item, "[warning]")) 
+		else if (strstr(item, "[warning]"))
 		{
 			color = ImVec4(0.9f, 1.0f, 0.4f, 1.0f);	// yellow
 			has_color = true;
@@ -122,4 +106,19 @@ void Console::Update()
 	ImGui::Separator();
 
 	ImGui::End();
+}
+
+// PRIVATE
+void Console::destroy()
+{
+	clearLog();
+	for (int i = 0; i < m_History.Size; i++)
+		free(m_History[i]);
+}
+
+void Console::clearLog()
+{
+	for (int i = 0; i < Log::Items.Size; i++)
+		free(Log::Items[i]);
+	Log::Items.clear();
 }

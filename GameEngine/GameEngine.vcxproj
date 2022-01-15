@@ -94,6 +94,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\gui\FileBrowser.cpp" />
     <ClCompile Include="src\gui\SceneHierarchy.cpp" />
     <ClCompile Include="src\gui\Console.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_glfw.cpp" />
@@ -126,6 +127,7 @@
     <ClCompile Include="src\gui\SceneView.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\gui\FileBrowser.h" />
     <ClInclude Include="src\gui\SceneHierarchy.h" />
     <ClInclude Include="src\gui\Console.h" />
     <ClInclude Include="src\core\Log.h" />

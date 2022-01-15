@@ -18,6 +18,10 @@ uniform int is_selected;    // 1 or 0
 
 void main()
 {
+    FragColor = texture(albedo_texture, TexCoord);
+    if (FragColor.a < 0.5)
+        discard;
+
     vec3 ambientStrength = vec3(0.4);
 
     vec3 direction = vec3(0.0, 1.0, 1.0);
@@ -25,7 +29,7 @@ void main()
 
     float directionalLight = max(dot(norm, direction), 0.0);
 
-    FragColor = texture(albedo_texture, TexCoord) * (vec4(ambientStrength, 1.0) + directionalLight) + (vec4(0.3, 0.0, 0.0, 0.0) * is_selected);
+    FragColor = FragColor * (vec4(ambientStrength, 1.0) + directionalLight) + (vec4(0.3, 0.0, 0.0, 0.0) * is_selected);
 
     //FragColor = Color;
 }

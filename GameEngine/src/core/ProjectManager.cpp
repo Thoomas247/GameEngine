@@ -7,6 +7,11 @@ void ProjectManager::CreateProject(const std::string& name, const std::string& d
 	CurrentProject = std::make_unique<Project>(name, directory);
 }
 
+const std::string ProjectManager::GetProjectDir()
+{
+	return CurrentProject->ProjectDir;
+}
+
 const std::string ProjectManager::GetModelsPath()
 {
 	return CurrentProject->ProjectDir + CurrentProject->DefaultModelsPath;
