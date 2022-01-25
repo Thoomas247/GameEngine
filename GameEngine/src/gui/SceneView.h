@@ -19,7 +19,7 @@ class SceneView : public Panel
 private:
 	bool m_IsFocused = false;
 	unsigned int m_FrameBuffer;
-	unsigned int m_Texture;
+	unsigned int m_RenderTextureID;
 	SceneCamera m_SceneCamera;
 
 public:

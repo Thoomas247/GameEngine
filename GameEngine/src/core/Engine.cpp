@@ -38,6 +38,8 @@ int Engine::Run()
 	EngineGUI::Init();
 	Renderer::Init();
 
+
+	// TODO: make all the operations below possible to do in the GUI
 	///////////////////////////////////////////////////////////
 	
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");

@@ -59,14 +59,14 @@ SceneView::SceneView()
 	glCreateFramebuffers(1, &m_FrameBuffer);
 
 	// color texture
-	glCreateTextures(GL_TEXTURE_2D, 1, &m_Texture);
-	glTextureParameteri(m_Texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTextureParameteri(m_Texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTextureParameteri(m_Texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_Texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTextureStorage2D(m_Texture, 1, GL_RGB8, VIEWPORT_RENDER_RESOLUTION_WIDTH, VIEWPORT_RENDER_RESOLUTION_HEIGHT);
+	glCreateTextures(GL_TEXTURE_2D, 1, &m_RenderTextureID);
+	glTextureParameteri(m_RenderTextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteri(m_RenderTextureID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTextureParameteri(m_RenderTextureID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_RenderTextureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTextureStorage2D(m_RenderTextureID, 1, GL_RGB8, VIEWPORT_RENDER_RESOLUTION_WIDTH, VIEWPORT_RENDER_RESOLUTION_HEIGHT);
 
-	glNamedFramebufferTexture(m_FrameBuffer, GL_COLOR_ATTACHMENT0, m_Texture, 0);
+	glNamedFramebufferTexture(m_FrameBuffer, GL_COLOR_ATTACHMENT0, m_RenderTextureID, 0);
 
 	// depth buffer
 	unsigned int depthBuffer;
@@ -122,7 +122,7 @@ void SceneView::Update(const float& deltaTime)
 	Renderer::CurrentCamera = &m_SceneCamera;
 
 	drawTexture();
-	ImGui::Image((void*)m_Texture, size, ImVec2(0, 1), ImVec2(1, 0));	// image needs to be inverted
+	ImGui::Image((void*)m_RenderTextureID, size, ImVec2(0, 1), ImVec2(1, 0));	// image needs to be inverted
 
 	ImGui::End();
 }
