@@ -8,17 +8,18 @@ in vec3 Normal;
 in vec2 TexCoord;
 in vec4 Color;
 
-uniform sampler2D albedo_texture;
-uniform sampler2D emissive_texture;
-uniform sampler2D metallic_roughness_texture;
-uniform sampler2D normal_texture;
-uniform sampler2D occlusion_texture;
+uniform sampler2D albedo_tex;
+uniform sampler2D emissive_tex;
+uniform sampler2D metallic_roughness_tex;
+uniform sampler2D normal_tex;
+uniform sampler2D occlusion_tex;
 
 uniform int is_selected;    // 1 or 0
 
 void main()
 {
-    FragColor = texture(albedo_texture, TexCoord);
+    FragColor = texture(albedo_tex, TexCoord);
+
     if (FragColor.a < 0.5)
         discard;
 
@@ -30,6 +31,4 @@ void main()
     float directionalLight = max(dot(norm, direction), 0.0);
 
     FragColor = FragColor * (vec4(ambientStrength, 1.0) + directionalLight) + (vec4(0.3, 0.0, 0.0, 0.0) * is_selected);
-
-    //FragColor = Color;
 }

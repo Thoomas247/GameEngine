@@ -11,9 +11,9 @@ Mesh::Mesh()
 {
 }
 
-Mesh::Mesh(std::shared_ptr<BufferData> bufferData, std::shared_ptr<Skeleton> skeleton, std::shared_ptr<Material> material, std::shared_ptr<Shader> shader, glm::mat4 transform)
+Mesh::Mesh(std::shared_ptr<VertexArray> vertexArray, std::shared_ptr<Skeleton> skeleton, std::shared_ptr<Material> material, std::shared_ptr<Shader> shader, glm::mat4 transform)
 {
-	m_BufferData = bufferData;
+	m_VertexArray = vertexArray;
 	m_Skeleton = skeleton;
 	m_Material = material;
 	m_Shader = shader;

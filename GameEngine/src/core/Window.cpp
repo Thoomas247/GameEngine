@@ -16,6 +16,7 @@ void Window::InitWindow(const int& width, const int& height)
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// glfw: window creation
@@ -30,6 +31,7 @@ void Window::InitWindow(const int& width, const int& height)
 
 	glfwSetFramebufferSizeCallback(WindowPtr, frameBufferSizeCallback);
 	glfwSetInputMode(WindowPtr, GLFW_CURSOR, /*GLFW_CURSOR_DISABLED*/ GLFW_CURSOR_NORMAL);
+	glfwSwapInterval(1);	// vsync
 
 	// glad: load all OpenGL function pointers
 	int version = gladLoadGL(glfwGetProcAddress);

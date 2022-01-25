@@ -5,41 +5,39 @@
 
 #include "glm/glm.hpp"
 
+enum UniformType
+{
+	NONE, 
+	MODEL_MAT, VIEW_MAT, PROJECTION_MAT,
+	ALBEDO_TEX, EMISSIVE_TEX, METALLIC_ROUGHNESS_TEX, NORMAL_TEX, OCCLUSION_TEX,
+	ALBEDO_FAC, EMISSIVE_FAC, METALLIC_FAC, ROUGHNESS_FAC,
+	IS_SELECTED
+};
+
 class Shader
 {
 public:
-	std::map <std::string, int> m_UniformLocationCache;
-	unsigned int m_GLID = 0;	// opengl ID of shader after compilation
-	std::string m_VertexPath;
-	std::string m_FragmentPath;
-
-	// store all uniform locations upon shader creation
-	int m_ModelMatLocation = -1;
-	int m_ViewMatLocation = -1;
-	int m_ProjectionMatLocation = -1;
-	int m_AlbedoTextureLocation = -1;
-	int m_EmissiveTextureLocation = -1;
-	int m_MetallicRoughnessTextureLocation = -1;
-	int m_NormalTextureLocation = -1;
-	int m_OcclusionTextureLocation = -1;
-	int m_IsSelectedLocation = -1;	// temp
-
-public:
-	Shader();
-	Shader(const std::string& vertexPath, const std::string& fragmentPath);
-
-	void SetBool(const int& uniformID, const bool& value);
-	void SetInt(const int& uniformID, const int& value);
-	void SetFloat(const int& uniformID, const float& value);
-	void SetVec2(const int& uniformID, const glm::vec2& value);
-	void SetVec3(const int& uniformID, const glm::vec3& value);
-	void SetVec4(const int& uniformID, const glm::vec4& value);
-	void SetMat2(const int& uniformID, const glm::mat2& mat);
-	void SetMat3(const int& uniformID, const glm::mat3& mat);
-	void SetMat4(const int& uniformID, const glm::mat4& mat);
+	unsigned int ID = 0;
 
 private:
-	void loadShader(const std::string& vertexPath, const std::string& fragmentPath);
+	std::map<UniformType, int> m_UniformLocations;
+
+public:
+	Shader(const std::string& vertexPath, const std::string& fragmentPath);
+	~Shader();
+
+	void Activate();
+
+	void SetBool(UniformType uniform, const bool& value);
+	void SetInt(UniformType uniform, const int& value);
+	void SetFloat(UniformType uniform, const float& value);
+	void SetVec2(UniformType uniform, const glm::vec2& value);
+	void SetVec3(UniformType uniform, const glm::vec3& value);
+	void SetVec4(UniformType uniform, const glm::vec4& value);
+	void SetMat2(UniformType uniform, const glm::mat2& mat);
+	void SetMat3(UniformType uniform, const glm::mat3& mat);
+	void SetMat4(UniformType uniform, const glm::mat4& mat);
+
+private:
 	void setUniformLocations();
-	void checkCompileErrors(const unsigned int& shader, const std::string& type);
 };

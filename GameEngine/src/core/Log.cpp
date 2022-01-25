@@ -6,7 +6,6 @@ char* Strdup(const char* s) { IM_ASSERT(s); size_t len = strlen(s) + 1; void* bu
 
 void addLog(const char* fmt, ...) IM_FMTARGS(2)
 {
-	// FIXME-OPT
 	char buf[1024];
 	va_list args;
 	va_start(args, fmt);

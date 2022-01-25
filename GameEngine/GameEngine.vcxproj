@@ -125,6 +125,7 @@
     <ClCompile Include="src\renderer\Skeleton.cpp" />
     <ClCompile Include="src\core\World.cpp" />
     <ClCompile Include="src\gui\SceneView.cpp" />
+    <ClCompile Include="src\renderer\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\gui\FileBrowser.h" />
@@ -151,13 +152,15 @@
     <ClInclude Include="src\structs\Material.h" />
     <ClInclude Include="src\renderer\Mesh.h" />
     <ClInclude Include="src\renderer\Shader.h" />
-    <ClInclude Include="src\structs\BufferData.h" />
     <ClInclude Include="src\structs\Vertex.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
     <ClInclude Include="src\core\World.h" />
     <ClInclude Include="src\gui\SceneView.h" />
+    <ClInclude Include="src\renderer\VertexArray.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\Skybox.frag" />
+    <None Include="assets\shaders\Skybox.vert" />
     <None Include="test game\assets\shaders\Base.frag" />
     <None Include="test game\assets\shaders\Base.vert" />
   </ItemGroup>

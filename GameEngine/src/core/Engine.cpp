@@ -38,6 +38,7 @@ int Engine::Run()
 	
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
+	//Importer::ImportGLTF("Window", "F:/Users/TM1/Downloads/window/scene.gltf");
 
 	std::shared_ptr<GameObject> tree = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
 	World::AddGameObject("Tree", tree);
@@ -60,7 +61,6 @@ int Engine::Run()
 	float lastFrame = 0.0f;
 	float currentFrame = 0.0f;
 
-	// TODO: Separate engine loop from game loop (use Game namespace)
 	World::SetUp();
 
 	// main engine loop
@@ -70,7 +70,7 @@ int Engine::Run()
 		if (Input::ActionEscape)
 		{
 			Window::CloseWindow();
-			continue;	// window might not close right away
+			continue;
 		}
 
 		currentFrame = float(glfwGetTime());
@@ -80,8 +80,8 @@ int Engine::Run()
 		Input::Update();
 		World::Update(deltaTime);
 
-		EngineGUI::Draw();
-		//Renderer::Draw(); // not needed here in engine mode
+		EngineGUI::Update();
+		//Renderer::Draw(); // not needed here in "engine" mode
 
 		Window::SwapBuffers();
 		Window::PollEvents();

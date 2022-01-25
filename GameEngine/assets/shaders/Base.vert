@@ -8,9 +8,9 @@ layout (location = 4) in ivec4 aJoints;
 layout (location = 5) in vec4 aWeights;
 
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 model_mat;
+uniform mat4 view_mat;
+uniform mat4 projection_mat;
 
 out vec3 FragPos;
 out vec3 Normal;
@@ -19,10 +19,10 @@ out vec4 Color;
 
 void main()
 {
-    FragPos = vec3(model * vec4(aPos, 1.0));
-    Normal = mat3(transpose(inverse(model))) * aNormal;
+    FragPos = vec3(model_mat * vec4(aPos, 1.0));
+    Normal = mat3(transpose(inverse(model_mat))) * aNormal;
     TexCoord = aTexCoord;
     Color = aColor;
     
-    gl_Position = projection * view * vec4(FragPos, 1.0);
+    gl_Position = projection_mat * view_mat * vec4(FragPos, 1.0);
 }

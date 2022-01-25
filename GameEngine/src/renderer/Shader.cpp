@@ -8,129 +8,8 @@
 #include "../core/ProjectManager.h"
 #include "../core/Log.h"
 
-// PUBLIC
-Shader::Shader()
-{
-	loadShader("assets/shaders/Base.vert", "assets/shaders/Base.frag");
-	setUniformLocations();
-}
 
-Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
-{
-	loadShader(vertexPath, fragmentPath);
-	setUniformLocations();
-}
-
-void Shader::SetBool(const int& uniformID, const bool& value)
-{
-	glUniform1i(uniformID, (int)value);
-}
-
-void Shader::SetInt(const int& uniformID, const int& value)
-{
-	glUniform1i(uniformID, value);
-}
-
-void Shader::SetFloat(const int& uniformID, const float& value)
-{
-	glUniform1f(uniformID, value);
-}
-
-void Shader::SetVec2(const int& uniformID, const glm::vec2& value)
-{
-	glUniform2fv(uniformID, 1, &value[0]);
-}
-
-void Shader::SetVec3(const int& uniformID, const glm::vec3& value)
-{
-	glUniform3fv(uniformID, 1, &value[0]);
-}
-
-void Shader::SetVec4(const int& uniformID, const glm::vec4& value)
-{
-	glUniform4fv(uniformID, 1, &value[0]);
-}
-
-void Shader::SetMat2(const int& uniformID, const glm::mat2& mat)
-{
-	glUniformMatrix2fv(uniformID, 1, GL_FALSE, &mat[0][0]);
-}
-
-void Shader::SetMat3(const int& uniformID, const glm::mat3& mat)
-{
-	glUniformMatrix3fv(uniformID, 1, GL_FALSE, &mat[0][0]);
-}
-
-void Shader::SetMat4(const int& uniformID, const glm::mat4& mat)
-{
-	glUniformMatrix4fv(uniformID, 1, GL_FALSE, &mat[0][0]);
-}
-
-// PRIVATE
-void Shader::loadShader(const std::string& vertexPath, const std::string& fragmentPath)
-{
-	m_VertexPath = vertexPath;
-	m_FragmentPath = fragmentPath;
-
-	// 1. retrieve the vertex/fragment source code from filePath
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-
-	// ensure ifstream objects can throw exceptions:
-	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try {
-		// open files
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
-		std::stringstream vShaderStream, fShaderStream;
-		// read file's buffer contents into streams
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
-		// close file handlers
-		vShaderFile.close();
-		fShaderFile.close();
-		// convert stream into string
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
-	}
-	catch (std::ifstream::failure& e) {
-		LOG_ERROR("SHADER::FILE_NOT_SUCCESFULLY_READ")
-	}
-
-	const char* vShaderCode = vertexCode.c_str();
-	const char* fShaderCode = fragmentCode.c_str();
-
-	// 2. compile shaders
-	unsigned int vertex, fragment;
-
-	// vertex shader
-	vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex, 1, &vShaderCode, NULL);
-	glCompileShader(vertex);
-	checkCompileErrors(vertex, "VERTEX");
-
-	// fragment Shader
-	fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment, 1, &fShaderCode, NULL);
-	glCompileShader(fragment);
-	checkCompileErrors(fragment, "FRAGMENT");
-
-	// shader Program
-	m_GLID = glCreateProgram();
-	glAttachShader(m_GLID, vertex);
-	glAttachShader(m_GLID, fragment);
-	glLinkProgram(m_GLID);
-	checkCompileErrors(m_GLID, "PROGRAM");
-
-	// delete the shaders as they're linked into our program now and no longer necessary
-	glDeleteShader(vertex);
-	glDeleteShader(fragment);
-}
-
-void Shader::checkCompileErrors(const unsigned int& shader, const std::string& type)
+void checkCompileErrors(const unsigned int& shader, const std::string& type)
 {
 	int success;
 	char infoLog[1024];
@@ -150,15 +29,139 @@ void Shader::checkCompileErrors(const unsigned int& shader, const std::string& t
 	}
 }
 
+std::string loadFileContents(const std::string& path)
+{
+	std::string fileContents;
+	std::ifstream fileStream;
+
+	fileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try {
+		fileStream.open(path);
+
+		std::stringstream stringStream;
+		stringStream << fileStream.rdbuf();
+
+		fileStream.close();
+		
+		fileContents = stringStream.str();
+	}
+	catch (std::ifstream::failure& e) {
+		LOG_ERROR("SHADER::FILE_NOT_SUCCESFULLY_READ")
+	}
+
+	return fileContents;
+}
+
+// PUBLIC
+Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
+{
+	std::string vertexString = loadFileContents(vertexPath).c_str();
+	std::string fragmentString = loadFileContents(fragmentPath).c_str();
+
+	const char* vertexCode = vertexString.c_str();
+	const char* fragmentCode = fragmentString.c_str();
+
+	// 2. compile shaders
+	unsigned int vertex, fragment;
+
+	// vertex shader
+	vertex = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertex, 1, &vertexCode, NULL);
+	glCompileShader(vertex);
+	checkCompileErrors(vertex, "VERTEX");
+
+	// fragment Shader
+	fragment = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragment, 1, &fragmentCode, NULL);
+	glCompileShader(fragment);
+	checkCompileErrors(fragment, "FRAGMENT");
+
+	// shader Program
+	ID = glCreateProgram();
+	glAttachShader(ID, vertex);
+	glAttachShader(ID, fragment);
+	glLinkProgram(ID);
+	checkCompileErrors(ID, "PROGRAM");
+
+	// delete the shaders as they're linked into our program now and no longer necessary
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
+
+	setUniformLocations();
+}
+
+Shader::~Shader()
+{
+	glDeleteProgram(ID);
+}
+
+void Shader::Activate()
+{
+	glUseProgram(ID);
+}
+
+void Shader::SetBool(UniformType uniform, const bool& value)
+{
+	glUniform1i(m_UniformLocations[uniform], (int)value);
+}
+
+void Shader::SetInt(UniformType uniform, const int& value)
+{
+	glUniform1i(m_UniformLocations[uniform], value);
+}
+
+void Shader::SetFloat(UniformType uniform, const float& value)
+{
+	glUniform1f(m_UniformLocations[uniform], value);
+}
+
+void Shader::SetVec2(UniformType uniform, const glm::vec2& value)
+{
+	glUniform2fv(m_UniformLocations[uniform], 1, &value[0]);
+}
+
+void Shader::SetVec3(UniformType uniform, const glm::vec3& value)
+{
+	glUniform3fv(m_UniformLocations[uniform], 1, &value[0]);
+}
+
+void Shader::SetVec4(UniformType uniform, const glm::vec4& value)
+{
+	glUniform4fv(m_UniformLocations[uniform], 1, &value[0]);
+}
+
+void Shader::SetMat2(UniformType uniform, const glm::mat2& mat)
+{
+	glUniformMatrix2fv(m_UniformLocations[uniform], 1, GL_FALSE, &mat[0][0]);
+}
+
+void Shader::SetMat3(UniformType uniform, const glm::mat3& mat)
+{
+	glUniformMatrix3fv(m_UniformLocations[uniform], 1, GL_FALSE, &mat[0][0]);
+}
+
+void Shader::SetMat4(UniformType uniform, const glm::mat4& mat)
+{
+	glUniformMatrix4fv(m_UniformLocations[uniform], 1, GL_FALSE, &mat[0][0]);
+}
+
+// PRIVATE
 void Shader::setUniformLocations()
 {
-	m_ModelMatLocation = glGetUniformLocation(this->m_GLID, "model");
-	m_ViewMatLocation = glGetUniformLocation(this->m_GLID, "view");
-	m_ProjectionMatLocation = glGetUniformLocation(this->m_GLID, "projection");
-	m_AlbedoTextureLocation = glGetUniformLocation(this->m_GLID, "albedo_texture");
-	m_EmissiveTextureLocation = glGetUniformLocation(this->m_GLID, "emissive_texture");
-	m_MetallicRoughnessTextureLocation = glGetUniformLocation(this->m_GLID, "metallic_roughness_texture");
-	m_NormalTextureLocation = glGetUniformLocation(this->m_GLID, "normal_texture");
-	m_OcclusionTextureLocation = glGetUniformLocation(this->m_GLID, "occlusion_texture");
-	m_IsSelectedLocation = glGetUniformLocation(this->m_GLID, "is_selected");	// temp
+	m_UniformLocations[MODEL_MAT] = glGetUniformLocation(ID, "model_mat");
+	m_UniformLocations[VIEW_MAT] = glGetUniformLocation(ID, "view_mat");
+	m_UniformLocations[PROJECTION_MAT] = glGetUniformLocation(ID, "projection_mat");
+
+	m_UniformLocations[ALBEDO_TEX] = glGetUniformLocation(ID, "albedo_tex");
+	m_UniformLocations[EMISSIVE_TEX] = glGetUniformLocation(ID, "emissive_tex");
+	m_UniformLocations[METALLIC_ROUGHNESS_TEX] = glGetUniformLocation(ID, "metallic_roughness_tex");
+	m_UniformLocations[NORMAL_TEX] = glGetUniformLocation(ID, "normal_tex");
+	m_UniformLocations[OCCLUSION_TEX] = glGetUniformLocation(ID, "occlusion_tex");
+
+	m_UniformLocations[ALBEDO_FAC] = glGetUniformLocation(ID, "albedo_fac");
+	m_UniformLocations[EMISSIVE_FAC] = glGetUniformLocation(ID, "emissive_fac");
+	m_UniformLocations[METALLIC_FAC] = glGetUniformLocation(ID, "metallic_fac");
+	m_UniformLocations[ROUGHNESS_FAC] = glGetUniformLocation(ID, "roughness_fac");
+
+	m_UniformLocations[IS_SELECTED] = glGetUniformLocation(ID, "is_selected");
 }

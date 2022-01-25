@@ -4,16 +4,29 @@
 
 struct Material
 {
-	glm::vec4 BaseColorFactor = glm::vec4(1.0f);
-	int BaseColorTexture = -1;
+	glm::vec4 BaseColorFactor;
+	glm::vec3 EmissiveFactor;
+	float MetallicFactor;
+	float RoughnessFactor;
 
-	float MetallicFactor = 0.0f;
-	float RoughnessFactor = 0.0f;
-	int MetallicRoughnessTexture = -1;	// metalness in blue channel, roughness in green channel
+	int BaseColorTexture;
+	int EmissiveTexture;
+	int MetallicRoughnessTexture;	// metalness in blue channel, roughness in green channel
+	int NormalTexture;
+	int OcclusionTexture;
 
-	glm::vec3 EmissiveFactor = glm::vec3(1.0f);
-	int EmissiveTexture = -1;
+	Material(const glm::vec4& baseF, const glm::vec3& emissiveF, const float& metallicF, const float& roughnessF, const int& baseT, 
+		const int& emissiveT, const int& metallicRoughnessT, const int& normalT, const int& occlusionT)
+	{
+		BaseColorFactor = baseF;
+		EmissiveFactor = emissiveF;
+		MetallicFactor = metallicF;
+		RoughnessFactor = roughnessF;
 
-	int Normaltexture = -1;
-	int OcclusionTexture = -1;
+		BaseColorTexture = baseT;
+		EmissiveTexture = emissiveT;
+		MetallicRoughnessTexture = metallicRoughnessT;
+		NormalTexture = normalT;
+		OcclusionTexture = occlusionT;
+	}
 };

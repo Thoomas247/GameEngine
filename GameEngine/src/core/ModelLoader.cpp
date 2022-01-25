@@ -1,7 +1,6 @@
 #include "ModelLoader.h"
 
 #include <fstream>
-//#include <iostream>
 
 #include "glad/gl.h"
 #include "stb/stb_image.h"
@@ -24,15 +23,16 @@ int loadTexture(const std::string& textureName)
 		return -1;	// TODO: make return default full white texture index
 	}
 
+	// create opengl texture
 	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glCreateTextures(GL_TEXTURE_2D, 1, &texture);
+
+	glTextureParameteri(texture, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTextureParameteri(texture, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 	// load image, create texture and generate mipmaps
 	int width, height, nrChannels;
 
@@ -52,19 +52,22 @@ int loadTexture(const std::string& textureName)
 				return -1;	// TODO: make return default full white texture index
 		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+		glTextureStorage2D(texture, 1, GL_RGBA8, width, height);
+		glTextureSubImage2D(texture, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data);
+		glGenerateTextureMipmap(texture);
 	}
 	else
 	{
 		LOG_ERROR("MODEL_LOADER::Failed to load texture!")
 			return -1;	// TODO: make return default full white texture index
 	}
+
 	stbi_image_free(data);
 
 	ModelLoader::TextureCache[textureName] = texture;
 	return texture;
 }
+
 Skeleton createSkeleton(json& j)
 {
 	std::vector<Joint> skeletonJoints;
@@ -121,6 +124,7 @@ Skeleton createSkeleton(json& j)
 
 	return Skeleton(skeletonJoints, animations);
 }
+
 Mesh createMesh(json& jmesh)
 {
 	// buffer data
@@ -142,60 +146,16 @@ Mesh createMesh(json& jmesh)
 
 	std::vector<unsigned int> indices = jmesh["indices"];
 
-	unsigned int VAO, VBO, EBO;
-
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);	// vertex positions
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-
-	glEnableVertexAttribArray(1);	// vertex normals
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-
-	glEnableVertexAttribArray(2);	// vertex texture coordinates
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
-
-	glBindVertexArray(0);	// unbind VAO
-
-	auto bufferData = std::make_shared<BufferData>(VAO, indices.size());
+	auto vertexArray = std::make_shared<VertexArray>(vertices, indices);
 
 
 	// material
-	std::shared_ptr<Material> material = std::make_shared<Material>();
-	std::string path;
-	material->BaseColorTexture = loadTexture(jmesh["baseColorTexture"]);
-
-	path = jmesh["metallicRoughnessTexture"];
-	material->MetallicRoughnessTexture = loadTexture(path);
-
-	path = jmesh["emissiveTexture"];
-	material->EmissiveTexture = loadTexture(path);
-
-	path = jmesh["normalTexture"];
-	material->Normaltexture = loadTexture(path);
-
-	path = jmesh["occlusionTexture"];
-	material->OcclusionTexture = loadTexture(path);
-
 	std::vector<float> baseColor = jmesh["baseColorFactor"];
-	material->BaseColorFactor = glm::vec4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]);
-
-	material->MetallicFactor = jmesh["metallicFactor"];
-	material->RoughnessFactor = jmesh["roughnessFactor"];
-
 	std::vector<float> emissiveColor = jmesh["emissiveFactor"];
-	material->EmissiveFactor = glm::vec3(emissiveColor[0], emissiveColor[1], emissiveColor[2]);
 
+	std::shared_ptr<Material> material = std::make_shared<Material>(glm::vec4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]), glm::vec3(emissiveColor[0], emissiveColor[1], emissiveColor[2]), 
+		jmesh["metallicFactor"], jmesh["roughnessFactor"], loadTexture(jmesh["baseColorTexture"]), loadTexture(jmesh["emissiveTexture"]), 
+		loadTexture(jmesh["metallicRoughnessTexture"]), loadTexture(jmesh["normalTexture"]), loadTexture(jmesh["occlusionTexture"]));
 
 	// transform
 	std::vector<float> transformVec = jmesh["transform"];
@@ -205,7 +165,7 @@ Mesh createMesh(json& jmesh)
 							transformVec[3], transformVec[7], transformVec[11], transformVec[15] };
 
 
-	return Mesh(bufferData, nullptr, material, std::make_shared<Shader>(), transform);
+	return Mesh(vertexArray, nullptr, material, std::make_shared<Shader>("assets/shaders/Base.vert", "assets/shaders/Base.frag"), transform);
 }
 
 std::map<std::string, int> ModelLoader::TextureCache;	// TODO: Move to TextureLibrary

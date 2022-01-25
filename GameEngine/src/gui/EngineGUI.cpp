@@ -38,16 +38,16 @@ void EngineGUI::Init()
 
 	//////////////////////////////////////////
 
-	Panels.push_back(std::make_unique<SceneView>());
 	Panels.push_back(std::make_unique<Console>());
 	Panels.push_back(std::make_unique<SceneHierarchy>());
 	Panels.push_back(std::make_unique<FileBrowser>());
+	Panels.push_back(std::make_unique<SceneView>());
 
 	//////////////////////////////////////////
 
 }
 
-void EngineGUI::Draw()
+void EngineGUI::Update()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -75,7 +75,6 @@ void EngineGUI::Draw()
 	ImGui::DockSpace(dockSpaceID, ImVec2(0.0f, 0.0f), dockSpaceFlags, nullptr);
 	ImGui::End();
 
-	
 	for (const auto& panel : Panels)
 	{
 		panel->Update();
