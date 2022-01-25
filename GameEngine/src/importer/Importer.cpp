@@ -7,7 +7,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "../core/ProjectManager.h"
+#include "../managers/ProjectManager.h"
 #include "../core/Log.h"
 
 void Importer::ImportGLTF(const std::string& name, const std::string& path)

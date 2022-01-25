@@ -1,6 +1,10 @@
 #pragma once
 
+#include <memory>
+
 #include "glm/glm.hpp"
+
+#include "Texture.h"
 
 struct Material
 {
@@ -9,14 +13,14 @@ struct Material
 	float MetallicFactor;
 	float RoughnessFactor;
 
-	int BaseColorTexture;
-	int EmissiveTexture;
-	int MetallicRoughnessTexture;	// metalness in blue channel, roughness in green channel
-	int NormalTexture;
-	int OcclusionTexture;
+	std::shared_ptr<Texture> BaseColorTexture;
+	std::shared_ptr<Texture> EmissiveTexture;
+	std::shared_ptr<Texture> MetallicRoughnessTexture;	// metalness in blue channel, roughness in green channel
+	std::shared_ptr<Texture> NormalTexture;
+	std::shared_ptr<Texture> OcclusionTexture;
 
-	Material(const glm::vec4& baseF, const glm::vec3& emissiveF, const float& metallicF, const float& roughnessF, const int& baseT, 
-		const int& emissiveT, const int& metallicRoughnessT, const int& normalT, const int& occlusionT)
+	Material(const glm::vec4& baseF, const glm::vec3& emissiveF, const float& metallicF, const float& roughnessF, std::shared_ptr<Texture> baseT, 
+		std::shared_ptr<Texture> emissiveT, std::shared_ptr<Texture> metallicRoughnessT, std::shared_ptr<Texture> normalT, std::shared_ptr<Texture> occlusionT)
 	{
 		BaseColorFactor = baseF;
 		EmissiveFactor = emissiveF;

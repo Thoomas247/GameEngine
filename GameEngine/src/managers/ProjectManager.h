@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-#include "Project.h"
+#include "../core/Project.h"
 
 namespace ProjectManager
 {

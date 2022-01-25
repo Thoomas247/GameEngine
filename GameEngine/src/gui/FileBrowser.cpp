@@ -2,20 +2,25 @@
 
 #include "imgui/imgui.h"
 
-#include "../core/ProjectManager.h"
+#include "../managers/ProjectManager.h"
 #include "../core/Log.h"
+
+constexpr auto ICON_PADDING = 16;
+constexpr auto ICON_SIZE = 128 + ICON_PADDING;
 
 // PUBLIC
 FileBrowser::FileBrowser()
 {
-	m_CurrentDir = ProjectManager::GetProjectDir();
+	cleanAndSetPath(ProjectManager::GetProjectDir());
 	getFiles();
 }
 
 void FileBrowser::Update(const float& deltaTime)
 {
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
+
 	ImGui::Begin("File Browser", (bool*)0, windowFlags);
+	ImVec2 size = ImGui::GetContentRegionAvail();
 
 	bool shouldUpdate = false;
 
@@ -46,19 +51,35 @@ void FileBrowser::Update(const float& deltaTime)
 		shouldUpdate = true;
 	}
 
+	ImGui::SameLine();
+
+	ImGui::Text(m_CurrentDir.c_str());
+
 	ImGui::Separator();
+
+	int numColumns = (int)(size.x / ICON_SIZE);
+	if (numColumns < 1)
+	{
+		numColumns = 1;
+	}
+
+	ImGui::BeginTable("File Browser Layout", numColumns);
 
 	for (const FileInfo& file : m_Files)
 	{
-		if (ImGui::Button(file.Name.c_str()))
+		ImGui::TableNextColumn();
+
+		if (ImGui::Button(file.Name.c_str(), ImVec2(ICON_SIZE, ICON_SIZE)))
 		{
 			if (file.Type == DIRECTORY)
 			{
-				m_CurrentDir = file.Path;
+				cleanAndSetPath(file.Path);
 				shouldUpdate = true;
 			}
 		}
 	}
+
+	ImGui::EndTable();
 
 	ImGui::End();
 
@@ -71,6 +92,29 @@ void FileBrowser::Update(const float& deltaTime)
 // PRIVATE
 void FileBrowser::destroy()
 {
+
+}
+
+void FileBrowser::cleanAndSetPath(const std::string& newPath)
+{
+	m_CurrentDir = newPath;
+
+	bool removeLast = false;
+
+	for (auto& c : m_CurrentDir)
+	{
+		removeLast = false;
+		if (c == '\\' || c == '/')
+		{
+			c = '/';
+			removeLast = true;
+		}
+	}
+
+	if (removeLast)
+	{
+		m_CurrentDir.resize(m_CurrentDir.size() - 1);
+	}
 
 }
 

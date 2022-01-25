@@ -109,9 +109,9 @@
     <ClCompile Include="include\imgui\imgui_tables.cpp" />
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\core\Engine.cpp" />
-    <ClCompile Include="src\core\ProjectManager.cpp" />
+    <ClCompile Include="src\managers\ProjectManager.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
-    <ClCompile Include="src\core\ModelLoader.cpp" />
+    <ClCompile Include="src\managers\ModelManager.cpp" />
     <ClCompile Include="include\glad\gl.c" />
     <ClCompile Include="src\importer\Importer.cpp" />
     <ClCompile Include="src\core\GameObject.cpp" />
@@ -126,6 +126,7 @@
     <ClCompile Include="src\core\World.cpp" />
     <ClCompile Include="src\gui\SceneView.cpp" />
     <ClCompile Include="src\renderer\VertexArray.cpp" />
+    <ClCompile Include="src\managers\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\gui\FileBrowser.h" />
@@ -139,8 +140,8 @@
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\renderer\Skeleton.h" />
-    <ClInclude Include="src\core\ModelLoader.h" />
-    <ClInclude Include="src\core\ProjectManager.h" />
+    <ClInclude Include="src\managers\ModelManager.h" />
+    <ClInclude Include="src\managers\ProjectManager.h" />
     <ClInclude Include="src\importer\Importer.h" />
     <ClInclude Include="src\core\GameObject.h" />
     <ClInclude Include="src\core\Input.h" />
@@ -157,6 +158,8 @@
     <ClInclude Include="src\core\World.h" />
     <ClInclude Include="src\gui\SceneView.h" />
     <ClInclude Include="src\renderer\VertexArray.h" />
+    <ClInclude Include="src\structs\Texture.h" />
+    <ClInclude Include="src\managers\TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\Skybox.frag" />

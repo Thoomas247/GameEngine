@@ -1,4 +1,4 @@
-#include "ModelLoader.h"
+#include "ModelManager.h"
 
 #include <fstream>
 
@@ -6,66 +6,58 @@
 #include "stb/stb_image.h"
 
 #include "ProjectManager.h"
-#include "Log.h"
+#include "TextureManager.h"
+#include "../core/Log.h"
 #include "../renderer/Mesh.h"
 
-int loadTexture(const std::string& textureName)
+std::map<std::string, Model> ModelManager::ModelCache;
+
+std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath)
 {
-	auto it = ModelLoader::TextureCache.find(textureName);
+	//std::string modelName = modelPath.substr(modelPath.find_last_of("/") + 1);
+	//modelName.resize(modelName.find_last_of("."));
 
-	if (it != ModelLoader::TextureCache.end())
+	// check if model is in cache
+	auto it = ModelCache.find(modelPath);
+	if (it != ModelCache.end())
 	{
-		return it->second;
-	}
+		Model& model = it->second;
+		std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
 
-	if (textureName == "")
-	{
-		return -1;	// TODO: make return default full white texture index
-	}
+		auto skeleton = std::make_shared<Skeleton>(model.m_Skeleton);
+		gameObject->AddChild("Skeleton", skeleton);
 
-	// create opengl texture
-	unsigned int texture;
-	glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-
-	glTextureParameteri(texture, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTextureParameteri(texture, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// load image, create texture and generate mipmaps
-	int width, height, nrChannels;
-
-	unsigned char* data = stbi_load((ProjectManager::GetTexturesPath() + textureName).c_str(), &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		GLenum format = GL_RED;
-		if (nrChannels == 1)
-			format = GL_RED;
-		else if (nrChannels == 3)
-			format = GL_RGB;
-		else if (nrChannels == 4)
-			format = GL_RGBA;
-		else
+		for (const auto& [name, savedMesh] : model.m_Meshes)
 		{
-			LOG_ERROR("MODEL_LOADER::Texture format not supported!")
-				return -1;	// TODO: make return default full white texture index
+			auto mesh = std::make_shared<Mesh>(savedMesh);
+			mesh->m_Skeleton = skeleton;
+			gameObject->AddChild(name, mesh);
 		}
 
-		glTextureStorage2D(texture, 1, GL_RGBA8, width, height);
-		glTextureSubImage2D(texture, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data);
-		glGenerateTextureMipmap(texture);
+		return gameObject;
 	}
-	else
+
+	// load from file
+	std::streamsize size = std::filesystem::file_size(modelPath);
+	std::vector<char> buffer;
+	buffer.resize(size);
+
+	std::ifstream fileIn = std::ifstream(modelPath, std::ios::in | std::ios::binary);
+	fileIn.read(&buffer[0], size);
+	fileIn.close();
+
+	json j = json::from_bson(buffer);
+
+	std::map<std::string, Mesh> meshes;
+	for (auto& [name, jmesh] : j["meshes"].items())
 	{
-		LOG_ERROR("MODEL_LOADER::Failed to load texture!")
-			return -1;	// TODO: make return default full white texture index
+		meshes[name] = createMesh(jmesh);
 	}
 
-	stbi_image_free(data);
+	Model model = Model(meshes, createSkeleton(j));
 
-	ModelLoader::TextureCache[textureName] = texture;
-	return texture;
+	ModelCache[modelPath] = model;
+	return LoadModel(modelPath);
 }
 
 Skeleton createSkeleton(json& j)
@@ -153,9 +145,15 @@ Mesh createMesh(json& jmesh)
 	std::vector<float> baseColor = jmesh["baseColorFactor"];
 	std::vector<float> emissiveColor = jmesh["emissiveFactor"];
 
-	std::shared_ptr<Material> material = std::make_shared<Material>(glm::vec4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]), glm::vec3(emissiveColor[0], emissiveColor[1], emissiveColor[2]), 
-		jmesh["metallicFactor"], jmesh["roughnessFactor"], loadTexture(jmesh["baseColorTexture"]), loadTexture(jmesh["emissiveTexture"]), 
-		loadTexture(jmesh["metallicRoughnessTexture"]), loadTexture(jmesh["normalTexture"]), loadTexture(jmesh["occlusionTexture"]));
+	std::string basePath = ProjectManager::GetTexturesPath() + std::string(jmesh["baseColorTexture"]);
+	std::string emissivePath = ProjectManager::GetTexturesPath() + std::string(jmesh["emissiveTexture"]);
+	std::string metallicRoughnessPath = ProjectManager::GetTexturesPath() + std::string(jmesh["metallicRoughnessTexture"]);
+	std::string normalPath = ProjectManager::GetTexturesPath() + std::string(jmesh["normalTexture"]);
+	std::string occlusionPath = ProjectManager::GetTexturesPath() + std::string(jmesh["occlusionTexture"]);
+
+	std::shared_ptr<Material> material = std::make_shared<Material>(glm::vec4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]), glm::vec3(emissiveColor[0], emissiveColor[1], emissiveColor[2]),
+		jmesh["metallicFactor"], jmesh["roughnessFactor"], TextureManager::LoadTexture(basePath), TextureManager::LoadTexture(emissivePath), TextureManager::LoadTexture(metallicRoughnessPath), 
+		TextureManager::LoadTexture(normalPath), TextureManager::LoadTexture(occlusionPath));
 
 	// transform
 	std::vector<float> transformVec = jmesh["transform"];
@@ -166,56 +164,4 @@ Mesh createMesh(json& jmesh)
 
 
 	return Mesh(vertexArray, nullptr, material, std::make_shared<Shader>("assets/shaders/Base.vert", "assets/shaders/Base.frag"), transform);
-}
-
-std::map<std::string, int> ModelLoader::TextureCache;	// TODO: Move to TextureLibrary
-std::map<std::string, Model> ModelLoader::ModelCache;
-
-std::shared_ptr<GameObject> ModelLoader::LoadModel(const std::string& modelPath)
-{
-	std::string modelName = modelPath.substr(modelPath.find_last_of("/") + 1);
-	modelName.resize(modelName.find_last_of("."));
-
-	// check if model is in cache
-	auto it = ModelCache.find(modelName);
-	if (it != ModelCache.end())
-	{
-		Model& model = it->second;
-		std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
-
-		auto skeleton = std::make_shared<Skeleton>(model.m_Skeleton);
-		gameObject->AddChild("Skeleton", skeleton);
-
-		for (const auto& [name, savedMesh] : model.m_Meshes)
-		{
-			auto mesh = std::make_shared<Mesh>(savedMesh);
-			mesh->m_Skeleton = skeleton;
-			gameObject->AddChild(name, mesh);
-		}
-
-		return gameObject;
-	}
-
-	// load from file
-	std::streamsize size = std::filesystem::file_size(modelPath);
-	std::vector<char> buffer;
-	buffer.resize(size);
-
-	std::ifstream fileIn = std::ifstream(modelPath, std::ios::in | std::ios::binary);
-	fileIn.read(&buffer[0], size);
-	fileIn.close();
-
-	json j = json::from_bson(buffer);
-
-	std::map<std::string, Mesh> meshes;
-	for (auto& [name, jmesh] : j["meshes"].items())
-	{
-		meshes[name] = createMesh(jmesh);
-	}
-
-	Model model = Model(meshes, createSkeleton(j));
-
-	ModelCache[modelName] = model;
-
-	return LoadModel(modelPath);
 }

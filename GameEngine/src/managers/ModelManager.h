@@ -11,7 +11,7 @@ using json = nlohmann::json;
 #include "../renderer/Mesh.h"
 #include "../structs/Vertex.h"
 
-// TODO: make folder for loader and organize into files
+// TODO: make folder for loader and organize classes into files
 
 struct Model
 {
@@ -29,10 +29,12 @@ struct Model
 	}
 };
 
-namespace ModelLoader
+namespace ModelManager
 {
-	extern std::map<std::string, int> TextureCache;	// TODO: Move to TextureLibrary
 	extern std::map<std::string, Model> ModelCache;
 
 	std::shared_ptr<GameObject> LoadModel(const std::string& modelPath);
 }
+
+Skeleton createSkeleton(json& j);
+Mesh createMesh(json& jmesh);

@@ -41,10 +41,10 @@ void Renderer::Draw()
 		mesh->m_Shader->Activate();
 
 		// albedo texture
-		glBindTextureUnit(0, mesh->m_Material->BaseColorTexture);
+		glBindTextureUnit(0, mesh->m_Material->BaseColorTexture->ID);
 		mesh->m_Shader->SetInt(ALBEDO_TEX, 0);	// TODO: switch to setting material all at once (make struct in shader)
 
-		// is selected?				// temp
+		// is mesh selected?				// temp
 		mesh->m_Shader->SetInt(IS_SELECTED, mesh->m_IsSelected);
 		mesh->m_IsSelected = false;	// reset for next frame
 

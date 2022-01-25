@@ -3,10 +3,12 @@
 #include <iostream>
 
 #include "Window.h"
-#include "ProjectManager.h"
 #include "Input.h"
 #include "World.h"
 #include "Log.h"
+
+#include "../managers/ProjectManager.h"
+#include "../managers/TextureManager.h"
 
 #include "../renderer/Renderer.h"
 
@@ -16,7 +18,7 @@
 #include "../game/Player.h"
 #include "../renderer/Camera.h"
 #include "../importer/Importer.h"
-#include "ModelLoader.h"
+#include "../managers/ModelManager.h"
 
 int Engine::Run()
 {
@@ -31,6 +33,8 @@ int Engine::Run()
 		return -1;
 	}
 
+	TextureManager::Init();
+
 	EngineGUI::Init();
 	Renderer::Init();
 
@@ -38,16 +42,15 @@ int Engine::Run()
 	
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
-	//Importer::ImportGLTF("Window", "F:/Users/TM1/Downloads/window/scene.gltf");
 
-	std::shared_ptr<GameObject> tree = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
+	std::shared_ptr<GameObject> tree = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
 	World::AddGameObject("Tree", tree);
 
-	std::shared_ptr<GameObject> tree2 = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
+	std::shared_ptr<GameObject> tree2 = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
 	tree2->m_LocalPosition = glm::vec3(30.0f, 0.0f, 0.0f);
 	World::AddGameObject("Tree2", tree2);
 
-	std::shared_ptr<GameObject> bird = ModelLoader::LoadModel(ProjectManager::GetModelsPath() + "Bird.GEM");
+	std::shared_ptr<GameObject> bird = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Bird.GEM");
 	World::AddGameObject("Bird", bird);
 
 	auto player = std::make_shared<Player>();

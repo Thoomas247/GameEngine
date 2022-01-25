@@ -5,7 +5,7 @@
 
 #include "glad/gl.h"
 
-#include "../core/ProjectManager.h"
+#include "../managers/ProjectManager.h"
 #include "../core/Log.h"
 
 

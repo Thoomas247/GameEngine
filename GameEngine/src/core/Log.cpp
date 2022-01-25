@@ -1,5 +1,7 @@
 #include "Log.h"
 
+#include <iostream>
+
 ImVector<char*> Log::Items;
 
 char* Strdup(const char* s) { IM_ASSERT(s); size_t len = strlen(s) + 1; void* buf = malloc(len); IM_ASSERT(buf); return (char*)memcpy(buf, (const void*)s, len); }
@@ -19,6 +21,7 @@ void Log::LogError(const std::string& error)
 {
 	std::string line = "[error] " + error;
 	addLog(line.c_str());
+	std::cout << error << std::endl;
 }
 
 void Log::LogWarning(const std::string& warning)
