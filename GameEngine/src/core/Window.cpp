@@ -63,3 +63,13 @@ void Window::CleanUp()
 {
 	glfwTerminate();
 }
+
+void Window::LockCursor()
+{
+	glfwSetInputMode(WindowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::UnlockCursor()
+{
+	glfwSetInputMode(WindowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}

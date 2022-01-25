@@ -33,7 +33,7 @@ private:
 
 public:
 	FileBrowser();
-	void Update() override;
+	void Update(const float& deltaTime) override;
 
 private:
 	void destroy() override;

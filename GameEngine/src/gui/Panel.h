@@ -6,7 +6,7 @@ public:
 	Panel();
 	~Panel();
 
-	virtual void Update();
+	virtual void Update(const float& deltaTime);
 
 protected:
 	virtual void destroy();

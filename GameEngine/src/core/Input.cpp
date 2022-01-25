@@ -7,6 +7,10 @@ float Input::MouseDeltaY = 0.0f;
 float Input::MouseLastXPos = 0.0f;
 float Input::MouseLastYPos = 0.0f;
 
+
+bool Input::MouseLeftButton = false;
+bool Input::MouseRightButton = false;
+
 bool Input::ActionEscape = false;
 bool Input::ActionMoveForward = false;
 bool Input::ActionMoveBack = false;
@@ -29,6 +33,9 @@ void Input::Update()
 
 void Input::resetInput()
 {
+	MouseLeftButton = false;
+	MouseRightButton = false;
+
 	ActionEscape = false;
 	ActionMoveForward = false;
 	ActionMoveBack = false;
@@ -38,6 +45,17 @@ void Input::resetInput()
 
 void Input::setInput()
 {
+	if (glfwGetMouseButton(Window::WindowPtr, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		MouseLeftButton = true;
+	}
+
+	if (glfwGetMouseButton(Window::WindowPtr, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	{
+		MouseRightButton = true;
+	}
+
+
 	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		ActionEscape = true;

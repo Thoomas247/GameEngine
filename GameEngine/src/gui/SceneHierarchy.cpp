@@ -6,7 +6,7 @@
 #include "../core/Log.h"
 
 // PUBLIC
-void SceneHierarchy::Update()
+void SceneHierarchy::Update(const float& deltaTime)
 {
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
 	ImGui::Begin("Scene Hierarchy", (bool*)0, windowFlags);

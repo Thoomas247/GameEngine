@@ -23,7 +23,7 @@ Console::Console()
 	m_ScrollToBottom = false;
 }
 
-void Console::Update()
+void Console::Update(const float& deltaTime)
 {
 	ImGui::Begin("Console");
 

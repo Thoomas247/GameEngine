@@ -12,7 +12,7 @@ FileBrowser::FileBrowser()
 	getFiles();
 }
 
-void FileBrowser::Update()
+void FileBrowser::Update(const float& deltaTime)
 {
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
 	ImGui::Begin("File Browser", (bool*)0, windowFlags);

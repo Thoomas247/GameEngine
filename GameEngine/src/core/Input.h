@@ -10,6 +10,10 @@ namespace Input
 	extern float MouseLastXPos;
 	extern float MouseLastYPos;
 
+
+	extern bool MouseRightButton;
+	extern bool MouseLeftButton;
+
 	extern bool ActionEscape;
 	extern bool ActionMoveForward;
 	extern bool ActionMoveBack;

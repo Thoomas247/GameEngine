@@ -13,7 +13,7 @@ public:
 	std::shared_ptr<GameObject> Selected = nullptr;
 
 public:
-	void Update() override;
+	void Update(const float& deltaTime) override;
 
 private:
 	void destroy() override;

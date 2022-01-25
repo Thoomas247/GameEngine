@@ -47,7 +47,7 @@ void EngineGUI::Init()
 
 }
 
-void EngineGUI::Update()
+void EngineGUI::Update(const float& deltaTime)
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -77,7 +77,7 @@ void EngineGUI::Update()
 
 	for (const auto& panel : Panels)
 	{
-		panel->Update();
+		panel->Update(deltaTime);
 	}
 	ImGui::ShowDemoWindow();
 

@@ -2,12 +2,56 @@
 
 #include "imgui/imgui.h"
 #include "glad/gl.h"
+#include "glm/glm.hpp"
 
 #include "../renderer/Renderer.h"
 #include "../core/Log.h"
+#include "../core/Input.h"
+#include "../core/Window.h"
 
 constexpr auto VIEWPORT_RENDER_RESOLUTION_WIDTH = 1920;
 constexpr auto VIEWPORT_RENDER_RESOLUTION_HEIGHT = 1080;
+
+
+// PUBLIC - SceneCamera
+void SceneCamera::DoMovement(const float& deltaTime)
+{
+	// Rotation
+	m_LocalRotation = glm::rotate(m_LocalRotation, glm::radians(Input::MouseDeltaX * m_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f));
+	m_LocalRotation = glm::rotate(m_LocalRotation, glm::radians(Input::MouseDeltaY * m_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	// Movement
+	glm::vec3 front = glm::mat3_cast(m_LocalRotation) * glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 right = glm::mat3_cast(m_LocalRotation) * glm::vec3(1.0f, 0.0f, 0.0f);
+
+	glm::vec3 inputVector = glm::vec3(0.0f);
+
+	if (Input::ActionMoveForward)
+	{
+		inputVector.z += 1.0f;
+	}
+	if (Input::ActionMoveBack)
+	{
+		inputVector.z -= 1.0f;
+	}
+	if (Input::ActionMoveRight)
+	{
+		inputVector.x += 1.0f;
+	}
+	if (Input::ActionMoveLeft)
+	{
+		inputVector.x -= 1.0f;
+	}
+
+	if (inputVector != glm::vec3(0.0f))
+	{
+		inputVector = glm::normalize(inputVector);
+		m_LocalPosition += front * inputVector.z * m_Speed * deltaTime;
+		m_LocalPosition += right * inputVector.x * m_Speed * deltaTime;
+	}
+
+	Update(deltaTime);
+}
 
 // PUBLIC
 SceneView::SceneView()
@@ -39,21 +83,50 @@ SceneView::SceneView()
 		LOG_ERROR("SCENE_VIEW::Failed to set up rendering to ImGui!")
 		return;
 	}
+
 }
 
-void SceneView::Update()
+void SceneView::Update(const float& deltaTime)
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
 
 	ImGui::Begin("Scene View", (bool*)0, flags);
 	ImVec2 size = ImGui::GetContentRegionAvail();
-	//////// temp fix: set current camera aspect ratio ////////
-	Renderer::CurrentCamera->AspectRatio = size.x / size.y;
-	///////////////////////////////////////////////////////////
+
+	if (Input::MouseRightButton && ImGui::IsWindowHovered())	// if mouse is over scene view and right button clicked
+	{
+		m_IsFocused = true;
+	}
+	else if (m_IsFocused && Input::MouseRightButton)	// if right button is still down and scene was previously hovered over, continue focusing the scene
+	{
+		m_IsFocused = true;
+	}
+	else
+	{
+		m_IsFocused = false;
+	}
+	
+	if (m_IsFocused)
+	{
+		Window::LockCursor();
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+		m_SceneCamera.DoMovement(deltaTime);
+	}
+	else 
+	{
+		Window::UnlockCursor();
+		ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+	}
+
+	m_SceneCamera.AspectRatio = size.x / size.y;
+	Renderer::CurrentCamera = &m_SceneCamera;
+
 	drawTexture();
 	ImGui::Image((void*)m_Texture, size, ImVec2(0, 1), ImVec2(1, 0));	// image needs to be inverted
+
 	ImGui::End();
 }
+
 
 // PRIVATE
 void SceneView::destroy()

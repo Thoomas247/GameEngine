@@ -13,6 +13,6 @@ namespace EngineGUI
 	extern std::vector<std::unique_ptr<Panel>> Panels;
 
 	void Init();
-	void Update();
+	void Update(const float& deltaTime);
 	void CleanUp();
 };

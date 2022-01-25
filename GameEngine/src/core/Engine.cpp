@@ -79,8 +79,7 @@ int Engine::Run()
 
 		Input::Update();
 		World::Update(deltaTime);
-
-		EngineGUI::Update();
+		EngineGUI::Update(deltaTime);
 		//Renderer::Draw(); // not needed here in "engine" mode
 
 		Window::SwapBuffers();
