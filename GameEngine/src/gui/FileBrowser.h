@@ -3,7 +3,10 @@
 #include "Panel.h"
 
 #include <vector>
+#include <map>
 #include <filesystem>
+
+#include "../structs/Texture.h"
 
 enum FileType {
 	NONE, DIRECTORY, GLTF, GEM, PNG, OTHER
@@ -30,6 +33,7 @@ class FileBrowser : public Panel
 private:
 	std::vector<FileInfo> m_Files;
 	std::string m_CurrentDir;
+	std::map<FileType, std::shared_ptr<Texture>> m_Icons;
 
 public:
 	FileBrowser();

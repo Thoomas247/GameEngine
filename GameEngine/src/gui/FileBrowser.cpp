@@ -3,6 +3,7 @@
 #include "imgui/imgui.h"
 
 #include "../managers/ProjectManager.h"
+#include "../managers/TextureManager.h"
 #include "../core/Log.h"
 
 constexpr auto ICON_PADDING = 16;
@@ -11,6 +12,12 @@ constexpr auto ICON_SIZE = 128 + ICON_PADDING;
 // PUBLIC
 FileBrowser::FileBrowser()
 {
+	m_Icons[DIRECTORY] = TextureManager::LoadTexture("assets/gui/icons/Folder Icon.png");
+	m_Icons[GLTF] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
+	m_Icons[GEM] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
+	m_Icons[PNG] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
+	m_Icons[OTHER] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
+
 	cleanAndSetPath(ProjectManager::GetProjectDir());
 	getFiles();
 }
@@ -69,7 +76,9 @@ void FileBrowser::Update(const float& deltaTime)
 	{
 		ImGui::TableNextColumn();
 
-		if (ImGui::Button(file.Name.c_str(), ImVec2(ICON_SIZE, ICON_SIZE)))
+		ImGui::PushID(file.Name.c_str());
+		ImGui::ImageButton(ImTextureID(m_Icons[file.Type]->ID), ImVec2(ICON_SIZE, ICON_SIZE));
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
 			if (file.Type == DIRECTORY)
 			{
@@ -77,6 +86,9 @@ void FileBrowser::Update(const float& deltaTime)
 				shouldUpdate = true;
 			}
 		}
+		ImGui::PopID();
+
+		ImGui::Text(file.Name.c_str());
 	}
 
 	ImGui::EndTable();
@@ -115,7 +127,6 @@ void FileBrowser::cleanAndSetPath(const std::string& newPath)
 	{
 		m_CurrentDir.resize(m_CurrentDir.size() - 1);
 	}
-
 }
 
 void FileBrowser::getFiles()
@@ -150,6 +161,10 @@ void FileBrowser::getFiles()
 			else if (!extension.compare(".png"))
 			{
 				fileInfo.Type = PNG;
+			}
+			else
+			{
+				fileInfo.Type = OTHER;
 			}
 		}
 
