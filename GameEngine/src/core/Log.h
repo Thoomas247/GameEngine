@@ -17,6 +17,7 @@ public:
 	static void LogError(const std::string& error);
 	static void LogWarning(const std::string& warning);
 	static void LogInfo(const std::string& info);
+	static void Clear();
 
 	static ImVector<char*> GetLog() { return s_Items; }
 

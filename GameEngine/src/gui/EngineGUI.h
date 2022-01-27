@@ -8,11 +8,16 @@
 #include "../core/GameObject.h"
 #include "Panel.h"
 
-namespace EngineGUI
+class EngineGUI
 {
-	extern std::vector<std::unique_ptr<Panel>> Panels;
+private:
+	static std::vector<std::unique_ptr<Panel>> s_Panels;
 
-	void Init();
-	void Update(const float& deltaTime);
-	void CleanUp();
+public:
+	static void Init();
+	static void Update(const float& deltaTime);
+	static void CleanUp();
+
+private:
+	static void applyStyle();
 };

@@ -26,6 +26,13 @@ void Log::LogInfo(const std::string& info)
 	addLog(line.c_str());
 }
 
+void Log::Clear()
+{
+	for (int i = 0; i < s_Items.Size; i++)
+		free(s_Items[i]);
+	s_Items.clear();
+}
+
 // PRIVATE
 void Log::addLog(const char* fmt, ...) IM_FMTARGS(2)
 {

@@ -116,7 +116,5 @@ void Console::destroy()
 
 void Console::clearLog()
 {
-	for (int i = 0; i < Log::GetLog().Size; i++)
-		free(Log::GetLog()[i]);
-	Log::GetLog().clear();
+	Log::Clear();
 }
