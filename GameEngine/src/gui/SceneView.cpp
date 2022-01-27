@@ -15,8 +15,8 @@ constexpr auto VIEWPORT_RENDER_RESOLUTION_HEIGHT = 1080;
 void SceneCamera::DoMovement(const float& deltaTime)
 {
 	// Rotation
-	m_LocalRotation = glm::rotate(m_LocalRotation, glm::radians(Input::MouseDeltaX * m_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f));
-	m_LocalRotation = glm::rotate(m_LocalRotation, glm::radians(Input::MouseDeltaY * m_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
+	m_LocalRotation = glm::rotate(m_LocalRotation, glm::radians(Input::GetMouseDeltaX() * m_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f));
+	m_LocalRotation = glm::rotate(m_LocalRotation, glm::radians(Input::GetMouseDeltaY() * m_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	// Movement
 	glm::vec3 front = glm::mat3_cast(m_LocalRotation) * glm::vec3(0.0f, 0.0f, -1.0f);
@@ -24,19 +24,19 @@ void SceneCamera::DoMovement(const float& deltaTime)
 
 	glm::vec3 inputVector = glm::vec3(0.0f);
 
-	if (Input::ActionMoveForward)
+	if (Input::GetActionMoveForward())
 	{
 		inputVector.z += 1.0f;
 	}
-	if (Input::ActionMoveBack)
+	if (Input::GetActionMoveBack())
 	{
 		inputVector.z -= 1.0f;
 	}
-	if (Input::ActionMoveRight)
+	if (Input::GetActionMoveRight())
 	{
 		inputVector.x += 1.0f;
 	}
-	if (Input::ActionMoveLeft)
+	if (Input::GetActionMoveLeft())
 	{
 		inputVector.x -= 1.0f;
 	}
@@ -91,11 +91,11 @@ void SceneView::Update(const float& deltaTime)
 	ImGui::Begin("Scene View", (bool*)0, flags);
 	ImVec2 size = ImGui::GetContentRegionAvail();
 
-	if (Input::MouseRightButton && ImGui::IsWindowHovered())	// if mouse is over scene view and right button clicked
+	if (Input::GetMouseRightButton() && ImGui::IsWindowHovered())	// if mouse is over scene view and right button clicked
 	{
 		m_IsFocused = true;
 	}
-	else if (m_IsFocused && Input::MouseRightButton)	// if right button is still down and scene was previously hovered over, continue focusing the scene
+	else if (m_IsFocused && Input::GetMouseRightButton())	// if right button is still down and scene was previously hovered over, continue focusing the scene
 	{
 		m_IsFocused = true;
 	}

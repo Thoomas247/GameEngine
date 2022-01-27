@@ -3,17 +3,29 @@
 #include "glad/gl.h"
 #include "glfw/glfw3.h"
 
-namespace Window
+class Window
 {
-	extern GLFWwindow* WindowPtr;
-	extern bool ShouldClose;
+private:
+	static GLFWwindow* s_WindowPtr;
+	static bool s_ShouldClose;
 
-	void InitWindow(const int& width, const int& height);
-	void CloseWindow();
-	void SwapBuffers();
-	void PollEvents();
-	void CleanUp();
+public:
+	static void InitWindow(const int& width, const int& height);
+	static void CloseWindow();
+	static void SwapBuffers();
+	static void PollEvents();
+	static void CleanUp();
 
-	void LockCursor();
-	void UnlockCursor();
-}
+	static void LockCursor();
+	static void UnlockCursor();
+
+	static GLFWwindow* GetWindowPtr() { return s_WindowPtr; }
+	static void SetWindowPtr(GLFWwindow* newPtr) { s_WindowPtr = newPtr; glfwMakeContextCurrent(s_WindowPtr); }
+
+	static bool ShouldClose() { return s_ShouldClose; }
+
+	
+
+private:
+	static void frameBufferSizeCallback(GLFWwindow* window, int width, int height);
+};

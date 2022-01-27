@@ -55,9 +55,9 @@ void Console::Update(const float& deltaTime)
 	if (copy_to_clipboard)
 		ImGui::LogToClipboard();
 
-	for (int i = 0; i < Log::Items.Size; i++)
+	for (int i = 0; i < Log::GetLog().Size; i++)
 	{
-		const char* item = Log::Items[i];
+		const char* item = Log::GetLog()[i];
 
 		//if (!m_Filter.PassFilter(item))
 		//	continue;
@@ -116,7 +116,7 @@ void Console::destroy()
 
 void Console::clearLog()
 {
-	for (int i = 0; i < Log::Items.Size; i++)
-		free(Log::Items[i]);
-	Log::Items.clear();
+	for (int i = 0; i < Log::GetLog().Size; i++)
+		free(Log::GetLog()[i]);
+	Log::GetLog().clear();
 }

@@ -8,11 +8,18 @@
 #define LOG_WARN(x) Log::LogWarning(x);
 #define LOG_INFO(x) Log::LogInfo(x);
 
-namespace Log
+class Log
 {
-	extern ImVector<char*> Items;
+private:
+	static ImVector<char*> s_Items;
 
-	void LogError(const std::string& error);
-	void LogWarning(const std::string& warning);
-	void LogInfo(const std::string& info);
-}
+public:
+	static void LogError(const std::string& error);
+	static void LogWarning(const std::string& warning);
+	static void LogInfo(const std::string& info);
+
+	static ImVector<char*> GetLog() { return s_Items; }
+
+private:
+	static void addLog(const char* fmt, ...) IM_FMTARGS(2);
+};

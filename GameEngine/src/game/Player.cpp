@@ -19,8 +19,8 @@ void Player::onSetUp()
 void Player::onUpdate(const float& deltaTime)
 {
 	// Rotation
-	m_Camera->SetLocalRotation(glm::rotate(m_Camera->GetLocalRotation(), glm::radians(Input::MouseDeltaX * S_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f)));
-	m_Camera->SetLocalRotation(glm::rotate(m_Camera->GetLocalRotation(), glm::radians(Input::MouseDeltaY * S_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f)));
+	m_Camera->SetLocalRotation(glm::rotate(m_Camera->GetLocalRotation(), glm::radians(Input::GetMouseDeltaX() * S_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f)));
+	m_Camera->SetLocalRotation(glm::rotate(m_Camera->GetLocalRotation(), glm::radians(Input::GetMouseDeltaY() * S_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f)));
 
 	// Movement
 	glm::vec3 front = glm::mat3_cast(m_Camera->GetLocalRotation()) * glm::vec3(0.0f, 0.0f, -1.0f);
@@ -28,19 +28,19 @@ void Player::onUpdate(const float& deltaTime)
 
 	glm::vec3 inputVector = glm::vec3(0.0f);
 
-	if (Input::ActionMoveForward)
+	if (Input::GetActionMoveForward())
 	{
 		inputVector.z += 1.0f;
 	}
-	if (Input::ActionMoveBack)
+	if (Input::GetActionMoveBack())
 	{
 		inputVector.z -= 1.0f;
 	}
-	if (Input::ActionMoveRight)
+	if (Input::GetActionMoveRight())
 	{
 		inputVector.x += 1.0f;
 	}
-	if (Input::ActionMoveLeft)
+	if (Input::GetActionMoveLeft())
 	{
 		inputVector.x -= 1.0f;
 	}

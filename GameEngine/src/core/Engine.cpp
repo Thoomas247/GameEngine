@@ -68,10 +68,10 @@ int Engine::Run()
 	World::SetUp();
 
 	// main engine loop
-	while (!Window::ShouldClose)
+	while (!Window::ShouldClose())
 	{
 		// detect if window should close
-		if (Input::ActionEscape)
+		if (Input::GetActionEscape())
 		{
 			Window::CloseWindow();
 			continue;

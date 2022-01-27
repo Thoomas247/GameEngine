@@ -6,13 +6,17 @@
 
 #include "GameObject.h"
 
-namespace World
+class World
 {
-	extern std::map<std::string, std::shared_ptr<GameObject>> GameObjects;
+private:
+	static std::map<std::string, std::shared_ptr<GameObject>> s_GameObjects;
 
-	void SetUp();
-	void Update(const float& deltaTime);
+public:
+	static void SetUp();
+	static void Update(const float& deltaTime);
 
-	void AddGameObject(const std::string& name, const std::shared_ptr<GameObject>& object);
-	std::shared_ptr<GameObject> GetGameObject(const std::string& path);
-}
+	static void AddGameObject(const std::string& name, const std::shared_ptr<GameObject>& object);
+	static std::shared_ptr<GameObject> GetGameObject(const std::string& path);
+
+	static std::map<std::string, std::shared_ptr<GameObject>> GetGameObjects() { return s_GameObjects; }
+};

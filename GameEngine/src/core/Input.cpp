@@ -2,82 +2,82 @@
 
 #include "Window.h"
 
-float Input::MouseDeltaX = 0.0f;
-float Input::MouseDeltaY = 0.0f;
-float Input::MouseLastXPos = 0.0f;
-float Input::MouseLastYPos = 0.0f;
+float Input::s_MouseDeltaX = 0.0f;
+float Input::s_MouseDeltaY = 0.0f;
+float Input::s_MouseLastXPos = 0.0f;
+float Input::s_MouseLastYPos = 0.0f;
 
+bool Input::s_MouseLeftButton = false;
+bool Input::s_MouseRightButton = false;
 
-bool Input::MouseLeftButton = false;
-bool Input::MouseRightButton = false;
+bool Input::s_ActionEscape = false;
+bool Input::s_ActionMoveForward = false;
+bool Input::s_ActionMoveBack = false;
+bool Input::s_ActionMoveLeft = false;
+bool Input::s_ActionMoveRight = false;
 
-bool Input::ActionEscape = false;
-bool Input::ActionMoveForward = false;
-bool Input::ActionMoveBack = false;
-bool Input::ActionMoveLeft = false;
-bool Input::ActionMoveRight = false;
-
-// defines the keybinds
+// PUBLIC
 void Input::Update()
 {
 	double xpos, ypos;
-	glfwGetCursorPos(Window::WindowPtr, &xpos, &ypos);
-	MouseDeltaX = (float)xpos - MouseLastXPos;
-	MouseDeltaY = MouseLastYPos - (float)ypos;
-	MouseLastXPos = (float)xpos;
-	MouseLastYPos = (float)ypos;
+	glfwGetCursorPos(Window::GetWindowPtr(), &xpos, &ypos);
+	s_MouseDeltaX = (float)xpos - s_MouseLastXPos;
+	s_MouseDeltaY = s_MouseLastYPos - (float)ypos;
+	s_MouseLastXPos = (float)xpos;
+	s_MouseLastYPos = (float)ypos;
 
 	resetInput();
 	setInput();
 }
 
+// PRIVATE
 void Input::resetInput()
 {
-	MouseLeftButton = false;
-	MouseRightButton = false;
+	s_MouseLeftButton = false;
+	s_MouseRightButton = false;
 
-	ActionEscape = false;
-	ActionMoveForward = false;
-	ActionMoveBack = false;
-	ActionMoveLeft = false;
-	ActionMoveRight = false;
+	s_ActionEscape = false;
+	s_ActionMoveForward = false;
+	s_ActionMoveBack = false;
+	s_ActionMoveLeft = false;
+	s_ActionMoveRight = false;
 }
 
 void Input::setInput()
 {
-	if (glfwGetMouseButton(Window::WindowPtr, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	if (glfwGetMouseButton(Window::GetWindowPtr(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
-		MouseLeftButton = true;
+		s_MouseLeftButton = true;
 	}
 
-	if (glfwGetMouseButton(Window::WindowPtr, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	if (glfwGetMouseButton(Window::GetWindowPtr(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
-		MouseRightButton = true;
+		s_MouseRightButton = true;
 	}
 
 
-	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(Window::GetWindowPtr(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
-		ActionEscape = true;
+		s_ActionEscape = true;
 	}
 
-	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(Window::GetWindowPtr(), GLFW_KEY_W) == GLFW_PRESS)
 	{
-		ActionMoveForward = true;
+		s_ActionMoveForward = true;
 	}
 
-	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(Window::GetWindowPtr(), GLFW_KEY_S) == GLFW_PRESS)
 	{
-		ActionMoveBack = true;
+		s_ActionMoveBack = true;
 	}
 
-	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_A) == GLFW_PRESS)
+	if (glfwGetKey(Window::GetWindowPtr(), GLFW_KEY_A) == GLFW_PRESS)
 	{
-		ActionMoveLeft = true;
+		s_ActionMoveLeft = true;
 	}
 
-	if (glfwGetKey(Window::WindowPtr, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(Window::GetWindowPtr(), GLFW_KEY_D) == GLFW_PRESS)
 	{
-		ActionMoveRight = true;
+		s_ActionMoveRight = true;
 	}
 }

@@ -2,14 +2,10 @@
 
 #include "Log.h"
 
-GLFWwindow* Window::WindowPtr = nullptr;
-bool Window::ShouldClose = false;
+GLFWwindow* Window::s_WindowPtr = nullptr;
+bool Window::s_ShouldClose = false;
 
-void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
-}
-
+// PUBLIC
 void Window::InitWindow(const int& width, const int& height)
 {
 	// glfw: initialize and configure
@@ -20,17 +16,17 @@ void Window::InitWindow(const int& width, const int& height)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// glfw: window creation
-	WindowPtr = glfwCreateWindow(width, height, "Game Engine", NULL, NULL);
-	if (WindowPtr == NULL)
+	s_WindowPtr = glfwCreateWindow(width, height, "Game Engine", NULL, NULL);
+	if (s_WindowPtr == NULL)
 	{
 		LOG_ERROR("MAIN::Failed to create GLFW window!")
 		glfwTerminate();
 		return;
 	}
-	glfwMakeContextCurrent(WindowPtr);
+	glfwMakeContextCurrent(s_WindowPtr);
 
-	glfwSetFramebufferSizeCallback(WindowPtr, frameBufferSizeCallback);
-	glfwSetInputMode(WindowPtr, GLFW_CURSOR, /*GLFW_CURSOR_DISABLED*/ GLFW_CURSOR_NORMAL);
+	glfwSetFramebufferSizeCallback(s_WindowPtr, frameBufferSizeCallback);
+	glfwSetInputMode(s_WindowPtr, GLFW_CURSOR, /*GLFW_CURSOR_DISABLED*/ GLFW_CURSOR_NORMAL);
 	glfwSwapInterval(1);	// vsync
 
 	// glad: load all OpenGL function pointers
@@ -45,13 +41,13 @@ void Window::InitWindow(const int& width, const int& height)
 
 void Window::CloseWindow()
 {
-	glfwSetWindowShouldClose(WindowPtr, true);
-	ShouldClose = true;
+	glfwSetWindowShouldClose(s_WindowPtr, true);
+	s_ShouldClose = true;
 }
 
 void Window::SwapBuffers()
 {
-	glfwSwapBuffers(WindowPtr);
+	glfwSwapBuffers(s_WindowPtr);
 }
 
 void Window::PollEvents()
@@ -66,10 +62,16 @@ void Window::CleanUp()
 
 void Window::LockCursor()
 {
-	glfwSetInputMode(WindowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(s_WindowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Window::UnlockCursor()
 {
-	glfwSetInputMode(WindowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glfwSetInputMode(s_WindowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+// PRIVATE
+void Window::frameBufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
 }

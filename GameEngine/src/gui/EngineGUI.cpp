@@ -33,7 +33,7 @@ void EngineGUI::Init()
 	}
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForOpenGL(Window::WindowPtr, true);
+	ImGui_ImplGlfw_InitForOpenGL(Window::GetWindowPtr(), true);
 	const char* glsl_version = "#version 130";
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
@@ -89,11 +89,10 @@ void EngineGUI::Update(const float& deltaTime)
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
-		GLFWwindow* backup_current_context = glfwGetCurrentContext();
+		GLFWwindow* backupCurrentContext = glfwGetCurrentContext();
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		Window::WindowPtr = backup_current_context;
-		glfwMakeContextCurrent(backup_current_context);
+		Window::SetWindowPtr(backupCurrentContext);
 	}
 }
 

@@ -1,10 +1,11 @@
 #include "World.h"
 
-std::map<std::string, std::shared_ptr<GameObject>> World::GameObjects;
+std::map<std::string, std::shared_ptr<GameObject>> World::s_GameObjects;
 
+// PUBLIC
 void World::SetUp()
 {
-	for (auto& [name, object] : GameObjects)
+	for (auto& [name, object] : s_GameObjects)
 	{
 		object->SetUp();
 	}
@@ -12,7 +13,7 @@ void World::SetUp()
 
 void World::Update(const float& deltaTime)
 {
-	for (auto& [name, object] : GameObjects)
+	for (auto& [name, object] : s_GameObjects)
 	{
 		object->Update(deltaTime);
 	}
@@ -20,7 +21,7 @@ void World::Update(const float& deltaTime)
 
 void World::AddGameObject(const std::string& name, const std::shared_ptr<GameObject>& object)
 {
-	GameObjects[name] = object;
+	s_GameObjects[name] = object;
 }
 
 std::shared_ptr<GameObject> World::GetGameObject(const std::string& path)
@@ -28,8 +29,8 @@ std::shared_ptr<GameObject> World::GetGameObject(const std::string& path)
 	size_t index = path.find_first_of("/");
 	std::string name = path.substr(0, index);
 
-	const std::map<std::string, std::shared_ptr<GameObject>>::iterator it = GameObjects.find(name);
-	if (it != GameObjects.end())
+	const std::map<std::string, std::shared_ptr<GameObject>>::iterator it = s_GameObjects.find(name);
+	if (it != s_GameObjects.end())
 	{
 		if (index == std::string::npos)
 		{
