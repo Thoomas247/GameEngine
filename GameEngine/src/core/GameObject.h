@@ -40,6 +40,9 @@ public:
 	glm::quat GetLocalRotation() const { return m_LocalRotation; }
 	void SetLocalRotation(const glm::quat& newRot) { m_LocalRotation = newRot; }
 
+	glm::vec3 GetLocalRotationAsEulerAngles() const { return glm::eulerAngles(m_LocalRotation); }
+	void SetLocalRotationFromEulerAngles(const glm::vec3& newRot) { m_LocalRotation = glm::quat(newRot); }
+
 	glm::vec3 GetLocalScale() const { return m_LocalScale; }
 	void SetLocalScale(const glm::vec3& newScale) { m_LocalScale = newScale; }
 

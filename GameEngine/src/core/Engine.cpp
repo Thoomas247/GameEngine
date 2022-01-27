@@ -27,7 +27,7 @@ int Engine::Run()
 	// TODO: create menu for engine to create/load project
 	ProjectManager::CreateProject("TestGame", "C:/Users/TM1/source/repos/GameEngine/GameEngine/TestGame/");
 
-	if (ProjectManager::CurrentProject == nullptr)
+	if (ProjectManager::GetCurrentProject() == nullptr)
 	{
 		LOG_ERROR("ENGINE::No project loaded!")
 		return -1;
@@ -37,7 +37,6 @@ int Engine::Run()
 
 	EngineGUI::Init();
 	Renderer::Init();
-
 
 	// TODO: make all the operations below possible to do in the GUI
 	///////////////////////////////////////////////////////////
@@ -49,7 +48,7 @@ int Engine::Run()
 	World::AddGameObject("Tree", tree);
 
 	std::shared_ptr<GameObject> tree2 = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
-	tree2->SetLocalPosition(glm::vec3(30.0f, 0.0f, 0.0f));
+	tree2->SetLocalPosition(glm::vec3(30.0f, 0.0f, 0.0f));	// already possible
 	World::AddGameObject("Tree2", tree2);
 
 	std::shared_ptr<GameObject> bird = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Bird.GEM");

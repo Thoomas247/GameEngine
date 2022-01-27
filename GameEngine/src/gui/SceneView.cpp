@@ -1,11 +1,9 @@
 #include "SceneView.h"
 
-#include "imgui/imgui.h"
 #include "glad/gl.h"
 #include "glm/glm.hpp"
 
 #include "../renderer/Renderer.h"
-#include "../core/Log.h"
 #include "../core/Input.h"
 #include "../core/Window.h"
 
@@ -119,7 +117,7 @@ void SceneView::Update(const float& deltaTime)
 	}
 
 	m_SceneCamera.SetAspectRatio(size.x / size.y);
-	Renderer::CurrentCamera = &m_SceneCamera;
+	Renderer::SetCurrentCamera(&m_SceneCamera);
 
 	drawTexture();
 	ImGui::Image((void*)m_RenderTextureID, size, ImVec2(0, 1), ImVec2(1, 0));	// image needs to be inverted

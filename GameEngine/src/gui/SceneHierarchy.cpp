@@ -1,9 +1,6 @@
 #include "SceneHierarchy.h"
 
-#include "imgui/imgui.h"
-
 #include "../core/World.h"
-#include "../core/Log.h"
 
 // PUBLIC
 void SceneHierarchy::Update(const float& deltaTime)
@@ -13,10 +10,10 @@ void SceneHierarchy::Update(const float& deltaTime)
 
 	addChildrenToTree(World::GameObjects);
 
-	if (Selected)
+	if (GetSelectedGameObject())
 	{
-		Selected->SetSelected(true);
-		setChildrenAsSelected(Selected->GetChildren());
+		GetSelectedGameObject()->SetSelected(true);
+		setChildrenAsSelected(GetSelectedGameObject()->GetChildren());
 	}
 
 	ImGui::End();
@@ -34,11 +31,12 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 	{
 		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-		if (Selected == object)
+		if (GetSelectedGameObject() == object.get())
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
 
+		// open as branch if has children
 		if (object->GetChildren().size() == 0)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
@@ -46,10 +44,11 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 			ImGui::TreeNodeEx(name.c_str(), nodeFlags);
 			if (ImGui::IsItemClicked())
 			{
-				Selected = object;
+				SetSelectedGameObject(object.get());
 			}
 		}
 
+		// else open as leaf
 		else
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
@@ -57,7 +56,7 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 			bool expanded = ImGui::TreeNodeEx(name.c_str(), nodeFlags);
 			if (ImGui::IsItemClicked())
 			{
-				Selected = object;
+				SetSelectedGameObject(object.get());
 			}
 			if (expanded)
 			{

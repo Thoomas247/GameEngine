@@ -6,10 +6,12 @@
 
 #include "../structs/Texture.h"
 
-namespace TextureManager
+class TextureManager
 {
-	extern std::map<std::string, std::shared_ptr<Texture>> TextureCache;
+private:
+	static std::map<std::string, std::shared_ptr<Texture>> s_TextureCache;
 
-	void Init();
-	std::shared_ptr<Texture> LoadTexture(const std::string& path);
-}
+public:
+	static void Init();
+	static std::shared_ptr<Texture> LoadTexture(const std::string& path);
+};

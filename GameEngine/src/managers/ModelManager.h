@@ -8,33 +8,19 @@
 using json = nlohmann::json;
 #include "glm/glm.hpp"
 
-#include "../renderer/Mesh.h"
 #include "../structs/Vertex.h"
+#include "../structs/Model.h"
 
-// TODO: make folder for loader and organize classes into files
-
-struct Model
+class ModelManager
 {
-	std::map<std::string, Mesh> m_Meshes;
-	Skeleton m_Skeleton;
+private:
+	static std::map<std::string, Model> s_ModelCache;
 
-	Model()
-	{
-	}
+public:
+	static std::shared_ptr<GameObject> LoadModel(const std::string& modelPath);
 
-	Model(const std::map<std::string, Mesh>& meshes, const Skeleton& skeleton)
-	{
-		m_Meshes = meshes;
-		m_Skeleton = skeleton;
-	}
+private:
+	static Skeleton createSkeleton(json& j);
+	static Mesh createMesh(json& jmesh);
 };
 
-namespace ModelManager
-{
-	extern std::map<std::string, Model> ModelCache;
-
-	std::shared_ptr<GameObject> LoadModel(const std::string& modelPath);
-}
-
-Skeleton createSkeleton(json& j);
-Mesh createMesh(json& jmesh);

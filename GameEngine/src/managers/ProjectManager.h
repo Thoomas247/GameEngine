@@ -5,22 +5,20 @@
 
 #include "../core/Project.h"
 
-namespace ProjectManager
+class ProjectManager
 {
-	extern std::unique_ptr<Project> CurrentProject;
+private:
+	static std::unique_ptr<Project> s_CurrentProject;
 
-	void CreateProject(const std::string& name, const std::string& directory);
-	//void LoadProject();
-	//void SaveProject();
+public:
+	static void CreateProject(const std::string& name, const std::string& directory);
+	//static void LoadProject();
+	//static void SaveProject();
 
-	const std::string GetProjectDir();
-	const std::string GetModelsPath();
-	const std::string GetTexturesPath();
-	const std::string GetShadersPath();
+	static Project* GetCurrentProject() { return s_CurrentProject.get(); }
 
-	/*
-	void SetModelsPath(const std::string& relativePath);
-	void SetTexturesPath(const std::string& relativePath);
-	void SetShadersPath(const std::string& relativePath);
-	*/
-}
+	static std::string GetProjectDir() { return s_CurrentProject->ProjectDir; }
+	static std::string GetModelsPath() { return s_CurrentProject->ProjectDir + s_CurrentProject->DefaultModelsPath; }
+	static std::string GetTexturesPath() { return s_CurrentProject->ProjectDir + s_CurrentProject->DefaultTexturesPath; }
+	static std::string GetShadersPath() { return s_CurrentProject->ProjectDir + s_CurrentProject->DefaultShadersPath; }
+};

@@ -1,8 +1,11 @@
 #include "Panel.h"
 
+GameObject* Panel::s_SelectedGameObject = nullptr;
+
 // PUBLIC
 Panel::Panel()
 {
+
 }
 
 Panel::~Panel()

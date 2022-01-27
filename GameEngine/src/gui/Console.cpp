@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../core/Log.h"
-
 /*
 	Extracted from ImGui demo window
 */

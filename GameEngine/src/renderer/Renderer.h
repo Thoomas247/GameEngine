@@ -5,11 +5,16 @@
 #include "Mesh.h"
 #include "Camera.h"
 
-namespace Renderer
+class Renderer
 {
-	extern std::vector<Mesh*> DrawList;
-	extern Camera* CurrentCamera;
+private:
+	static std::vector<Mesh*> s_DrawList;
+	static Camera* s_CurrentCamera;
 
-	void Init();
-	void Draw();
-}
+public:
+	static void Init();
+	static void Draw();
+
+	static void AddToDrawList(Mesh* mesh) { s_DrawList.push_back(mesh); }
+	static void SetCurrentCamera(Camera* camera) { s_CurrentCamera = camera; }
+};

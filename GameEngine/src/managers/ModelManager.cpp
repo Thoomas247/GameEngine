@@ -10,16 +10,14 @@
 #include "../core/Log.h"
 #include "../renderer/Mesh.h"
 
-std::map<std::string, Model> ModelManager::ModelCache;
+std::map<std::string, Model> ModelManager::s_ModelCache;
 
+// PUBLIC
 std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath)
 {
-	//std::string modelName = modelPath.substr(modelPath.find_last_of("/") + 1);
-	//modelName.resize(modelName.find_last_of("."));
-
 	// check if model is in cache
-	auto it = ModelCache.find(modelPath);
-	if (it != ModelCache.end())
+	auto it = s_ModelCache.find(modelPath);
+	if (it != s_ModelCache.end())
 	{
 		Model& model = it->second;
 		std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
@@ -56,11 +54,12 @@ std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath
 
 	Model model = Model(meshes, createSkeleton(j));
 
-	ModelCache[modelPath] = model;
+	s_ModelCache[modelPath] = model;
 	return LoadModel(modelPath);
 }
 
-Skeleton createSkeleton(json& j)
+// PRIVATE
+Skeleton ModelManager::createSkeleton(json& j)
 {
 	std::vector<Joint> skeletonJoints;
 	std::map<std::string, Animation> animations;
@@ -117,7 +116,7 @@ Skeleton createSkeleton(json& j)
 	return Skeleton(skeletonJoints, animations);
 }
 
-Mesh createMesh(json& jmesh)
+Mesh ModelManager::createMesh(json& jmesh)
 {
 	// buffer data
 	std::vector<float> vertFloats = jmesh["vertices"];

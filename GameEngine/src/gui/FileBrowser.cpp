@@ -1,10 +1,7 @@
 #include "FileBrowser.h"
 
-#include "imgui/imgui.h"
-
 #include "../managers/ProjectManager.h"
 #include "../managers/TextureManager.h"
-#include "../core/Log.h"
 
 constexpr auto ICON_PADDING = 16;
 constexpr auto ICON_SIZE = 128 + ICON_PADDING;

@@ -20,5 +20,5 @@ Mesh::Mesh(std::shared_ptr<VertexArray> vertexArray, std::shared_ptr<Skeleton> s
 // PRIVATE
 void Mesh::onUpdate(const float& deltaTime)
 {
-	Renderer::DrawList.push_back(this);
+	Renderer::AddToDrawList(this);
 }

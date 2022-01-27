@@ -5,8 +5,9 @@
 
 #include "../core/Log.h"
 
-std::map<std::string, std::shared_ptr<Texture>> TextureManager::TextureCache;
+std::map<std::string, std::shared_ptr<Texture>> TextureManager::s_TextureCache;
 
+// PUBLIC
 void TextureManager::Init()
 {
 	// create 1x1 pixel full-white texture
@@ -21,21 +22,21 @@ void TextureManager::Init()
 	GLubyte data[] = { 255, 255, 255, 255 };
 	glTextureSubImage2D(defaultTex.ID, 0, 0, 0, defaultTex.Width, defaultTex.Height, GL_RGB, GL_UNSIGNED_BYTE, data);
 
-	TextureCache["default"] = std::make_shared<Texture>(defaultTex);
+	s_TextureCache["default"] = std::make_shared<Texture>(defaultTex);
 }
 
 std::shared_ptr<Texture> TextureManager::LoadTexture(const std::string& path)
 {
-	auto it = TextureManager::TextureCache.find(path);
+	auto it = TextureManager::s_TextureCache.find(path);
 
-	if (it != TextureManager::TextureCache.end())
+	if (it != TextureManager::s_TextureCache.end())
 	{
 		return it->second;
 	}
 
 	if (path == "" || path.back() == '/')
 	{
-		return TextureCache["default"];	// TODO: make return default full white texture index
+		return s_TextureCache["default"];	// TODO: make return default full white texture index
 	}
 
 	Texture texture;
@@ -64,7 +65,7 @@ std::shared_ptr<Texture> TextureManager::LoadTexture(const std::string& path)
 		else
 		{
 			LOG_ERROR("TEXTURE_MANAGER::Texture format not supported!")
-				return TextureCache["default"];
+				return s_TextureCache["default"];
 		}
 
 		glTextureStorage2D(texture.ID, 1, GL_RGBA8, texture.Width, texture.Height);
@@ -74,11 +75,11 @@ std::shared_ptr<Texture> TextureManager::LoadTexture(const std::string& path)
 	else
 	{
 		LOG_ERROR("TEXTURE_MANAGER::Failed to load texture!")
-		return TextureCache["default"];
+		return s_TextureCache["default"];
 	}
 
 	stbi_image_free(data);
 
-	TextureManager::TextureCache[path] = std::make_shared<Texture>(texture);
+	TextureManager::s_TextureCache[path] = std::make_shared<Texture>(texture);
 	return LoadTexture(path);
 }
