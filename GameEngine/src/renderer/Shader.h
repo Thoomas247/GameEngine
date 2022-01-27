@@ -16,15 +16,15 @@ enum UniformType
 
 class Shader
 {
-public:
-	unsigned int ID = 0;
-
 private:
+	unsigned int m_ID = 0;
 	std::map<UniformType, int> m_UniformLocations;
 
 public:
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	~Shader();
+
+	unsigned int GetID() const { return m_ID; }
 
 	void Activate();
 

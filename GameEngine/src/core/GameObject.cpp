@@ -1,5 +1,8 @@
 #include "GameObject.h"
 
+//#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/matrix_decompose.hpp"
+
 // PUBLIC
 void GameObject::SetUp()
 {
@@ -63,6 +66,14 @@ void GameObject::calcTransforms(const glm::mat4& parentTransform)
 	m_LastLocalScale = m_LocalScale;
 
 	m_GlobalTransform = parentTransform * m_LocalTransform;
+}
+
+void GameObject::decomposeMatIntoComponents(const glm::mat4& matrix)
+{
+	// TODO: write own decompose function
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(matrix, m_LocalScale, m_LocalRotation, m_LocalPosition, skew, perspective);
 }
 
 void GameObject::onSetUp()

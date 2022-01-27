@@ -17,15 +17,6 @@ struct FileInfo
 	std::string Name;
 	std::string Path;
 	FileType Type = NONE;
-
-	/*
-	FileInfo(const std::string& name, const std::string& path, const FileType& type)
-	{
-		Name = name;
-		Path = path;
-		Type = type;
-	}
-	*/
 };
 
 class FileBrowser : public Panel

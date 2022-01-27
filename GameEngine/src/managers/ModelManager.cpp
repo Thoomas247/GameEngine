@@ -30,7 +30,7 @@ std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath
 		for (const auto& [name, savedMesh] : model.m_Meshes)
 		{
 			auto mesh = std::make_shared<Mesh>(savedMesh);
-			mesh->m_Skeleton = skeleton;
+			mesh->SetSkeleton(skeleton);
 			gameObject->AddChild(name, mesh);
 		}
 

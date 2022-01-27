@@ -14,7 +14,7 @@ FileBrowser::FileBrowser()
 {
 	m_Icons[DIRECTORY] = TextureManager::LoadTexture("assets/gui/icons/Folder Icon.png");
 	m_Icons[GLTF] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
-	m_Icons[GEM] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
+	m_Icons[GEM] = TextureManager::LoadTexture("assets/gui/icons/Model Icon.png");
 	m_Icons[PNG] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
 	m_Icons[OTHER] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
 
@@ -84,6 +84,11 @@ void FileBrowser::Update(const float& deltaTime)
 			{
 				cleanAndSetPath(file.Path);
 				shouldUpdate = true;
+			}
+
+			if (file.Type == GEM)
+			{
+				// add model to scene
 			}
 		}
 		ImGui::PopID();

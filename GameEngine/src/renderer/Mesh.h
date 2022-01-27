@@ -19,7 +19,7 @@
 
 class Mesh : public GameObject
 {
-public:
+private:
 	std::shared_ptr<VertexArray> m_VertexArray;
 	std::shared_ptr<Skeleton> m_Skeleton;
 	std::shared_ptr<Material> m_Material;
@@ -28,6 +28,18 @@ public:
 public:
 	Mesh();
 	Mesh(std::shared_ptr<VertexArray> vertexArray, std::shared_ptr<Skeleton> skeleton, std::shared_ptr<Material> material, std::shared_ptr<Shader> shader, glm::mat4 transform = glm::mat4(1.0f));
+
+	VertexArray* GetVertexArray() const { return m_VertexArray.get(); }
+	void SetVertexArray(const std::shared_ptr<VertexArray>& vertexArray) { m_VertexArray = vertexArray; }
+
+	Skeleton* GetSkeleton() const { return m_Skeleton.get(); }
+	void SetSkeleton(const std::shared_ptr<Skeleton>& skeleton) { m_Skeleton = skeleton; }
+
+	Material* GetMaterial() const { return m_Material.get(); }
+	void SetMaterial(const std::shared_ptr<Material>& material) { m_Material = material; }
+
+	Shader* GetShader() const { return m_Shader.get(); }
+	void SetShader(const std::shared_ptr<Shader>& shader) { m_Shader = shader; }
 
 private:
 	void onUpdate(const float& deltaTime) override;

@@ -118,7 +118,7 @@ void SceneView::Update(const float& deltaTime)
 		ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 	}
 
-	m_SceneCamera.AspectRatio = size.x / size.y;
+	m_SceneCamera.SetAspectRatio(size.x / size.y);
 	Renderer::CurrentCamera = &m_SceneCamera;
 
 	drawTexture();

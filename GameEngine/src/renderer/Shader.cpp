@@ -77,11 +77,11 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 	checkCompileErrors(fragment, "FRAGMENT");
 
 	// shader Program
-	ID = glCreateProgram();
-	glAttachShader(ID, vertex);
-	glAttachShader(ID, fragment);
-	glLinkProgram(ID);
-	checkCompileErrors(ID, "PROGRAM");
+	m_ID = glCreateProgram();
+	glAttachShader(m_ID, vertex);
+	glAttachShader(m_ID, fragment);
+	glLinkProgram(m_ID);
+	checkCompileErrors(m_ID, "PROGRAM");
 
 	// delete the shaders as they're linked into our program now and no longer necessary
 	glDeleteShader(vertex);
@@ -92,12 +92,12 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 
 Shader::~Shader()
 {
-	glDeleteProgram(ID);
+	glDeleteProgram(m_ID);
 }
 
 void Shader::Activate()
 {
-	glUseProgram(ID);
+	glUseProgram(m_ID);
 }
 
 void Shader::SetBool(UniformType uniform, const bool& value)
@@ -148,20 +148,20 @@ void Shader::SetMat4(UniformType uniform, const glm::mat4& mat)
 // PRIVATE
 void Shader::setUniformLocations()
 {
-	m_UniformLocations[MODEL_MAT] = glGetUniformLocation(ID, "model_mat");
-	m_UniformLocations[VIEW_MAT] = glGetUniformLocation(ID, "view_mat");
-	m_UniformLocations[PROJECTION_MAT] = glGetUniformLocation(ID, "projection_mat");
+	m_UniformLocations[MODEL_MAT] = glGetUniformLocation(m_ID, "model_mat");
+	m_UniformLocations[VIEW_MAT] = glGetUniformLocation(m_ID, "view_mat");
+	m_UniformLocations[PROJECTION_MAT] = glGetUniformLocation(m_ID, "projection_mat");
 
-	m_UniformLocations[ALBEDO_TEX] = glGetUniformLocation(ID, "albedo_tex");
-	m_UniformLocations[EMISSIVE_TEX] = glGetUniformLocation(ID, "emissive_tex");
-	m_UniformLocations[METALLIC_ROUGHNESS_TEX] = glGetUniformLocation(ID, "metallic_roughness_tex");
-	m_UniformLocations[NORMAL_TEX] = glGetUniformLocation(ID, "normal_tex");
-	m_UniformLocations[OCCLUSION_TEX] = glGetUniformLocation(ID, "occlusion_tex");
+	m_UniformLocations[ALBEDO_TEX] = glGetUniformLocation(m_ID, "albedo_tex");
+	m_UniformLocations[EMISSIVE_TEX] = glGetUniformLocation(m_ID, "emissive_tex");
+	m_UniformLocations[METALLIC_ROUGHNESS_TEX] = glGetUniformLocation(m_ID, "metallic_roughness_tex");
+	m_UniformLocations[NORMAL_TEX] = glGetUniformLocation(m_ID, "normal_tex");
+	m_UniformLocations[OCCLUSION_TEX] = glGetUniformLocation(m_ID, "occlusion_tex");
 
-	m_UniformLocations[ALBEDO_FAC] = glGetUniformLocation(ID, "albedo_fac");
-	m_UniformLocations[EMISSIVE_FAC] = glGetUniformLocation(ID, "emissive_fac");
-	m_UniformLocations[METALLIC_FAC] = glGetUniformLocation(ID, "metallic_fac");
-	m_UniformLocations[ROUGHNESS_FAC] = glGetUniformLocation(ID, "roughness_fac");
+	m_UniformLocations[ALBEDO_FAC] = glGetUniformLocation(m_ID, "albedo_fac");
+	m_UniformLocations[EMISSIVE_FAC] = glGetUniformLocation(m_ID, "emissive_fac");
+	m_UniformLocations[METALLIC_FAC] = glGetUniformLocation(m_ID, "metallic_fac");
+	m_UniformLocations[ROUGHNESS_FAC] = glGetUniformLocation(m_ID, "roughness_fac");
 
-	m_UniformLocations[IS_SELECTED] = glGetUniformLocation(ID, "is_selected");
+	m_UniformLocations[IS_SELECTED] = glGetUniformLocation(m_ID, "is_selected");
 }

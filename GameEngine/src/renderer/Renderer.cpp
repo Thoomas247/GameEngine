@@ -38,24 +38,24 @@ void Renderer::Draw()
 
 	for (Mesh* mesh : Renderer::DrawList)
 	{
-		mesh->m_Shader->Activate();
+		mesh->GetShader()->Activate();
 
 		// albedo texture
-		glBindTextureUnit(0, mesh->m_Material->BaseColorTexture->ID);
-		mesh->m_Shader->SetInt(ALBEDO_TEX, 0);	// TODO: switch to setting material all at once (make struct in shader)
+		glBindTextureUnit(0, mesh->GetMaterial()->BaseColorTexture->ID);
+		mesh->GetShader()->SetInt(ALBEDO_TEX, 0);	// TODO: switch to setting material all at once (make struct in shader)
 
 		// is mesh selected?				// temp
-		mesh->m_Shader->SetInt(IS_SELECTED, mesh->m_IsSelected);
-		mesh->m_IsSelected = false;	// reset for next frame
+		mesh->GetShader()->SetInt(IS_SELECTED, mesh->IsSelected());
+		mesh->SetSelected(false);	// reset for next frame
 
 		// matrices
-		mesh->m_Shader->SetMat4(MODEL_MAT, mesh->m_GlobalTransform);
-		mesh->m_Shader->SetMat4(VIEW_MAT, CurrentCamera->ViewMatrix);
-		mesh->m_Shader->SetMat4(PROJECTION_MAT, CurrentCamera->ProjectionMatrix);
+		mesh->GetShader()->SetMat4(MODEL_MAT, mesh->GetGlobalTransform());
+		mesh->GetShader()->SetMat4(VIEW_MAT, CurrentCamera->GetViewMatrix());
+		mesh->GetShader()->SetMat4(PROJECTION_MAT, CurrentCamera->GetProjectionMatrix());
 
-		mesh->m_VertexArray->Bind();
-		glDrawElements(GL_TRIANGLES, mesh->m_VertexArray->NumIndices, GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
-		mesh->m_VertexArray->Unbind();
+		mesh->GetVertexArray()->Bind();
+		glDrawElements(GL_TRIANGLES, mesh->GetVertexArray()->GetNumIndices(), GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
+		mesh->GetVertexArray()->Unbind();
 	}
 
 	DrawList.clear();

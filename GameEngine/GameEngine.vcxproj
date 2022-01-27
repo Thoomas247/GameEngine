@@ -101,7 +101,6 @@
     <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\core\Log.cpp" />
     <ClCompile Include="src\gui\Panel.cpp" />
-    <ClCompile Include="src\core\Game.cpp" />
     <ClCompile Include="src\gui\EngineGUI.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
@@ -134,7 +133,6 @@
     <ClInclude Include="src\gui\Console.h" />
     <ClInclude Include="src\core\Log.h" />
     <ClInclude Include="src\gui\Panel.h" />
-    <ClInclude Include="src\core\Game.h" />
     <ClInclude Include="src\gui\EngineGUI.h" />
     <ClInclude Include="src\core\Project.h" />
     <ClInclude Include="src\core\Engine.h" />

@@ -15,8 +15,8 @@ void SceneHierarchy::Update(const float& deltaTime)
 
 	if (Selected)
 	{
-		Selected->m_IsSelected = true;
-		setChildrenAsSelected(Selected->m_Children);
+		Selected->SetSelected(true);
+		setChildrenAsSelected(Selected->GetChildren());
 	}
 
 	ImGui::End();
@@ -39,7 +39,7 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
 
-		if (object->m_Children.size() == 0)
+		if (object->GetChildren().size() == 0)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
@@ -61,7 +61,7 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 			}
 			if (expanded)
 			{
-				addChildrenToTree(object->m_Children);
+				addChildrenToTree(object->GetChildren());
 				ImGui::TreePop();
 			}
 		}
@@ -72,7 +72,7 @@ void SceneHierarchy::setChildrenAsSelected(const std::map<std::string, std::shar
 {
 	for (auto& [name, child] : children)
 	{
-		child->m_IsSelected = true;
-		setChildrenAsSelected(child->m_Children);
+		child->SetSelected(true);
+		setChildrenAsSelected(child->GetChildren());
 	}
 }

@@ -12,10 +12,9 @@
 
 class Skeleton : public GameObject
 {
-public:
+private:
 	Animation* m_CurrentAnimation = nullptr;
 
-private:
 	std::vector<Joint> m_Joints;
 	std::map<std::string, Animation> m_Animations;
 
