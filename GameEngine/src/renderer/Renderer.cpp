@@ -30,7 +30,7 @@ void Renderer::Draw()
 	if (s_CurrentCamera == nullptr)
 	{
 		LOG_ERROR("RENDERER::Camera is null!")
-		return;
+			return;
 	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

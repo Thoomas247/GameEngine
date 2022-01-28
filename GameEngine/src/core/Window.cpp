@@ -20,7 +20,7 @@ void Window::InitWindow(const int& width, const int& height)
 	if (s_WindowPtr == NULL)
 	{
 		LOG_ERROR("MAIN::Failed to create GLFW window!")
-		glfwTerminate();
+			glfwTerminate();
 		return;
 	}
 	glfwMakeContextCurrent(s_WindowPtr);
@@ -34,7 +34,7 @@ void Window::InitWindow(const int& width, const int& height)
 	if (version == 0)
 	{
 		LOG_ERROR("MAIN::Failed to initialize OpenGL context!")
-		return;
+			return;
 	}
 	LOG_INFO("MAIN::Loaded OpenGL " + std::string(GLAD_VERSION_MAJOR(version) + "." + GLAD_VERSION_MINOR(version)))
 }

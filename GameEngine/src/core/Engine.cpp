@@ -30,7 +30,7 @@ int Engine::Run()
 	if (ProjectManager::GetCurrentProject() == nullptr)
 	{
 		LOG_ERROR("ENGINE::No project loaded!")
-		return -1;
+			return -1;
 	}
 
 	TextureManager::Init();
@@ -40,7 +40,7 @@ int Engine::Run()
 
 	// TODO: make all the operations below possible to do in the GUI
 	///////////////////////////////////////////////////////////
-	
+
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 
@@ -54,7 +54,7 @@ int Engine::Run()
 		for (int z = 0; z < 10; z++)
 		{
 			auto tree = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
-			tree->LocalPosition = glm::vec3(10*x, 0.0f, 10*z);
+			tree->LocalPosition = glm::vec3(10 * x, 0.0f, 10 * z);
 			tree->SetLocalRotationFromEulerAngles(glm::vec3(-90.0f, 0.0f, 0.0f));
 			World::AddGameObject(std::to_string(x) + "," + std::to_string(z), tree);
 		}

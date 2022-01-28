@@ -19,7 +19,7 @@ struct Material
 	std::shared_ptr<Texture> NormalTexture;
 	std::shared_ptr<Texture> OcclusionTexture;
 
-	Material(const glm::vec4& baseF, const glm::vec3& emissiveF, const float& metallicF, const float& roughnessF, std::shared_ptr<Texture> baseT, 
+	Material(const glm::vec4& baseF, const glm::vec3& emissiveF, const float& metallicF, const float& roughnessF, std::shared_ptr<Texture> baseT,
 		std::shared_ptr<Texture> emissiveT, std::shared_ptr<Texture> metallicRoughnessT, std::shared_ptr<Texture> normalT, std::shared_ptr<Texture> occlusionT)
 	{
 		BaseColorFactor = baseF;

@@ -21,7 +21,6 @@ void SceneHierarchy::Update(const float& deltaTime)
 // PRIVATE
 void SceneHierarchy::destroy()
 {
-
 }
 
 void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_ptr<GameObject>>& children)

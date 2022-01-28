@@ -21,4 +21,3 @@ public:
 	void Bind();
 	void Unbind();
 };
-

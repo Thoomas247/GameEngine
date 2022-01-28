@@ -9,7 +9,7 @@
 
 #include "../core/GameObject.h"
 
-class Camera : public GameObject 
+class Camera : public GameObject
 {
 private:
 	glm::mat4 m_LastGlobalTransform = glm::mat4(1.0f);
@@ -31,7 +31,6 @@ public:
 	glm::mat4 GetProjectionMatrix() const { return m_ProjectionMatrix; }
 
 	void SetAspectRatio(const float& aspectRatio) { m_AspectRatio = aspectRatio; }
-
 
 private:
 	void onUpdate(const float& deltaTime) override;

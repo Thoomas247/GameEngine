@@ -25,5 +25,4 @@ void Camera::CalcViewProjectionMatrix()
 // PRIVATE
 void Camera::onUpdate(const float& deltaTime)
 {
-	
 }

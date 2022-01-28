@@ -8,7 +8,6 @@
 #include "../managers/ProjectManager.h"
 #include "../core/Log.h"
 
-
 void checkCompileErrors(const unsigned int& shader, const std::string& type)
 {
 	int success;
@@ -42,7 +41,7 @@ std::string loadFileContents(const std::string& path)
 		stringStream << fileStream.rdbuf();
 
 		fileStream.close();
-		
+
 		fileContents = stringStream.str();
 	}
 	catch (std::ifstream::failure& e) {

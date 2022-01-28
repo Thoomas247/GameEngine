@@ -23,4 +23,3 @@ private:
 	static Skeleton createSkeleton(json& j);
 	static Mesh createMesh(json& jmesh);
 };
-

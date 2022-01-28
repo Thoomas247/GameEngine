@@ -10,4 +10,3 @@ public:
 private:
 	void destroy() override;
 };
-

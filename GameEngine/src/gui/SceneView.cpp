@@ -13,14 +13,14 @@ constexpr auto VIEWPORT_RENDER_RESOLUTION_HEIGHT = 1080;
 // PUBLIC - SceneCamera
 void SceneCamera::DoMovement(const float& deltaTime)
 {
-	// Rotation
-	LocalRotation = glm::rotate(LocalRotation, glm::radians(Input::GetMouseDeltaX() * m_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f));
-	LocalRotation = glm::rotate(LocalRotation, glm::radians(Input::GetMouseDeltaY() * m_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
-
-	// Movement
 	glm::vec3 front = glm::mat3_cast(LocalRotation) * glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 right = glm::mat3_cast(LocalRotation) * glm::vec3(1.0f, 0.0f, 0.0f);
 
+	// rotation
+	LocalRotation = glm::rotate(LocalRotation, glm::radians(Input::GetMouseDeltaX() * m_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f));
+	LocalRotation = glm::rotate(LocalRotation, glm::radians(Input::GetMouseDeltaY() * m_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	// movement
 	glm::vec3 inputVector = glm::vec3(0.0f);
 
 	if (Input::GetActionMoveForward())
@@ -69,7 +69,7 @@ SceneView::SceneView()
 	unsigned int depthBuffer;
 	glCreateRenderbuffers(1, &depthBuffer);
 	glNamedRenderbufferStorage(depthBuffer, GL_DEPTH_COMPONENT, VIEWPORT_RENDER_RESOLUTION_WIDTH, VIEWPORT_RENDER_RESOLUTION_HEIGHT);
-	
+
 	glNamedFramebufferRenderbuffer(m_FrameBuffer, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
 
 	//glNamedFramebufferDrawBuffer(m_FrameBuffer, GL_COLOR_ATTACHMENT0);
@@ -78,9 +78,8 @@ SceneView::SceneView()
 	if (glCheckNamedFramebufferStatus(m_FrameBuffer, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
 		LOG_ERROR("SCENE_VIEW::Failed to set up rendering to ImGui!")
-		return;
+			return;
 	}
-
 }
 
 void SceneView::Update(const float& deltaTime)
@@ -100,14 +99,14 @@ void SceneView::Update(const float& deltaTime)
 	{
 		m_IsFocused = false;
 	}
-	
+
 	if (m_IsFocused)
 	{
 		Window::LockCursor();
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
 		m_SceneCamera.DoMovement(deltaTime);
 	}
-	else 
+	else
 	{
 		Window::UnlockCursor();
 		ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
@@ -121,7 +120,6 @@ void SceneView::Update(const float& deltaTime)
 
 	ImGui::End();
 }
-
 
 // PRIVATE
 void SceneView::destroy()

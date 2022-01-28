@@ -139,7 +139,6 @@ Mesh ModelManager::createMesh(json& jmesh)
 
 	auto vertexArray = std::make_shared<VertexArray>(vertices, indices);
 
-
 	// material
 	std::vector<float> baseColor = jmesh["baseColorFactor"];
 	std::vector<float> emissiveColor = jmesh["emissiveFactor"];
@@ -151,7 +150,7 @@ Mesh ModelManager::createMesh(json& jmesh)
 	std::string occlusionPath = ProjectManager::GetTexturesPath() + std::string(jmesh["occlusionTexture"]);
 
 	std::shared_ptr<Material> material = std::make_shared<Material>(glm::vec4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]), glm::vec3(emissiveColor[0], emissiveColor[1], emissiveColor[2]),
-		jmesh["metallicFactor"], jmesh["roughnessFactor"], TextureManager::LoadTexture(basePath), TextureManager::LoadTexture(emissivePath), TextureManager::LoadTexture(metallicRoughnessPath), 
+		jmesh["metallicFactor"], jmesh["roughnessFactor"], TextureManager::LoadTexture(basePath), TextureManager::LoadTexture(emissivePath), TextureManager::LoadTexture(metallicRoughnessPath),
 		TextureManager::LoadTexture(normalPath), TextureManager::LoadTexture(occlusionPath));
 
 	// transform
@@ -160,7 +159,6 @@ Mesh ModelManager::createMesh(json& jmesh)
 							transformVec[1], transformVec[5], transformVec[9], transformVec[13],
 							transformVec[2], transformVec[6], transformVec[10], transformVec[14],
 							transformVec[3], transformVec[7], transformVec[11], transformVec[15] };
-
 
 	return Mesh(vertexArray, nullptr, material, std::make_shared<Shader>("assets/shaders/Base.vert", "assets/shaders/Base.frag"), transform);
 }

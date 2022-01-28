@@ -75,7 +75,7 @@ std::shared_ptr<Texture> TextureManager::LoadTexture(const std::string& path)
 	else
 	{
 		LOG_ERROR("TEXTURE_MANAGER::Failed to load texture!")
-		return s_TextureCache["default"];
+			return s_TextureCache["default"];
 	}
 
 	stbi_image_free(data);

@@ -95,6 +95,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\gui\HostPanel.cpp" />
     <ClCompile Include="src\gui\PropertiesPanel.cpp" />
     <ClCompile Include="src\gui\FileBrowser.cpp" />
     <ClCompile Include="src\gui\SceneHierarchy.cpp" />
@@ -131,6 +132,7 @@
     <ClCompile Include="src\managers\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\gui\HostPanel.h" />
     <ClInclude Include="src\gui\PropertiesPanel.h" />
     <ClInclude Include="src\gui\FileBrowser.h" />
     <ClInclude Include="src\gui\SceneHierarchy.h" />

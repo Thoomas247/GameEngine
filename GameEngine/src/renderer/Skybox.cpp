@@ -52,5 +52,4 @@ void Skybox::Init()
 	s_Textures[RIGHT] = TextureManager::LoadTexture("assets/textures/skybox/skybox_right.jpg");
 	s_Textures[TOP] = TextureManager::LoadTexture("assets/textures/skybox/skybox_top.jpg");
 	s_Textures[BOTTOM] = TextureManager::LoadTexture("assets/textures/skybox/skybox_bottom.jpg");
-
 }

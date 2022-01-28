@@ -65,7 +65,7 @@ void FileBrowser::Update(const float& deltaTime)
 		numColumns = 1;
 	}
 
-	ImGui::BeginTable("File Browser Layout", numColumns);
+	bool tableReturn = ImGui::BeginTable("File Browser Layout", numColumns);
 
 	for (const FileInfo& file : m_Files)
 	{
@@ -91,7 +91,8 @@ void FileBrowser::Update(const float& deltaTime)
 		ImGui::Text(file.Name.c_str());
 	}
 
-	ImGui::EndTable();
+	if (tableReturn)
+		ImGui::EndTable();
 
 	ImGui::End();
 
@@ -104,7 +105,6 @@ void FileBrowser::Update(const float& deltaTime)
 // PRIVATE
 void FileBrowser::destroy()
 {
-
 }
 
 void FileBrowser::cleanAndSetPath(const std::string& newPath)

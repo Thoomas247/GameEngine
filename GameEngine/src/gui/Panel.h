@@ -9,7 +9,7 @@ class Panel
 {
 protected:
 	static GameObject* s_SelectedGameObject;
-	static ImGuiWindowFlags s_WindowFlags;
+	static const ImGuiWindowFlags s_WindowFlags = ImGuiWindowFlags_NoCollapse;
 
 public:
 	Panel();

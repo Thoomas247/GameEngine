@@ -55,7 +55,6 @@ void Input::setInput()
 		s_MouseRightButton = true;
 	}
 
-
 	if (glfwGetKey(Window::GetWindowPtr(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		s_ActionEscape = true;

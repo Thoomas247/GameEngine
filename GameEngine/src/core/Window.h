@@ -24,8 +24,6 @@ public:
 
 	static bool ShouldClose() { return s_ShouldClose; }
 
-	
-
 private:
 	static void frameBufferSizeCallback(GLFWwindow* window, int width, int height);
 };

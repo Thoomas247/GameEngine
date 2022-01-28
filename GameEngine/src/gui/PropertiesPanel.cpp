@@ -20,7 +20,7 @@ void PropertiesPanel::Update(const float& deltaTime)
 		TextCentered("Local Tranform");
 		ImGui::Separator();
 
-		ImGui::BeginTable("Transform Table", 4);
+		bool tableReturn = ImGui::BeginTable("Transform Table", 4);
 
 		// position
 		ImGui::TableNextColumn();
@@ -113,13 +113,12 @@ void PropertiesPanel::Update(const float& deltaTime)
 		ImGui::InputFloat("", &s_SelectedGameObject->LocalScale.z);
 		ImGui::PopID();
 
-		ImGui::EndTable();
-
+		if (tableReturn)
+			ImGui::EndTable();
 
 		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Separator();
-
 
 		// OTHER
 		TextCentered("Other Stuff");
@@ -131,7 +130,6 @@ void PropertiesPanel::Update(const float& deltaTime)
 		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Separator();
-
 	}
 
 	ImGui::End();
