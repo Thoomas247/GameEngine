@@ -8,7 +8,7 @@ void GameObject::SetUp()
 {
 	onSetUp();
 
-	for (auto& [name, object] : m_Children)
+	for (auto& [name, object] : Children)
 	{
 		object->SetUp();
 	}
@@ -19,7 +19,7 @@ void GameObject::Update(const float& deltaTime, const glm::mat4& parentTransform
 	onUpdate(deltaTime);
 	calcTransforms(parentTransform);
 
-	for (auto& [name, object] : m_Children)
+	for (auto& [name, object] : Children)
 	{
 		object->Update(deltaTime, m_GlobalTransform);
 	}
@@ -27,7 +27,7 @@ void GameObject::Update(const float& deltaTime, const glm::mat4& parentTransform
 
 void GameObject::AddChild(const std::string& name, const std::shared_ptr<GameObject>& object)
 {
-	m_Children[name] = object;
+	Children[name] = object;
 }
 
 std::shared_ptr<GameObject> GameObject::GetChild(const std::string& path)
@@ -35,8 +35,8 @@ std::shared_ptr<GameObject> GameObject::GetChild(const std::string& path)
 	size_t index = path.find_first_of("/");
 	std::string name = path.substr(0, index);
 
-	const std::map<std::string, std::shared_ptr<GameObject>>::iterator it = m_Children.find(name);
-	if (it != m_Children.end())
+	const std::map<std::string, std::shared_ptr<GameObject>>::iterator it = Children.find(name);
+	if (it != Children.end())
 	{
 		if (index == std::string::npos)
 		{
@@ -53,17 +53,17 @@ std::shared_ptr<GameObject> GameObject::GetChild(const std::string& path)
 // PRIVATE
 void GameObject::calcTransforms(const glm::mat4& parentTransform)
 {
-	if (m_LocalPosition == m_LastLocalPosition && m_LocalRotation == m_LastLocalRotation && m_LocalScale == m_LastLocalScale)
+	if (LocalPosition == m_LastLocalPosition && LocalRotation == m_LastLocalRotation && LocalScale == m_LastLocalScale)
 	{
 		m_GlobalTransform = parentTransform * m_LocalTransform;
 		return;
 	}
 
-	m_LocalTransform = glm::translate(glm::mat4(1.0f), m_LocalPosition) * glm::mat4_cast(m_LocalRotation) * glm::scale(glm::mat4(1.0f), m_LocalScale);
+	m_LocalTransform = glm::translate(glm::mat4(1.0f), LocalPosition) * glm::mat4_cast(LocalRotation) * glm::scale(glm::mat4(1.0f), LocalScale);
 
-	m_LastLocalPosition = m_LocalPosition;
-	m_LastLocalRotation = m_LocalRotation;
-	m_LastLocalScale = m_LocalScale;
+	m_LastLocalPosition = LocalPosition;
+	m_LastLocalRotation = LocalRotation;
+	m_LastLocalScale = LocalScale;
 
 	m_GlobalTransform = parentTransform * m_LocalTransform;
 }
@@ -73,7 +73,7 @@ void GameObject::decomposeMatIntoComponents(const glm::mat4& matrix)
 	// TODO: write own decompose function
 	glm::vec3 skew;
 	glm::vec4 perspective;
-	glm::decompose(matrix, m_LocalScale, m_LocalRotation, m_LocalPosition, skew, perspective);
+	glm::decompose(matrix, LocalScale, LocalRotation, LocalPosition, skew, perspective);
 }
 
 void GameObject::onSetUp()

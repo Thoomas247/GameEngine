@@ -19,11 +19,6 @@ void World::Update(const float& deltaTime)
 	}
 }
 
-void World::AddGameObject(const std::string& name, const std::shared_ptr<GameObject>& object)
-{
-	s_GameObjects[name] = object;
-}
-
 std::shared_ptr<GameObject> World::GetGameObject(const std::string& path)
 {
 	size_t index = path.find_first_of("/");
@@ -42,4 +37,9 @@ std::shared_ptr<GameObject> World::GetGameObject(const std::string& path)
 	}
 
 	return nullptr;
+}
+
+void World::AddGameObject(const std::string& name, const std::shared_ptr<GameObject>& object)
+{
+	s_GameObjects[name] = object;
 }

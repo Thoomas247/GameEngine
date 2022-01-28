@@ -13,7 +13,7 @@ void PropertiesPanel::Update(const float& deltaTime)
 {
 	ImGui::Begin("Properties", (bool*)0, s_WindowFlags);
 
-	if (GetSelectedGameObject())
+	if (s_SelectedGameObject)
 	{
 		// LOCAL TRANSFORM
 		ImGui::Separator();
@@ -23,8 +23,6 @@ void PropertiesPanel::Update(const float& deltaTime)
 		ImGui::BeginTable("Transform Table", 4);
 
 		// position
-		glm::vec3 localPos = GetSelectedGameObject()->GetLocalPosition();
-
 		ImGui::TableNextColumn();
 		ImGui::Text("Position");
 
@@ -34,33 +32,25 @@ void PropertiesPanel::Update(const float& deltaTime)
 		ImGui::Text("X:"); ImGui::SameLine();
 
 		ImGui::PushID("XPos");
-		if (ImGui::InputFloat("", & localPos.x))
-			posChanged = true;
+		ImGui::InputFloat("", &s_SelectedGameObject->LocalPosition.x);
 		ImGui::PopID();
 
 		ImGui::TableNextColumn();
 		ImGui::Text("Y:"); ImGui::SameLine();
 
 		ImGui::PushID("YPos");
-		if (ImGui::InputFloat("", &localPos.y))
-			posChanged = true;
+		ImGui::InputFloat("", &s_SelectedGameObject->LocalPosition.y);
 		ImGui::PopID();
 
 		ImGui::TableNextColumn();
 		ImGui::Text("Z:"); ImGui::SameLine();
 
 		ImGui::PushID("ZPos");
-		if (ImGui::InputFloat("", &localPos.z))
-			posChanged = true;
+		ImGui::InputFloat("", &s_SelectedGameObject->LocalPosition.z);
 		ImGui::PopID();
 
-		if (posChanged)
-		{
-			GetSelectedGameObject()->SetLocalPosition(localPos);
-		}
-
 		// rotation
-		glm::vec3 localRot = glm::degrees(GetSelectedGameObject()->GetLocalRotationAsEulerAngles());
+		glm::vec3 localRot = s_SelectedGameObject->GetLocalRotationAsEulerAngles();
 
 		ImGui::TableNextColumn();
 		ImGui::Text("Rotation");
@@ -93,12 +83,10 @@ void PropertiesPanel::Update(const float& deltaTime)
 
 		if (rotChanged)
 		{
-			GetSelectedGameObject()->SetLocalRotationFromEulerAngles(glm::radians(localRot));
+			s_SelectedGameObject->SetLocalRotationFromEulerAngles(localRot);
 		}
 
 		// scale
-		glm::vec3 localScale = GetSelectedGameObject()->GetLocalScale();
-
 		ImGui::TableNextColumn();
 		ImGui::Text("Scale");
 
@@ -108,30 +96,22 @@ void PropertiesPanel::Update(const float& deltaTime)
 		ImGui::Text("X:"); ImGui::SameLine();
 
 		ImGui::PushID("XScale");
-		if (ImGui::InputFloat("", &localScale.x))
-			scaleChanged = true;
+		ImGui::InputFloat("", &s_SelectedGameObject->LocalScale.x);
 		ImGui::PopID();
 
 		ImGui::TableNextColumn();
 		ImGui::Text("Y:"); ImGui::SameLine();
 
 		ImGui::PushID("YScale");
-		if (ImGui::InputFloat("", &localScale.y))
-			scaleChanged = true;
+		ImGui::InputFloat("", &s_SelectedGameObject->LocalScale.y);
 		ImGui::PopID();
 
 		ImGui::TableNextColumn();
 		ImGui::Text("Z:"); ImGui::SameLine();
 
 		ImGui::PushID("ZScale");
-		if (ImGui::InputFloat("", &localScale.z))
-			scaleChanged = true;
+		ImGui::InputFloat("", &s_SelectedGameObject->LocalScale.z);
 		ImGui::PopID();
-
-		if (scaleChanged)
-		{
-			GetSelectedGameObject()->SetLocalScale(localScale);
-		}
 
 		ImGui::EndTable();
 

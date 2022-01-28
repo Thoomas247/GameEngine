@@ -10,17 +10,16 @@
 constexpr auto VIEWPORT_RENDER_RESOLUTION_WIDTH = 1920;
 constexpr auto VIEWPORT_RENDER_RESOLUTION_HEIGHT = 1080;
 
-
 // PUBLIC - SceneCamera
 void SceneCamera::DoMovement(const float& deltaTime)
 {
 	// Rotation
-	m_LocalRotation = glm::rotate(m_LocalRotation, glm::radians(Input::GetMouseDeltaX() * m_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f));
-	m_LocalRotation = glm::rotate(m_LocalRotation, glm::radians(Input::GetMouseDeltaY() * m_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
+	LocalRotation = glm::rotate(LocalRotation, glm::radians(Input::GetMouseDeltaX() * m_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f));
+	LocalRotation = glm::rotate(LocalRotation, glm::radians(Input::GetMouseDeltaY() * m_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	// Movement
-	glm::vec3 front = glm::mat3_cast(m_LocalRotation) * glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 right = glm::mat3_cast(m_LocalRotation) * glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 front = glm::mat3_cast(LocalRotation) * glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 right = glm::mat3_cast(LocalRotation) * glm::vec3(1.0f, 0.0f, 0.0f);
 
 	glm::vec3 inputVector = glm::vec3(0.0f);
 
@@ -44,8 +43,8 @@ void SceneCamera::DoMovement(const float& deltaTime)
 	if (inputVector != glm::vec3(0.0f))
 	{
 		inputVector = glm::normalize(inputVector);
-		m_LocalPosition += front * inputVector.z * m_Speed * deltaTime;
-		m_LocalPosition += right * inputVector.x * m_Speed * deltaTime;
+		LocalPosition += front * inputVector.z * m_Speed * deltaTime;
+		LocalPosition += right * inputVector.x * m_Speed * deltaTime;
 	}
 
 	Update(deltaTime);

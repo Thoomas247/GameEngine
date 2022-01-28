@@ -7,10 +7,8 @@
 
 class Panel
 {
-private:
-	static GameObject* s_SelectedGameObject;
-
 protected:
+	static GameObject* s_SelectedGameObject;
 	static ImGuiWindowFlags s_WindowFlags;
 
 public:
@@ -18,9 +16,6 @@ public:
 	~Panel();
 
 	virtual void Update(const float& deltaTime);
-
-	GameObject* GetSelectedGameObject() const { return s_SelectedGameObject; }
-	void SetSelectedGameObject(GameObject* gameObject) { s_SelectedGameObject = gameObject; }
 
 protected:
 	virtual void destroy();

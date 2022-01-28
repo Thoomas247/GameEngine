@@ -7,12 +7,12 @@ void SceneHierarchy::Update(const float& deltaTime)
 {
 	ImGui::Begin("Scene Hierarchy", (bool*)0, s_WindowFlags);
 
-	addChildrenToTree(World::GetGameObjects());
+	addChildrenToTree(World::s_GameObjects);
 
-	if (GetSelectedGameObject())
+	if (s_SelectedGameObject)
 	{
-		GetSelectedGameObject()->SetSelected(true);
-		setChildrenAsSelected(GetSelectedGameObject()->GetChildren());
+		s_SelectedGameObject->SetSelected(true);
+		setChildrenAsSelected(s_SelectedGameObject->Children);
 	}
 
 	ImGui::End();
@@ -30,20 +30,22 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 	{
 		ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-		if (GetSelectedGameObject() == object.get())
+		if (s_SelectedGameObject == object.get())
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
 
 		// open as branch if has children
-		if (object->GetChildren().size() == 0)
+		const auto& children = object->Children;
+
+		if (children.size() == 0)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 			ImGui::TreeNodeEx(name.c_str(), nodeFlags);
 			if (ImGui::IsItemClicked())
 			{
-				SetSelectedGameObject(object.get());
+				s_SelectedGameObject = object.get();
 			}
 		}
 
@@ -55,11 +57,11 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 			bool expanded = ImGui::TreeNodeEx(name.c_str(), nodeFlags);
 			if (ImGui::IsItemClicked())
 			{
-				SetSelectedGameObject(object.get());
+				s_SelectedGameObject = object.get();
 			}
 			if (expanded)
 			{
-				addChildrenToTree(object->GetChildren());
+				addChildrenToTree(children);
 				ImGui::TreePop();
 			}
 		}
@@ -71,6 +73,6 @@ void SceneHierarchy::setChildrenAsSelected(const std::map<std::string, std::shar
 	for (auto& [name, child] : children)
 	{
 		child->SetSelected(true);
-		setChildrenAsSelected(child->GetChildren());
+		setChildrenAsSelected(child->Children);
 	}
 }

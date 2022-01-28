@@ -19,12 +19,12 @@ void Player::onSetUp()
 void Player::onUpdate(const float& deltaTime)
 {
 	// Rotation
-	m_Camera->SetLocalRotation(glm::rotate(m_Camera->GetLocalRotation(), glm::radians(Input::GetMouseDeltaX() * S_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f)));
-	m_Camera->SetLocalRotation(glm::rotate(m_Camera->GetLocalRotation(), glm::radians(Input::GetMouseDeltaY() * S_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f)));
+	m_Camera->LocalRotation = glm::rotate(m_Camera->LocalRotation, glm::radians(Input::GetMouseDeltaX() * S_MouseSensitivity), glm::vec3(0.0f, -1.0f, 0.0f));
+	m_Camera->LocalRotation = glm::rotate(m_Camera->LocalRotation, glm::radians(Input::GetMouseDeltaY() * S_MouseSensitivity), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	// Movement
-	glm::vec3 front = glm::mat3_cast(m_Camera->GetLocalRotation()) * glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 right = glm::mat3_cast(m_Camera->GetLocalRotation()) * glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 front = glm::mat3_cast(m_Camera->LocalRotation) * glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 right = glm::mat3_cast(m_Camera->LocalRotation) * glm::vec3(1.0f, 0.0f, 0.0f);
 
 	glm::vec3 inputVector = glm::vec3(0.0f);
 
@@ -48,7 +48,7 @@ void Player::onUpdate(const float& deltaTime)
 	if (inputVector != glm::vec3(0.0f))
 	{
 		inputVector = glm::normalize(inputVector);
-		m_LocalPosition += front * inputVector.z * m_Speed * deltaTime;
-		m_LocalPosition += right * inputVector.x * m_Speed * deltaTime;
+		LocalPosition += front * inputVector.z * m_Speed * deltaTime;
+		LocalPosition += right * inputVector.x * m_Speed * deltaTime;
 	}
 }
