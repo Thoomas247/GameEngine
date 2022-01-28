@@ -12,6 +12,8 @@
 #include "FileBrowser.h"
 #include "PropertiesPanel.h"
 
+constexpr auto FONT_SIZE = 28.0f;
+
 std::vector<std::unique_ptr<Panel>> EngineGUI::s_Panels;
 
 // PUBLIC
@@ -23,6 +25,8 @@ void EngineGUI::Init()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+
+	io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/gui/fonts/Open_Sans/OpenSans-Regular.ttf", FONT_SIZE);
 
 	applyStyle();
 
