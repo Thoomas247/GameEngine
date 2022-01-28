@@ -11,8 +11,7 @@ void TextCentered(std::string text) {
 // PUBLIC
 void PropertiesPanel::Update(const float& deltaTime)
 {
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
-	ImGui::Begin("Properties", (bool*)0, windowFlags);
+	ImGui::Begin("Properties", (bool*)0, s_WindowFlags);
 
 	if (GetSelectedGameObject())
 	{

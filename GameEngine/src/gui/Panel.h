@@ -10,6 +10,9 @@ class Panel
 private:
 	static GameObject* s_SelectedGameObject;
 
+protected:
+	static ImGuiWindowFlags s_WindowFlags;
+
 public:
 	Panel();
 	~Panel();

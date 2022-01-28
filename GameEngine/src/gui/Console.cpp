@@ -23,22 +23,13 @@ Console::Console()
 
 void Console::Update(const float& deltaTime)
 {
-	ImGui::Begin("Console");
-
-	// TODO: display items starting from the bottom
+	ImGui::Begin("Console", (bool*)0, s_WindowFlags);
 
 	if (ImGui::SmallButton("Clear")) { clearLog(); }
 	ImGui::SameLine();
 	bool copy_to_clipboard = ImGui::SmallButton("Copy");
 
 	ImGui::Separator();
-
-	// Options, Filter
-	/*
-	ImGui::SameLine();
-	m_Filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
-	ImGui::Separator();
-	*/
 
 	// Reserve enough left-over height for 1 separator + 1 input text
 	const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();

@@ -86,9 +86,7 @@ SceneView::SceneView()
 
 void SceneView::Update(const float& deltaTime)
 {
-	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
-
-	ImGui::Begin("Scene View", (bool*)0, flags);
+	ImGui::Begin("Scene View", (bool*)0, s_WindowFlags);
 	ImVec2 size = ImGui::GetContentRegionAvail();
 
 	if (Input::GetMouseRightButton() && ImGui::IsWindowHovered())	// if mouse is over scene view and right button clicked

@@ -21,9 +21,7 @@ FileBrowser::FileBrowser()
 
 void FileBrowser::Update(const float& deltaTime)
 {
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
-
-	ImGui::Begin("File Browser", (bool*)0, windowFlags);
+	ImGui::Begin("File Browser", (bool*)0, s_WindowFlags);
 	ImVec2 size = ImGui::GetContentRegionAvail();
 
 	bool shouldUpdate = false;

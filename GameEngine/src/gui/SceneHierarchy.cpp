@@ -5,8 +5,7 @@
 // PUBLIC
 void SceneHierarchy::Update(const float& deltaTime)
 {
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
-	ImGui::Begin("Scene Hierarchy", (bool*)0, windowFlags);
+	ImGui::Begin("Scene Hierarchy", (bool*)0, s_WindowFlags);
 
 	addChildrenToTree(World::GetGameObjects());
 
