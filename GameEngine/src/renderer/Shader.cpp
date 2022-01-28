@@ -53,6 +53,10 @@ std::string loadFileContents(const std::string& path)
 }
 
 // PUBLIC
+Shader::Shader()
+{
+}
+
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
 	std::string vertexString = loadFileContents(vertexPath).c_str();
@@ -164,4 +168,11 @@ void Shader::setUniformLocations()
 	m_UniformLocations[ROUGHNESS_FAC] = glGetUniformLocation(m_ID, "roughness_fac");
 
 	m_UniformLocations[IS_SELECTED] = glGetUniformLocation(m_ID, "is_selected");
+
+	m_UniformLocations[SKY_FRONT_TEX] = glGetUniformLocation(m_ID, "front_tex");
+	m_UniformLocations[SKY_BACK_TEX] = glGetUniformLocation(m_ID, "back_tex");
+	m_UniformLocations[SKY_LEFT_TEX] = glGetUniformLocation(m_ID, "left_tex");
+	m_UniformLocations[SKY_RIGHT_TEX] = glGetUniformLocation(m_ID, "right_tex");
+	m_UniformLocations[SKY_TOP_TEX] = glGetUniformLocation(m_ID, "top_tex");
+	m_UniformLocations[SKY_BOTTOM_TEX] = glGetUniformLocation(m_ID, "bottom_tex");
 }

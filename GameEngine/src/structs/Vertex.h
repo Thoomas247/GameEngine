@@ -21,6 +21,16 @@ struct Vertex
 		Weights = glm::vec4(0.0f);
 	}
 
+	Vertex(const glm::vec3& position)
+	{
+		Position = position;
+		Normal = glm::vec3(0.0f);
+		TexCoord = glm::vec2(0.0f);
+		Color = glm::vec4(1.0f);
+		Joints = glm::ivec4(0);
+		Weights = glm::vec4(0.0f);
+	}
+
 	Vertex(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texCoord)
 	{
 		Position = position;

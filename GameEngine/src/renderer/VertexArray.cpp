@@ -2,6 +2,11 @@
 
 #include "glad/gl.h"
 
+// PUBLIC
+VertexArray::VertexArray()
+{
+}
+
 VertexArray::VertexArray(const std::vector<Vertex> vertices, const std::vector<unsigned int>& indices)
 {
 	unsigned int VBO;

@@ -5,13 +5,16 @@
 
 #include "glm/glm.hpp"
 
+// TODO: Make shader manager
+
 enum UniformType
 {
 	NONE, 
 	MODEL_MAT, VIEW_MAT, PROJECTION_MAT,
 	ALBEDO_TEX, EMISSIVE_TEX, METALLIC_ROUGHNESS_TEX, NORMAL_TEX, OCCLUSION_TEX,
 	ALBEDO_FAC, EMISSIVE_FAC, METALLIC_FAC, ROUGHNESS_FAC,
-	IS_SELECTED
+	IS_SELECTED,
+	SKY_FRONT_TEX, SKY_BACK_TEX, SKY_LEFT_TEX, SKY_RIGHT_TEX, SKY_TOP_TEX, SKY_BOTTOM_TEX
 };
 
 class Shader
@@ -21,6 +24,7 @@ private:
 	std::map<UniformType, int> m_UniformLocations;
 
 public:
+	Shader();
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	~Shader();
 

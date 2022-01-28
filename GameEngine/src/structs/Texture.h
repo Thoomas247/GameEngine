@@ -9,5 +9,9 @@ struct Texture
 
 	Texture()
 	{
+		ID = 0;
+		Width = -1;
+		Height = -1;
+		Channels = -1;
 	}
 };

@@ -125,6 +125,7 @@
     <ClCompile Include="src\renderer\Skeleton.cpp" />
     <ClCompile Include="src\core\World.cpp" />
     <ClCompile Include="src\gui\SceneView.cpp" />
+    <ClCompile Include="src\renderer\Skybox.cpp" />
     <ClCompile Include="src\renderer\VertexArray.cpp" />
     <ClCompile Include="src\managers\TextureManager.cpp" />
   </ItemGroup>
@@ -154,6 +155,7 @@
     <ClInclude Include="src\renderer\Mesh.h" />
     <ClInclude Include="src\renderer\Shader.h" />
     <ClInclude Include="src\structs\Model.h" />
+    <ClInclude Include="src\renderer\Skybox.h" />
     <ClInclude Include="src\structs\Vertex.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
     <ClInclude Include="src\core\World.h" />

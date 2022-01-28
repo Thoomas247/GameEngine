@@ -11,6 +11,7 @@ private:
 	unsigned int m_NumIndices = 0;
 
 public:
+	VertexArray();
 	VertexArray(const std::vector<Vertex> vertices, const std::vector<unsigned int>& indices);
 	~VertexArray();
 
