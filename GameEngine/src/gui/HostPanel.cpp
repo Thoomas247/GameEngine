@@ -49,6 +49,15 @@ void HostPanel::Update(const float& deltaTime)
 
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Collider"))
+		{
+			ImGui::MenuItem("Cube");
+			ImGui::MenuItem("Sphere");
+			ImGui::MenuItem("Capsule");
+			ImGui::MenuItem("Mesh");
+
+			ImGui::EndMenu();
+		}
 
 		ImGui::EndMenu();
 	}
