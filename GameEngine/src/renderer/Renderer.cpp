@@ -55,7 +55,7 @@ void Renderer::Draw()
 		mesh->GetShader()->SetMat4(PROJECTION_MAT, s_CurrentCamera->GetProjectionMatrix());
 
 		mesh->GetVertexArray()->Bind();
-		glDrawElements(GL_TRIANGLES, mesh->GetVertexArray()->GetNumIndices(), GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
+		glDrawElements(GL_TRIANGLES, (GLsizei)mesh->GetVertexArray()->GetNumIndices(), GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
 		mesh->GetVertexArray()->Unbind();
 	}
 

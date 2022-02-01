@@ -17,6 +17,10 @@ bool Input::s_ActionMoveLeft = false;
 bool Input::s_ActionMoveRight = false;
 
 // PUBLIC
+
+/// <summary>
+/// Retrieves the current inputs from glfw and sets the engine's keybinds accordingly each frame.
+/// </summary>
 void Input::Update()
 {
 	double xpos, ypos;

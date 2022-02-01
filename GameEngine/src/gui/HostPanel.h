@@ -7,7 +7,7 @@
 class HostPanel : public Panel
 {
 private:
-	static const ImGuiDockNodeFlags s_DockSpaceFlags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoWindowMenuButton;
+	static const ImGuiDockNodeFlags s_DockSpaceFlags = ImGuiDockNodeFlags_PassthruCentralNode | (ImGuiDockNodeFlags_)ImGuiDockNodeFlags_NoCloseButton | (ImGuiDockNodeFlags_)ImGuiDockNodeFlags_NoWindowMenuButton;
 	static const ImGuiWindowFlags s_HostWindowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking |
 		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 

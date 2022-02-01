@@ -33,7 +33,7 @@ public:
 	void Update(const float& deltaTime, const glm::mat4& parentTransform = glm::mat4(1.0f));
 
 	void AddChild(const std::string& name, const std::shared_ptr<GameObject>& object);
-	std::shared_ptr<GameObject> GetChild(const std::string& path);
+	std::shared_ptr<GameObject> GetChild(const std::string& name);
 
 	glm::vec3 GetLocalRotationAsEulerAngles() const { return glm::degrees(glm::eulerAngles(LocalRotation)); }
 	void SetLocalRotationFromEulerAngles(const glm::vec3& newRot) { LocalRotation = glm::quat(glm::radians(newRot)); }

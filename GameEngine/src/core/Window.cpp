@@ -71,7 +71,7 @@ void Window::UnlockCursor()
 }
 
 // PRIVATE
-void Window::frameBufferSizeCallback(GLFWwindow* window, int width, int height)
+void Window::frameBufferSizeCallback(GLFWwindow*, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }

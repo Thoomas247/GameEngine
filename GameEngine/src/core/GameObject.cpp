@@ -3,7 +3,14 @@
 //#include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/matrix_decompose.hpp"
 
+#include "Log.h"
+
 // PUBLIC
+
+/// <summary>
+/// Runs once when the game world initializes. 
+/// Runs the onSetup() method defined by the game and then runs SetUp() on all this GameObject's children.
+/// </summary>
 void GameObject::SetUp()
 {
 	onSetUp();
@@ -14,6 +21,12 @@ void GameObject::SetUp()
 	}
 }
 
+/// <summary>
+/// Runs every frame after the world has started.
+/// Runs the onUpdate() method defined by the game and then runs Update() on all this GameObject's children.
+/// </summary>
+/// <param name="deltaTime"></param>
+/// <param name="parentTransform"></param>
 void GameObject::Update(const float& deltaTime, const glm::mat4& parentTransform)
 {
 	onUpdate(deltaTime);
@@ -25,29 +38,35 @@ void GameObject::Update(const float& deltaTime, const glm::mat4& parentTransform
 	}
 }
 
+/// <summary>
+/// Adds a child GameObject to this GameObject.
+/// The child object will now move with the parent in the game world and be updated each frame.
+/// </summary>
+/// <param name="name"></param>
+/// <param name="object"></param>
 void GameObject::AddChild(const std::string& name, const std::shared_ptr<GameObject>& object)
 {
 	Children[name] = object;
 }
 
-std::shared_ptr<GameObject> GameObject::GetChild(const std::string& path)
+/// <summary>
+/// Returns a child GameObject based on the name given.
+/// Assumes that the child exists and is only used as a shortcut to retrieve a reference to a child.
+/// </summary>
+/// <param name="path"></param>
+/// <returns></returns>
+std::shared_ptr<GameObject> GameObject::GetChild(const std::string& name)
 {
-	size_t index = path.find_first_of("/");
-	std::string name = path.substr(0, index);
-
 	const std::map<std::string, std::shared_ptr<GameObject>>::iterator it = Children.find(name);
 	if (it != Children.end())
 	{
-		if (index == std::string::npos)
-		{
-			return it->second;
-		}
-
-		std::string newPath = path.substr(index);
-		return it->second->GetChild(newPath);
+		return it->second;
 	}
-
-	return NULL;
+	else
+	{
+		LOG_ERROR("GAME_OBJECT::Child " + name + " was not found. GameObject::GetChild() assumes the child exists (read doc for more info).")
+		return nullptr;
+	}
 }
 
 // PRIVATE
@@ -81,7 +100,7 @@ void GameObject::onSetUp()
 	// Does nothing by default
 }
 
-void GameObject::onUpdate(const float& deltaTime)
+void GameObject::onUpdate(const float&)
 {
 	// Does nothing by default
 }

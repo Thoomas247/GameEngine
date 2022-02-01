@@ -3,7 +3,7 @@
 #include "../core/World.h"
 
 // PUBLIC
-void SceneHierarchy::Update(const float& deltaTime)
+void SceneHierarchy::Update(const float&)
 {
 	ImGui::Begin("Scene Hierarchy", (bool*)0, s_WindowFlags);
 
@@ -35,9 +35,9 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 		}
 
 		// open as branch if has children
-		const auto& children = object->Children;
+		const auto& objectChildren = object->Children;
 
-		if (children.size() == 0)
+		if (objectChildren.size() == 0)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
@@ -60,7 +60,7 @@ void SceneHierarchy::addChildrenToTree(const std::map<std::string, std::shared_p
 			}
 			if (expanded)
 			{
-				addChildrenToTree(children);
+				addChildrenToTree(objectChildren);
 				ImGui::TreePop();
 			}
 		}

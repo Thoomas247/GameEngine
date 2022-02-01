@@ -9,7 +9,7 @@ void TextCentered(std::string text) {
 }
 
 // PUBLIC
-void PropertiesPanel::Update(const float& deltaTime)
+void PropertiesPanel::Update(const float&)
 {
 	ImGui::Begin("Properties", (bool*)0, s_WindowFlags);
 
@@ -25,8 +25,6 @@ void PropertiesPanel::Update(const float& deltaTime)
 		// position
 		ImGui::TableNextColumn();
 		ImGui::Text("Position");
-
-		bool posChanged = false;
 
 		ImGui::TableNextColumn();
 		ImGui::Text("X:"); ImGui::SameLine();
@@ -89,8 +87,6 @@ void PropertiesPanel::Update(const float& deltaTime)
 		// scale
 		ImGui::TableNextColumn();
 		ImGui::Text("Scale");
-
-		bool scaleChanged = false;
 
 		ImGui::TableNextColumn();
 		ImGui::Text("X:"); ImGui::SameLine();

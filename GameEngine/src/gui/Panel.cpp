@@ -12,7 +12,7 @@ Panel::~Panel()
 	destroy();
 }
 
-void Panel::Update(const float& deltaTime)
+void Panel::Update(const float&)
 {
 }
 

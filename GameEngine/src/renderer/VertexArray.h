@@ -8,7 +8,7 @@ class VertexArray
 {
 private:
 	unsigned int m_ID = 0;
-	unsigned int m_NumIndices = 0;
+	size_t m_NumIndices = 0;
 
 public:
 	VertexArray();
@@ -16,7 +16,7 @@ public:
 	~VertexArray();
 
 	unsigned int GetID() const { return m_ID; }
-	unsigned int GetNumIndices() const { return m_NumIndices; }
+	size_t GetNumIndices() const { return m_NumIndices; }
 
 	void Bind();
 	void Unbind();

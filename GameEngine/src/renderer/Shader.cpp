@@ -44,7 +44,7 @@ std::string loadFileContents(const std::string& path)
 
 		fileContents = stringStream.str();
 	}
-	catch (std::ifstream::failure& e) {
+	catch (std::ifstream::failure&) {
 		LOG_ERROR("SHADER::FILE_NOT_SUCCESFULLY_READ")
 	}
 

@@ -12,6 +12,9 @@
 
 class Skeleton : public GameObject
 {
+public:
+	unsigned int NumJoints;
+
 private:
 	Animation* m_CurrentAnimation = nullptr;
 

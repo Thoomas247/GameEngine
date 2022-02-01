@@ -1,7 +1,7 @@
 #include "HostPanel.h"
 
 // PUBLIC
-void HostPanel::Update(const float& deltaTime)
+void HostPanel::Update(const float&)
 {
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->WorkPos);

@@ -19,7 +19,7 @@ FileBrowser::FileBrowser()
 	getFiles();
 }
 
-void FileBrowser::Update(const float& deltaTime)
+void FileBrowser::Update(const float&)
 {
 	ImGui::Begin("File Browser", (bool*)0, s_WindowFlags);
 	ImVec2 size = ImGui::GetContentRegionAvail();

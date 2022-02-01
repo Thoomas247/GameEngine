@@ -44,11 +44,18 @@ VertexArray::~VertexArray()
 	glDeleteVertexArrays(1, &m_ID);
 }
 
+/// <summary>
+/// Bind this VAO to opengl.
+/// </summary>
 void VertexArray::Bind()
 {
 	glBindVertexArray(m_ID);
 }
 
+/// <summary>
+/// Unbind this VAO from opengl.
+/// Same as binding 0 as the VAO.
+/// </summary>
 void VertexArray::Unbind()
 {
 	glBindVertexArray(0);
