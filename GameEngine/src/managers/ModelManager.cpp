@@ -13,6 +13,15 @@
 std::map<std::string, Model> ModelManager::s_ModelCache;
 
 // PUBLIC
+
+/// <summary>
+/// Loads a GameObject containing child meshes and optionally a skeleton given an absolute path.
+/// The abosulte path can be retrieved using the ProjectManager.
+/// Normally this function is called through the GUI which can only see existing files,
+/// however std::filesystem::file_size will throw errors if the given path does not exist.
+/// </summary>
+/// <param name="modelPath"></param>
+/// <returns></returns>
 std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath)
 {
 	// check if model is in cache
@@ -23,12 +32,14 @@ std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath
 		std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
 
 		auto skeleton = std::make_shared<Skeleton>(model.m_Skeleton);
-		gameObject->AddChild("Skeleton", skeleton);
+		if (skeleton->NumJoints > 0)
+			gameObject->AddChild("Skeleton", skeleton);
 
 		for (const auto& [name, savedMesh] : model.m_Meshes)
 		{
 			auto mesh = std::make_shared<Mesh>(savedMesh);
-			mesh->SetSkeleton(skeleton);
+			if (skeleton->NumJoints > 0)
+				mesh->SetSkeleton(skeleton);
 			gameObject->AddChild(name, mesh);
 		}
 
@@ -55,7 +66,24 @@ std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath
 	Model model = Model(meshes, createSkeleton(j));
 
 	s_ModelCache[modelPath] = model;
-	return LoadModel(modelPath);
+	
+	// create the game object we are returning
+	std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
+
+	auto skeleton = std::make_shared<Skeleton>(model.m_Skeleton);
+
+	if (skeleton->NumJoints > 0)
+		gameObject->AddChild("Skeleton", skeleton);
+
+	for (const auto& [name, savedMesh] : model.m_Meshes)
+	{
+		auto mesh = std::make_shared<Mesh>(savedMesh);
+		if (skeleton->NumJoints > 0)
+			mesh->SetSkeleton(skeleton);
+		gameObject->AddChild(name, mesh);
+	}
+
+	return gameObject;
 }
 
 // PRIVATE
