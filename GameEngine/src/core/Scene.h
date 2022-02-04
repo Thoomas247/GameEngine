@@ -9,6 +9,7 @@
 class Scene
 {
 private:
+	uint64_t m_UUID = UUID::GenerateUUID();
 	std::string m_Name = "";
 	std::string m_Path = "";
 

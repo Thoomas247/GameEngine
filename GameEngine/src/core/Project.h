@@ -2,18 +2,23 @@
 
 #include <string>
 
-struct Project
+class Project
 {
-	std::string Name;
-	std::string ProjectDir;
+private:
+	std::string m_Name;
+	std::string m_ProjectDir;
 
-	std::string DefaultModelsPath = "assets/models/";
-	std::string DefaultTexturesPath = "assets/textures/";
-	std::string DefaultShadersPath = "assets/shaders/";
+	std::string m_DefaultScenesPath = "assets/scenes/";
+	std::string m_DefaultModelsPath = "assets/models/";
+	std::string m_DefaultTexturesPath = "assets/textures/";
+	std::string m_DefaultShadersPath = "assets/shaders/";
 
-	Project(const std::string& name, const std::string& projectDir)
-	{
-		Name = name;
-		ProjectDir = projectDir;
-	}
+public:
+	Project(const std::string& name, const std::string& projectDir);
+	
+	std::string GetProjectDir() { return m_ProjectDir; }
+	std::string GetDefaultScenesPath() { return m_DefaultScenesPath; }
+	std::string GetDefaultModelsPath() { return m_DefaultModelsPath; }
+	std::string GetDefaultTexturesPath() { return m_DefaultTexturesPath; }
+	std::string GetDefaultShadersPath() { return m_DefaultShadersPath; }
 };

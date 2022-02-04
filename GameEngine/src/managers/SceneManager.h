@@ -21,7 +21,7 @@ public:
 	static void SetUpScene() { s_CurrentScene->SetUp(); }
 	static void UpdateScene(const float& deltaTime) { s_CurrentScene->Update(deltaTime); }
 	static void AddGameObjectToScene(const std::shared_ptr<GameObject>& gameObject) { s_CurrentScene->AddGameObject(gameObject); }
+
 	static void SaveScene() { s_CurrentScene->Save(); }
 	static void SaveSceneAs(const std::string& path, const std::string& name) { s_CurrentScene->SaveAs(path, name); }
 };
-

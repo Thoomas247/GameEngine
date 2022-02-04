@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\Project.cpp" />
     <ClCompile Include="src\core\Scene.cpp" />
     <ClCompile Include="src\managers\ProjectManager.cpp" />
     <ClCompile Include="src\gui\HostPanel.cpp" />
@@ -132,6 +133,7 @@
     <ClCompile Include="src\renderer\Skybox.cpp" />
     <ClCompile Include="src\renderer\VertexArray.cpp" />
     <ClCompile Include="src\managers\TextureManager.cpp" />
+    <ClCompile Include="src\core\UUID.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\managers\SceneManager.h" />
@@ -167,6 +169,7 @@
     <ClInclude Include="src\renderer\VertexArray.h" />
     <ClInclude Include="src\structs\Texture.h" />
     <ClInclude Include="src\managers\TextureManager.h" />
+    <ClInclude Include="src\core\UUID.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\Skybox.frag" />

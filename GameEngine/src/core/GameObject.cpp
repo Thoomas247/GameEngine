@@ -5,12 +5,14 @@
 
 #include "Log.h"
 
+
+// PUBLIC
+
 GameObject::GameObject()
 {
 	m_Name = "GameObject";
 }
 
-// PUBLIC
 GameObject::GameObject(const std::string& name)
 {
 	m_Name = name;

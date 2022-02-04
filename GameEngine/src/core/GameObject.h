@@ -8,6 +8,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
 
+#include "UUID.h"
+
 class GameObject
 {
 public:
@@ -16,6 +18,7 @@ public:
 	glm::vec3 LocalScale = glm::vec3(1.0f);
 
 protected:
+	uint64_t m_UUID = UUID::GenerateUUID();;
 	std::string m_Name;
 
 	std::vector<std::shared_ptr<GameObject>> m_Children;
@@ -36,6 +39,8 @@ public:
 
 	void SetUp();
 	void Update(const float& deltaTime, const glm::mat4& parentTransform = glm::mat4(1.0f));
+
+	uint64_t GetUUID() { return m_UUID; }
 
 	std::string GetName() { return m_Name; }
 	void SetName(const std::string name) { m_Name = name; }

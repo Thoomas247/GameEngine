@@ -49,7 +49,7 @@ int Engine::Run()
 		for (int z = 0; z < 10; z++)
 		{
 			auto tree = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
-			tree->SetName(std::to_string(x) + ", " + std::to_string(z));
+			//tree->SetName(std::to_string(x) + ", " + std::to_string(z));
 			tree->LocalPosition = glm::vec3(10 * x, 0.0f, 10 * z);
 			tree->SetLocalRotationFromEulerAngles(glm::vec3(-90.0f, 0.0f, 0.0f));
 			SceneManager::AddGameObjectToScene(tree);

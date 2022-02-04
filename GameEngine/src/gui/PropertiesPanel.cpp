@@ -15,6 +15,9 @@ void PropertiesPanel::Update(const float&)
 
 	if (s_SelectedGameObject)
 	{
+		TextCentered("GameObject ID: " + std::to_string(s_SelectedGameObject->GetUUID()));
+		ImGui::Separator();
+
 		// LOCAL TRANSFORM
 		ImGui::Separator();
 		TextCentered("Local Tranform");

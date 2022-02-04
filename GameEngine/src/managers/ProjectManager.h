@@ -16,10 +16,13 @@ public:
 	//static void LoadProject();
 	//static void SaveProject();
 
-	//static Project* GetCurrentProject() { return s_CurrentProject.get(); }
+	static std::string GetProjectDir() { return s_CurrentProject->GetProjectDir(); }
+	static std::string GetScenesPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultScenesPath(); }
+	static std::string GetModelsPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultModelsPath(); }
+	static std::string GetTexturesPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultTexturesPath(); }
+	static std::string GetShadersPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultShadersPath(); }
 
-	static std::string GetProjectDir() { return s_CurrentProject->ProjectDir; }
-	static std::string GetModelsPath() { return s_CurrentProject->ProjectDir + s_CurrentProject->DefaultModelsPath; }
-	static std::string GetTexturesPath() { return s_CurrentProject->ProjectDir + s_CurrentProject->DefaultTexturesPath; }
-	static std::string GetShadersPath() { return s_CurrentProject->ProjectDir + s_CurrentProject->DefaultShadersPath; }
+
+	static void SaveProject() { s_CurrentProject->Save(); }
+	static void SaveProjectAs(const std::string& path, const std::string& name) { s_CurrentProject->SaveAs(path, name); }
 };
