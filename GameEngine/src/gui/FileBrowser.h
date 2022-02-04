@@ -8,15 +8,15 @@
 
 #include "../structs/Texture.h"
 
-enum FileType {
-	NONE, DIRECTORY, GLTF, GEM, PNG, OTHER
+enum class FileType {
+	None, Directory, GLTF, GEM, PNG, Other
 };
 
 struct FileInfo
 {
 	std::string Name;
 	std::string Path;
-	FileType Type = NONE;
+	FileType Type = FileType::None;
 };
 
 class FileBrowser : public Panel

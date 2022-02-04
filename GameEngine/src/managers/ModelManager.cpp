@@ -95,7 +95,7 @@ std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath
 }
 
 // PRIVATE
-Skeleton ModelManager::createSkeleton(json& j, const std::string& name)
+Skeleton ModelManager::createSkeleton(json& j, const std::string& displayName)
 {
 	std::vector<Joint> skeletonJoints;
 	std::map<std::string, Animation> animations;
@@ -149,7 +149,7 @@ Skeleton ModelManager::createSkeleton(json& j, const std::string& name)
 		LOG_WARN("MODEL_LOADER::Model has no skeleton")
 	}
 
-	return Skeleton(name, skeletonJoints, animations);
+	return Skeleton(displayName, skeletonJoints, animations);
 }
 
 Mesh ModelManager::createMesh(json& jmesh, const std::string& name)

@@ -116,7 +116,7 @@ void SceneView::Update(const float& deltaTime)
 	Renderer::SetCurrentCamera(&m_SceneCamera);
 
 	drawTexture();
-	ImGui::Image(ImTextureID(m_RenderTextureID), size, ImVec2(0, 1), ImVec2(1, 0));	// image needs to be inverted
+	ImGui::Image((ImTextureID)m_RenderTextureID, size, ImVec2(0, 1), ImVec2(1, 0));	// image needs to be inverted
 
 	ImGui::End();
 }

@@ -9,11 +9,11 @@ constexpr auto ICON_SIZE = 128 + ICON_PADDING;
 // PUBLIC
 FileBrowser::FileBrowser()
 {
-	m_Icons[DIRECTORY] = TextureManager::LoadTexture("assets/gui/icons/Folder Icon.png");
-	m_Icons[GLTF] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
-	m_Icons[GEM] = TextureManager::LoadTexture("assets/gui/icons/Model Icon.png");
-	m_Icons[PNG] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
-	m_Icons[OTHER] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
+	m_Icons[FileType::Directory] = TextureManager::LoadTexture("assets/gui/icons/Folder Icon.png");
+	m_Icons[FileType::GLTF] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
+	m_Icons[FileType::GEM] = TextureManager::LoadTexture("assets/gui/icons/Model Icon.png");
+	m_Icons[FileType::PNG] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
+	m_Icons[FileType::Other] = TextureManager::LoadTexture("assets/gui/icons/File Icon.png");
 
 	cleanAndSetPath(ProjectManager::GetProjectDir());
 	getFiles();
@@ -72,16 +72,16 @@ void FileBrowser::Update(const float&)
 		ImGui::TableNextColumn();
 
 		ImGui::PushID(file.Name.c_str());
-		ImGui::ImageButton(ImTextureID(m_Icons[file.Type]->ID), ImVec2(ICON_SIZE, ICON_SIZE));
+		ImGui::ImageButton((ImTextureID)m_Icons[file.Type]->ID, ImVec2(ICON_SIZE, ICON_SIZE));
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
-			if (file.Type == DIRECTORY)
+			if (file.Type == FileType::Directory)
 			{
 				cleanAndSetPath(file.Path);
 				shouldUpdate = true;
 			}
 
-			if (file.Type == GEM)
+			if (file.Type == FileType::GEM)
 			{
 				// add model to scene
 			}
@@ -144,7 +144,7 @@ void FileBrowser::getFiles()
 
 		if (file.is_directory())
 		{
-			fileInfo.Type = DIRECTORY;
+			fileInfo.Type = FileType::Directory;
 		}
 		else
 		{
@@ -152,19 +152,19 @@ void FileBrowser::getFiles()
 
 			if (!extension.compare(".GEM"))
 			{
-				fileInfo.Type = GEM;
+				fileInfo.Type = FileType::GEM;
 			}
 			else if (!extension.compare(".gltf"))
 			{
-				fileInfo.Type = GLTF;
+				fileInfo.Type = FileType::GLTF;
 			}
 			else if (!extension.compare(".png"))
 			{
-				fileInfo.Type = PNG;
+				fileInfo.Type = FileType::PNG;
 			}
 			else
 			{
-				fileInfo.Type = OTHER;
+				fileInfo.Type = FileType::Other;
 			}
 		}
 

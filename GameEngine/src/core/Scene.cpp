@@ -11,7 +11,9 @@ Scene::Scene(const std::string& name, const std::string& path)
 
 Scene::Scene(const Scene& scene)
 {
-
+	m_Name = scene.m_Name + "_copy";
+	m_Path = scene.m_Path + "_copy";
+	m_GameObjects = scene.m_GameObjects;
 }
 
 /// <summary>
@@ -79,6 +81,7 @@ bool Scene::saveToFile()
 	}
 	else 
 	{
-
+		// TODO: Implement
+		return true;
 	}
 }
