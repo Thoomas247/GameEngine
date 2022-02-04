@@ -41,7 +41,7 @@ void SceneHierarchy::addChildrenToTree(const std::vector<std::shared_ptr<GameObj
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-			ImGui::PushID(object->GetUUID());
+			ImGui::PushID((int)object->GetUUID());
 			ImGui::TreeNodeEx(object->GetName().c_str(), nodeFlags);
 			if (ImGui::IsItemClicked())
 			{
@@ -55,7 +55,7 @@ void SceneHierarchy::addChildrenToTree(const std::vector<std::shared_ptr<GameObj
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-			ImGui::PushID(object->GetUUID());
+			ImGui::PushID((int)object->GetUUID());
 			bool expanded = ImGui::TreeNodeEx(object->GetName().c_str(), nodeFlags);
 			if (ImGui::IsItemClicked())
 			{

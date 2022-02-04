@@ -21,8 +21,4 @@ public:
 	static std::string GetModelsPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultModelsPath(); }
 	static std::string GetTexturesPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultTexturesPath(); }
 	static std::string GetShadersPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultShadersPath(); }
-
-
-	static void SaveProject() { s_CurrentProject->Save(); }
-	static void SaveProjectAs(const std::string& path, const std::string& name) { s_CurrentProject->SaveAs(path, name); }
 };
