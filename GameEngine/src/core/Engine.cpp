@@ -1,7 +1,5 @@
 #include "Engine.h"
 
-#include <iostream>
-
 #include "Window.h"
 #include "Input.h"
 #include "Log.h"
@@ -15,7 +13,6 @@
 #include "../gui/EngineGUI.h"
 
 // debug:
-#include "../game/Player.h"
 #include "../renderer/Camera.h"
 #include "../importer/Importer.h"
 #include "../managers/ModelManager.h"
@@ -24,10 +21,10 @@ int Engine::Run()
 {
 	Window::InitWindow(3200, 1800);
 
-	// TODO: create menu for engine to create/load project. fix ProjectManager to match SceneManager structure
+	// TODO: create menu for engine to create/load project, fix ProjectManager to match SceneManager structure
 	ProjectManager::CreateProject("TestGame", "TestGame/");
 
-	// TODO: make this possible in the GUI. finish Scene class
+	// TODO: make this possible in the GUI, finish Scene class
 	Scene mainScene = Scene("Main", "");
 	SceneManager::SetScene(&mainScene);
 
@@ -46,6 +43,7 @@ int Engine::Run()
 	bird->LocalScale = glm::vec3(0.5f);
 	SceneManager::AddGameObjectToScene(bird);
 
+	// create 100 trees in a 10 * 10 grid (for debugging)
 	for (int x = 0; x < 10; x++)
 	{
 		for (int z = 0; z < 10; z++)
@@ -57,21 +55,6 @@ int Engine::Run()
 			SceneManager::AddGameObjectToScene(tree);
 		}
 	}
-
-	/*
-	std::shared_ptr<GameObject> tree = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
-	World::AddGameObject("Tree", tree);
-
-	std::shared_ptr<GameObject> tree2 = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
-	tree2->SetLocalPosition(glm::vec3(30.0f, 0.0f, 0.0f));	// already possible
-	World::AddGameObject("Tree2", tree2);
-
-	auto player = std::make_shared<Player>();
-	auto camera = std::make_shared<Camera>();
-	Renderer::SetCurrentCamera(camera.get());
-	player->AddChild("Camera", camera);
-	World::AddGameObject("Player", player);
-	*/
 
 	///////////////////////////////////////////////////////////
 

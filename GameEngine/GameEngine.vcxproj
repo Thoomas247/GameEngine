@@ -119,7 +119,6 @@
     <ClCompile Include="src\importer\Importer.cpp" />
     <ClCompile Include="src\core\GameObject.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
-    <ClCompile Include="src\game\Player.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\managers\SceneManager.cpp" />
     <ClCompile Include="src\renderer\Camera.cpp" />
@@ -152,8 +151,6 @@
     <ClInclude Include="src\importer\Importer.h" />
     <ClInclude Include="src\core\GameObject.h" />
     <ClInclude Include="src\core\Input.h" />
-    <ClInclude Include="src\game\Player.h" />
-    <ClInclude Include="src\game\Settings.h" />
     <ClInclude Include="src\renderer\Camera.h" />
     <ClInclude Include="src\structs\Animation.h" />
     <ClInclude Include="src\structs\Joint.h" />
