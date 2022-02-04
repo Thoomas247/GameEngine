@@ -10,6 +10,14 @@
 #include "../managers/ProjectManager.h"
 #include "../core/Log.h"
 
+// PUBLIC
+
+/// <summary>
+/// Converts a GLTF file to a format which the engine can use.
+/// Textures are copied to the default directory set in ProjectManager.
+/// </summary>
+/// <param name="name"></param>
+/// <param name="path"></param>
 void Importer::ImportGLTF(const std::string& name, const std::string& path)
 {
 	tinygltf::Model model;
@@ -43,7 +51,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	}
 	if (!ret) {
 		LOG_ERROR("IMPORTER::Failed to parse GLTF!")
-			return;
+		return;
 	}
 
 	json j;
@@ -86,7 +94,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	}
 
 	// scenes
-	tinygltf::Scene& scene = model.scenes[model.defaultScene];	// only one scene is supported
+	tinygltf::GLTFScene& scene = model.scenes[model.defaultGLTFScene];	// only one scene is supported
 	std::map<int, glm::mat4> nodeTransforms;
 	std::map<std::string, int> nameToIndex;	// for applying transforms later
 
@@ -108,12 +116,12 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 	if (model.skins.size() > 1)
 	{
-		LOG_WARN("IMPORTER::More than one skin not supported")
+		LOG_WARN("IMPORTER::More than one skin not supported. Please fix model " + name + ".")
 	}
 
 	if (model.skins.size() == 0)
 	{
-		LOG_INFO("IMPORTER::Model has no skinning information")
+		LOG_INFO("IMPORTER::Model " + name + " has no skinning information")
 	}
 
 	else
@@ -164,8 +172,8 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 		if (primitive.mode != TINYGLTF_MODE_TRIANGLES && primitive.mode != TINYGLTF_MODE_TRIANGLE_FAN && primitive.mode != TINYGLTF_MODE_TRIANGLE_STRIP)
 		{
-			LOG_ERROR("IMPORTER::Primitive mode not supported!")
-				return;
+			LOG_ERROR("IMPORTER::Primitive mode is not supported! Please fix model " + name + ".")
+			return;
 		}
 
 		std::vector<float> positions = getVertexPositions(model, primitive);
@@ -373,6 +381,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	fileOut.close();
 }
 
+// PRIVATE
 std::string Importer::getNewName(const std::string& name, const json& j, const int& count)
 {
 	std::string newName = name + std::to_string(count);
@@ -452,7 +461,7 @@ std::vector<float> Importer::getVertexNormals(tinygltf::Model& model, tinygltf::
 	if (primitive.attributes.count("NORMAL") == 0)
 	{
 		LOG_WARN("IMPORTER::Mesh has no normals attribute!")
-			tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
+		tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
 		return std::vector<float>(accessor.count * TINYGLTF_TYPE_VEC3, 1.0f);
 	}
 

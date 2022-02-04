@@ -27,7 +27,7 @@ private:
 
 public:
 	Mesh();
-	Mesh(std::shared_ptr<VertexArray> vertexArray, std::shared_ptr<Skeleton> skeleton, std::shared_ptr<Material> material, std::shared_ptr<Shader> shader, glm::mat4 transform = glm::mat4(1.0f));
+	Mesh(const std::string& name, std::shared_ptr<VertexArray> vertexArray, std::shared_ptr<Skeleton> skeleton, std::shared_ptr<Material> material, std::shared_ptr<Shader> shader, glm::mat4 transform = glm::mat4(1.0f));
 
 	VertexArray* GetVertexArray() const { return m_VertexArray.get(); }
 	void SetVertexArray(const std::shared_ptr<VertexArray>& vertexArray) { m_VertexArray = vertexArray; }

@@ -20,6 +20,6 @@ public:
 	static std::shared_ptr<GameObject> LoadModel(const std::string& modelPath);
 
 private:
-	static Skeleton createSkeleton(json& j);
-	static Mesh createMesh(json& jmesh);
+	static Skeleton createSkeleton(json& j, const std::string& name);
+	static Mesh createMesh(json& jmesh, const std::string& name);
 };

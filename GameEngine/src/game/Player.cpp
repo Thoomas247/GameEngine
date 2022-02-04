@@ -13,7 +13,7 @@ Player::Player()
 // PRIVATE
 void Player::onSetUp()
 {
-	m_Camera = GetChild("Camera");
+	//m_Camera = GetChild("Camera");
 }
 
 void Player::onUpdate(const float& deltaTime)

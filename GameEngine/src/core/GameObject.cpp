@@ -5,7 +5,16 @@
 
 #include "Log.h"
 
+GameObject::GameObject()
+{
+	m_Name = "GameObject";
+}
+
 // PUBLIC
+GameObject::GameObject(const std::string& name)
+{
+	m_Name = name;
+}
 
 /// <summary>
 /// Runs once when the game world initializes. 
@@ -15,7 +24,7 @@ void GameObject::SetUp()
 {
 	onSetUp();
 
-	for (auto& [name, object] : Children)
+	for (const auto& object : m_Children)
 	{
 		object->SetUp();
 	}
@@ -32,7 +41,7 @@ void GameObject::Update(const float& deltaTime, const glm::mat4& parentTransform
 	onUpdate(deltaTime);
 	calcTransforms(parentTransform);
 
-	for (auto& [name, object] : Children)
+	for (const auto& object : m_Children)
 	{
 		object->Update(deltaTime, m_GlobalTransform);
 	}
@@ -44,29 +53,9 @@ void GameObject::Update(const float& deltaTime, const glm::mat4& parentTransform
 /// </summary>
 /// <param name="name"></param>
 /// <param name="object"></param>
-void GameObject::AddChild(const std::string& name, const std::shared_ptr<GameObject>& object)
+void GameObject::AddChild(const std::shared_ptr<GameObject>& object)
 {
-	Children[name] = object;
-}
-
-/// <summary>
-/// Returns a child GameObject based on the name given.
-/// Assumes that the child exists and is only used as a shortcut to retrieve a reference to a child.
-/// </summary>
-/// <param name="path"></param>
-/// <returns></returns>
-std::shared_ptr<GameObject> GameObject::GetChild(const std::string& name)
-{
-	const std::map<std::string, std::shared_ptr<GameObject>>::iterator it = Children.find(name);
-	if (it != Children.end())
-	{
-		return it->second;
-	}
-	else
-	{
-		LOG_ERROR("GAME_OBJECT::Child " + name + " was not found. GameObject::GetChild() assumes the child exists (read doc for more info).")
-		return nullptr;
-	}
+	m_Children.push_back(object);
 }
 
 // PRIVATE

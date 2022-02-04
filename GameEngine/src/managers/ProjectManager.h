@@ -12,10 +12,11 @@ private:
 
 public:
 	static void CreateProject(const std::string& name, const std::string& directory);
+
 	//static void LoadProject();
 	//static void SaveProject();
 
-	static Project* GetCurrentProject() { return s_CurrentProject.get(); }
+	//static Project* GetCurrentProject() { return s_CurrentProject.get(); }
 
 	static std::string GetProjectDir() { return s_CurrentProject->ProjectDir; }
 	static std::string GetModelsPath() { return s_CurrentProject->ProjectDir + s_CurrentProject->DefaultModelsPath; }

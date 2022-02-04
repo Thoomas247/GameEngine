@@ -1086,7 +1086,7 @@ struct Asset {
   bool operator==(const Asset &) const;
 };
 
-struct Scene {
+struct GLTFScene {
   std::string name;
   std::vector<int> nodes;
 
@@ -1097,9 +1097,9 @@ struct Scene {
   std::string extras_json_string;
   std::string extensions_json_string;
 
-  Scene() = default;
-  DEFAULT_METHODS(Scene)
-  bool operator==(const Scene &) const;
+  GLTFScene() = default;
+  DEFAULT_METHODS(GLTFScene)
+  bool operator==(const GLTFScene &) const;
 };
 
 struct SpotLight {
@@ -1158,10 +1158,10 @@ class Model {
   std::vector<Skin> skins;
   std::vector<Sampler> samplers;
   std::vector<Camera> cameras;
-  std::vector<Scene> scenes;
+  std::vector<GLTFScene> scenes;
   std::vector<Light> lights;
 
-  int defaultScene = -1;
+  int defaultGLTFScene = -1;
   std::vector<std::string> extensionsUsed;
   std::vector<std::string> extensionsRequired;
 
@@ -1334,13 +1334,13 @@ class TinyGLTF {
   ///
   /// Write glTF to stream, buffers and images will be embeded
   ///
-  bool WriteGltfSceneToStream(Model *model, std::ostream &stream,
+  bool WriteGltfGLTFSceneToStream(Model *model, std::ostream &stream,
                               bool prettyPrint, bool writeBinary);
 
   ///
   /// Write glTF to file.
   ///
-  bool WriteGltfSceneToFile(Model *model, const std::string &filename,
+  bool WriteGltfGLTFSceneToFile(Model *model, const std::string &filename,
                             bool embedImages, bool embedBuffers,
                             bool prettyPrint, bool writeBinary);
 
@@ -1863,7 +1863,7 @@ bool Model::operator==(const Model &other) const {
          this->buffers == other.buffers &&
          this->bufferViews == other.bufferViews &&
          this->cameras == other.cameras &&
-         this->defaultScene == other.defaultScene &&
+         this->defaultGLTFScene == other.defaultGLTFScene &&
          this->extensions == other.extensions &&
          this->extensionsRequired == other.extensionsRequired &&
          this->extensionsUsed == other.extensionsUsed &&
@@ -1937,7 +1937,7 @@ bool Sampler::operator==(const Sampler &other) const {
 
          //this->wrapR == other.wrapR && this->wrapS == other.wrapS &&
 }
-bool Scene::operator==(const Scene &other) const {
+bool GLTFScene::operator==(const GLTFScene &other) const {
   return this->extensions == other.extensions && this->extras == other.extras &&
          this->name == other.name && this->nodes == other.nodes;
 }
@@ -5571,7 +5571,7 @@ bool TinyGLTF::LoadFromString(Model *model, std::string *err, std::string *warn,
   model->extensionsUsed.clear();
   model->extensionsRequired.clear();
   model->extensions.clear();
-  model->defaultScene = -1;
+  model->defaultGLTFScene = -1;
 
   // 1. Parse Asset
   {
@@ -5810,7 +5810,7 @@ bool TinyGLTF::LoadFromString(Model *model, std::string *err, std::string *warn,
       std::vector<int> nodes;
       ParseIntegerArrayProperty(&nodes, err, o, "nodes", false);
 
-      Scene scene;
+      GLTFScene scene;
       scene.nodes = std::move(nodes);
 
       ParseStringProperty(&scene.name, err, o, "name", false);
@@ -5847,7 +5847,7 @@ bool TinyGLTF::LoadFromString(Model *model, std::string *err, std::string *warn,
     json_const_iterator rootIt;
     int iVal;
     if (FindMember(v, "scene", rootIt) && GetInt(GetValue(rootIt), iVal)) {
-      model->defaultScene = iVal;
+      model->defaultGLTFScene = iVal;
     }
   }
 
@@ -7220,7 +7220,7 @@ static void SerializeGltfCamera(const Camera &camera, json &o) {
   SerializeExtensionMap(camera.extensions, o);
 }
 
-static void SerializeGltfScene(Scene &scene, json &o) {
+static void SerializeGltfGLTFScene(GLTFScene &scene, json &o) {
   SerializeNumberArrayProperty<int>("nodes", scene.nodes, o);
 
   if (scene.name.size()) {
@@ -7366,8 +7366,8 @@ static void SerializeGltfModel(Model *model, json &o) {
   }
 
   // SCENE
-  if (model->defaultScene > -1) {
-    SerializeNumberProperty<int>("scene", model->defaultScene, o);
+  if (model->defaultGLTFScene > -1) {
+    SerializeNumberProperty<int>("scene", model->defaultGLTFScene, o);
   }
 
   // SCENES
@@ -7375,9 +7375,9 @@ static void SerializeGltfModel(Model *model, json &o) {
     json scenes;
     JsonReserveArray(scenes, model->scenes.size());
     for (unsigned int i = 0; i < model->scenes.size(); ++i) {
-      json currentScene;
-      SerializeGltfScene(model->scenes[i], currentScene);
-      JsonPushBack(scenes, std::move(currentScene));
+      json currentGLTFScene;
+      SerializeGltfGLTFScene(model->scenes[i], currentGLTFScene);
+      JsonPushBack(scenes, std::move(currentGLTFScene));
     }
     JsonAddMember(o, "scenes", std::move(scenes));
   }
@@ -7589,7 +7589,7 @@ static void WriteBinaryGltfFile(const std::string &output,
   WriteBinaryGltfStream(gltfFile, content, binBuffer);
 }
 
-bool TinyGLTF::WriteGltfSceneToStream(Model *model, std::ostream &stream,
+bool TinyGLTF::WriteGltfGLTFSceneToStream(Model *model, std::ostream &stream,
                                       bool prettyPrint = true,
                                       bool writeBinary = false) {
   JsonDocument output;
@@ -7642,7 +7642,7 @@ bool TinyGLTF::WriteGltfSceneToStream(Model *model, std::ostream &stream,
   return true;
 }
 
-bool TinyGLTF::WriteGltfSceneToFile(Model *model, const std::string &filename,
+bool TinyGLTF::WriteGltfGLTFSceneToFile(Model *model, const std::string &filename,
                                     bool embedImages = false,
                                     bool embedBuffers = false,
                                     bool prettyPrint = true,

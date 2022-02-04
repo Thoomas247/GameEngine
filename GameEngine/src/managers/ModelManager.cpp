@@ -29,18 +29,18 @@ std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath
 	if (it != s_ModelCache.end())
 	{
 		Model& model = it->second;
-		std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
+		std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(model.m_Name);
 
 		auto skeleton = std::make_shared<Skeleton>(model.m_Skeleton);
 		if (skeleton->NumJoints > 0)
-			gameObject->AddChild("Skeleton", skeleton);
+			gameObject->AddChild(skeleton);
 
-		for (const auto& [name, savedMesh] : model.m_Meshes)
+		for (const auto& savedMesh : model.m_Meshes)
 		{
 			auto mesh = std::make_shared<Mesh>(savedMesh);
 			if (skeleton->NumJoints > 0)
 				mesh->SetSkeleton(skeleton);
-			gameObject->AddChild(name, mesh);
+			gameObject->AddChild(mesh);
 		}
 
 		return gameObject;
@@ -57,37 +57,45 @@ std::shared_ptr<GameObject> ModelManager::LoadModel(const std::string& modelPath
 
 	json j = json::from_bson(buffer);
 
-	std::map<std::string, Mesh> meshes;
+	std::vector<Mesh> meshes;
 	for (auto& [name, jmesh] : j["meshes"].items())
 	{
-		meshes[name] = createMesh(jmesh);
+		meshes.push_back(createMesh(jmesh, name));
 	}
 
-	Model model = Model(meshes, createSkeleton(j));
+	// get name from file
+	size_t lastSlashPos = modelPath.find_last_of("/") + 1;
+
+	if (lastSlashPos == modelPath.npos)
+		lastSlashPos = 0;
+
+	std::string displayName = modelPath.substr(lastSlashPos, modelPath.size() - modelPath.find_last_of("."));
+
+	Model model = Model(displayName, meshes, createSkeleton(j, "Skeleton"));
 
 	s_ModelCache[modelPath] = model;
 	
 	// create the game object we are returning
-	std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
+	std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(displayName);
 
 	auto skeleton = std::make_shared<Skeleton>(model.m_Skeleton);
 
 	if (skeleton->NumJoints > 0)
-		gameObject->AddChild("Skeleton", skeleton);
+		gameObject->AddChild(skeleton);
 
-	for (const auto& [name, savedMesh] : model.m_Meshes)
+	for (const auto& savedMesh : model.m_Meshes)
 	{
 		auto mesh = std::make_shared<Mesh>(savedMesh);
 		if (skeleton->NumJoints > 0)
 			mesh->SetSkeleton(skeleton);
-		gameObject->AddChild(name, mesh);
+		gameObject->AddChild(mesh);
 	}
 
 	return gameObject;
 }
 
 // PRIVATE
-Skeleton ModelManager::createSkeleton(json& j)
+Skeleton ModelManager::createSkeleton(json& j, const std::string& name)
 {
 	std::vector<Joint> skeletonJoints;
 	std::map<std::string, Animation> animations;
@@ -141,10 +149,10 @@ Skeleton ModelManager::createSkeleton(json& j)
 		LOG_WARN("MODEL_LOADER::Model has no skeleton")
 	}
 
-	return Skeleton(skeletonJoints, animations);
+	return Skeleton(name, skeletonJoints, animations);
 }
 
-Mesh ModelManager::createMesh(json& jmesh)
+Mesh ModelManager::createMesh(json& jmesh, const std::string& name)
 {
 	// buffer data
 	std::vector<float> vertFloats = jmesh["vertices"];
@@ -188,5 +196,5 @@ Mesh ModelManager::createMesh(json& jmesh)
 							transformVec[2], transformVec[6], transformVec[10], transformVec[14],
 							transformVec[3], transformVec[7], transformVec[11], transformVec[15] };
 
-	return Mesh(vertexArray, nullptr, material, std::make_shared<Shader>("assets/shaders/Base.vert", "assets/shaders/Base.frag"), transform);
+	return Mesh(name, vertexArray, nullptr, material, std::make_shared<Shader>("assets/shaders/Base.vert", "assets/shaders/Base.frag"), transform);
 }

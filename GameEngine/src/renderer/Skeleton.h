@@ -23,7 +23,7 @@ private:
 
 public:
 	Skeleton();
-	Skeleton(const std::vector<Joint>& joints, const std::map<std::string, Animation>& animations);
+	Skeleton(const std::string& name, const std::vector<Joint>& joints, const std::map<std::string, Animation>& animations);
 
 private:
 	void onUpdate(const float& deltaTime) override;

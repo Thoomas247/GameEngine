@@ -4,9 +4,9 @@
 
 #include "Window.h"
 #include "Input.h"
-#include "World.h"
 #include "Log.h"
 
+#include "../managers/SceneManager.h"
 #include "../managers/ProjectManager.h"
 #include "../managers/TextureManager.h"
 
@@ -24,17 +24,14 @@ int Engine::Run()
 {
 	Window::InitWindow(3200, 1800);
 
-	// TODO: create menu for engine to create/load project
+	// TODO: create menu for engine to create/load project. fix ProjectManager to match SceneManager structure
 	ProjectManager::CreateProject("TestGame", "TestGame/");
 
-	if (ProjectManager::GetCurrentProject() == nullptr)
-	{
-		LOG_ERROR("ENGINE::No project loaded!")
-			return -1;
-	}
+	// TODO: make this possible in the GUI. finish Scene class
+	Scene mainScene = Scene("Main", "");
+	SceneManager::SetScene(&mainScene);
 
 	TextureManager::Init();
-
 	EngineGUI::Init();
 	Renderer::Init();
 
@@ -47,16 +44,17 @@ int Engine::Run()
 	std::shared_ptr<GameObject> bird = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Bird.GEM");
 	bird->LocalPosition = glm::vec3(50.0f, 40.0f, 50.0f);
 	bird->LocalScale = glm::vec3(0.5f);
-	World::AddGameObject("Bird", bird);
+	SceneManager::AddGameObjectToScene(bird);
 
 	for (int x = 0; x < 10; x++)
 	{
 		for (int z = 0; z < 10; z++)
 		{
 			auto tree = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Tree.GEM");
+			tree->SetName(std::to_string(x) + ", " + std::to_string(z));
 			tree->LocalPosition = glm::vec3(10 * x, 0.0f, 10 * z);
 			tree->SetLocalRotationFromEulerAngles(glm::vec3(-90.0f, 0.0f, 0.0f));
-			World::AddGameObject(std::to_string(x) + "," + std::to_string(z), tree);
+			SceneManager::AddGameObjectToScene(tree);
 		}
 	}
 
@@ -81,7 +79,7 @@ int Engine::Run()
 	float lastFrame = 0.0f;
 	float currentFrame = 0.0f;
 
-	World::SetUp();
+	SceneManager::SetUpScene();
 
 	// main engine loop
 	while (!Window::ShouldClose())
@@ -98,7 +96,7 @@ int Engine::Run()
 		lastFrame = currentFrame;
 
 		Input::Update();
-		World::Update(deltaTime);
+		SceneManager::UpdateScene(deltaTime);
 		EngineGUI::Update(deltaTime);
 		//Renderer::Draw(); // not needed here in "engine" mode
 
