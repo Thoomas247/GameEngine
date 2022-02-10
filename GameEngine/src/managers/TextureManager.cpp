@@ -64,8 +64,8 @@ std::shared_ptr<Texture> TextureManager::LoadTexture(const std::string& path)
 			format = GL_RGBA;
 		else
 		{
-			LOG_ERROR("TEXTURE_MANAGER::Texture format not supported!")
-				return s_TextureCache["default"];
+			LOG_ERROR("TEXTURE_MANAGER::Texture format not supported!");
+			return s_TextureCache["default"];
 		}
 
 		glTextureStorage2D(texture.ID, 1, GL_RGBA8, texture.Width, texture.Height);
@@ -74,8 +74,8 @@ std::shared_ptr<Texture> TextureManager::LoadTexture(const std::string& path)
 	}
 	else
 	{
-		LOG_ERROR("TEXTURE_MANAGER::Failed to load texture!")
-			return s_TextureCache["default"];
+		LOG_ERROR("TEXTURE_MANAGER::Failed to load texture!");
+		return s_TextureCache["default"];
 	}
 
 	stbi_image_free(data);

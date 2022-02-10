@@ -77,8 +77,8 @@ SceneView::SceneView()
 	// check for errors
 	if (glCheckNamedFramebufferStatus(m_FrameBuffer, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		LOG_ERROR("SCENE_VIEW::Failed to set up rendering to ImGui!")
-			return;
+		LOG_ERROR("SCENE_VIEW::Failed to set up rendering to ImGui!");
+		return;
 	}
 }
 

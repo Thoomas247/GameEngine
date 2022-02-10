@@ -8,6 +8,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
 
+#include "json/json.hpp"
+using json = nlohmann::json;
+
 #include "UUID.h"
 
 class GameObject

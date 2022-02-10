@@ -19,8 +19,8 @@ void Window::InitWindow(const int& width, const int& height)
 	s_WindowPtr = glfwCreateWindow(width, height, "Game Engine", NULL, NULL);
 	if (s_WindowPtr == NULL)
 	{
-		LOG_ERROR("MAIN::Failed to create GLFW window!")
-			glfwTerminate();
+		LOG_ERROR("MAIN::Failed to create GLFW window!");
+		glfwTerminate();
 		return;
 	}
 	glfwMakeContextCurrent(s_WindowPtr);
@@ -33,10 +33,10 @@ void Window::InitWindow(const int& width, const int& height)
 	int version = gladLoadGL(glfwGetProcAddress);
 	if (version == 0)
 	{
-		LOG_ERROR("MAIN::Failed to initialize OpenGL context!")
-			return;
+		LOG_ERROR("MAIN::Failed to initialize OpenGL context!");
+		return;
 	}
-	LOG_INFO("MAIN::Loaded OpenGL " + std::string(GLAD_VERSION_MAJOR(version) + "." + GLAD_VERSION_MINOR(version)))
+	LOG_INFO("MAIN::Loaded OpenGL " + std::string(GLAD_VERSION_MAJOR(version) + "." + GLAD_VERSION_MINOR(version)));
 }
 
 void Window::CloseWindow()

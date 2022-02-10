@@ -146,7 +146,7 @@ Skeleton ModelManager::createSkeleton(json& j, const std::string& displayName)
 	}
 	else
 	{
-		LOG_WARN("MODEL_LOADER::Model has no skeleton")
+		LOG_WARN("MODEL_LOADER::Model has no skeleton");
 	}
 
 	return Skeleton(displayName, skeletonJoints, animations);

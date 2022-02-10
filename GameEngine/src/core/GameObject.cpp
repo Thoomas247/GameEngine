@@ -5,7 +5,6 @@
 
 #include "Log.h"
 
-
 // PUBLIC
 
 GameObject::GameObject()
@@ -61,6 +60,7 @@ void GameObject::AddChild(const std::shared_ptr<GameObject>& object)
 }
 
 // PRIVATE
+
 void GameObject::calcTransforms(const glm::mat4& parentTransform)
 {
 	if (LocalPosition == m_LastLocalPosition && LocalRotation == m_LastLocalRotation && LocalScale == m_LastLocalScale)

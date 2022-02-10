@@ -1,7 +1,5 @@
 #include "SceneHierarchy.h"
 
-#include "../managers/SceneManager.h"
-
 // PUBLIC
 void SceneHierarchy::Update(const float&)
 {

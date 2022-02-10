@@ -11,5 +11,12 @@ std::uniform_int_distribution<uint64_t> UUID::s_UniformDistribution;
 /// <returns></returns>
 uint64_t UUID::GenerateUUID()
 {
-	return s_UniformDistribution(s_RandomEngine);
+	uint64_t uuid = 0;
+
+	while (uuid == 0)	// removes the very small chance that 0 is used as an ID (0 indicates an invalid entity)
+	{
+		uuid = s_UniformDistribution(s_RandomEngine);
+	}
+
+	return uuid;
 }

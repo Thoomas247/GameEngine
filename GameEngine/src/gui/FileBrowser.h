@@ -32,6 +32,7 @@ public:
 
 private:
 	void destroy() override;
+	std::string cleanPath(std::string path);
 	void cleanAndSetPath(const std::string& newPath);
 	void getFiles();
 };

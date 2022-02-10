@@ -1,6 +1,7 @@
 #include "FileBrowser.h"
 
 #include "../managers/ProjectManager.h"
+#include "../managers/ModelManager.h"
 #include "../managers/TextureManager.h"
 
 constexpr auto ICON_PADDING = 24;
@@ -83,7 +84,7 @@ void FileBrowser::Update(const float&)
 
 			if (file.Type == FileType::GEM)
 			{
-				// add model to scene
+				SceneManager::AddGameObjectToScene(ModelManager::LoadModel(file.Path));
 			}
 		}
 		ImGui::PopID();
@@ -107,13 +108,11 @@ void FileBrowser::destroy()
 {
 }
 
-void FileBrowser::cleanAndSetPath(const std::string& newPath)
+std::string FileBrowser::cleanPath(std::string path)
 {
-	m_CurrentDir = newPath;
-
 	bool removeLast = false;
 
-	for (auto& c : m_CurrentDir)
+	for (auto& c : path)
 	{
 		removeLast = false;
 		if (c == '\\' || c == '/')
@@ -125,8 +124,15 @@ void FileBrowser::cleanAndSetPath(const std::string& newPath)
 
 	if (removeLast)
 	{
-		m_CurrentDir.resize(m_CurrentDir.size() - 1);
+		path.resize(path.size() - 1);
 	}
+
+	return path;
+}
+
+void FileBrowser::cleanAndSetPath(const std::string& newPath)
+{
+	m_CurrentDir = cleanPath(newPath);
 }
 
 void FileBrowser::getFiles()
@@ -139,7 +145,7 @@ void FileBrowser::getFiles()
 	{
 		FileInfo fileInfo;
 
-		fileInfo.Path = file.path().string();
+		fileInfo.Path = cleanPath(file.path().string());
 		fileInfo.Name = file.path().filename().string();
 
 		if (file.is_directory())

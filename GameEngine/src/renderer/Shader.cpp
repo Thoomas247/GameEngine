@@ -16,14 +16,14 @@ void checkCompileErrors(const unsigned int& shader, const std::string& type)
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 		if (!success) {
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			LOG_ERROR("SHADER::Shader compilation failed!" + std::string(" - " + type + ": " + infoLog))
+			LOG_ERROR("SHADER::Shader compilation failed!" + std::string(" - " + type + ": " + infoLog));
 		}
 	}
 	else {
 		glGetProgramiv(shader, GL_LINK_STATUS, &success);
 		if (!success) {
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			LOG_ERROR("SHADER::Shader linking failed!" + std::string(" - " + type + ": " + infoLog))
+			LOG_ERROR("SHADER::Shader linking failed!" + std::string(" - " + type + ": " + infoLog));
 		}
 	}
 }
@@ -45,7 +45,7 @@ std::string loadFileContents(const std::string& path)
 		fileContents = stringStream.str();
 	}
 	catch (std::ifstream::failure&) {
-		LOG_ERROR("SHADER::FILE_NOT_SUCCESFULLY_READ")
+		LOG_ERROR("SHADER::FILE_NOT_SUCCESFULLY_READ");
 	}
 
 	return fileContents;
