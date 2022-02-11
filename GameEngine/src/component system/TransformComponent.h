@@ -47,21 +47,19 @@ public:
 		m_HasChanged = false;
 	}
 
-	void UpdateLocalTransform()
-	{ 
-		m_LocalTransform = glm::translate(glm::mat4(1.0f), m_LocalTranslation) * glm::mat4_cast(m_LocalRotation) * glm::scale(glm::mat4(1.0f), m_LocalScale);
-	}
-
 	/// <summary>
-	/// Calculates the resulting global transformation given a parent transform.
+	/// Recalculates the local transform and global transform matrices given a parent transform and returns the new global transform.
 	/// </summary>
 	/// <param name="parentMatrix"></param>
-	/// <returns>The calculated transform</returns>
-	glm::mat4 UpdateGlobalTransform(const glm::mat4& parentMatrix)
-	{
+	void UpdateTransforms(const glm::mat4& parentMatrix)
+	{ 
+		if (m_HasChanged)
+		{
+			m_LocalTransform = glm::translate(glm::mat4(1.0f), m_LocalTranslation) * glm::mat4_cast(m_LocalRotation) * glm::scale(glm::mat4(1.0f), m_LocalScale);
+			m_HasChanged = false;
+		}
+
 		m_GlobalTransform = parentMatrix * m_LocalTransform;
-		m_HasChanged = false;
-		return m_GlobalTransform;
 	}
 
 	void SetLocalTranslation(const glm::vec3& translation) { m_LocalTranslation = translation; m_HasChanged = true; }

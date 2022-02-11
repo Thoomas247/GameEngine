@@ -4,7 +4,7 @@
 
 #include "../core/Log.h"
 
-#include "Camera.h"
+#include "../component system/ECS.h"
 
 // PUBLIC
 void Renderer::Init()
@@ -20,7 +20,7 @@ void Renderer::Init()
 	glClearColor(0.3f, 0.4f, 0.8f, 1.0f);
 }
 
-void Renderer::Draw(Scene& scene)
+void Renderer::Draw()
 {
 	/*
 	if (s_CurrentCamera == nullptr)
@@ -34,12 +34,12 @@ void Renderer::Draw(Scene& scene)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	for (MeshComponent& meshComponent : scene.GetMeshComponents())
+	for (MeshComponent& meshComponent : ECS::GetMeshComponents())
 	{
 		// material
 		Material* material = meshComponent.GetMaterial();
 
-		glBindTextureUnit(0, material->BaseColorTexture->ID);	// albedo tex
+		glBindTextureUnit(0, material->BaseColorTexture.ID);	// albedo tex
 
 		// shader
 		Shader* shader = meshComponent.GetShader();
@@ -47,7 +47,7 @@ void Renderer::Draw(Scene& scene)
 		
 		shader->SetInt(ALBEDO_TEX, 0);	// albedo tex
 
-		Camera camera = Camera();	// TEMP camera
+		CameraComponent camera = CameraComponent(1, 90.0f, 16/9, 0.1f, 1000.0f);	// TEMP camera
 		shader->SetMat4(MODEL_MAT, meshComponent.GetModelMat());		// model
 		shader->SetMat4(VIEW_MAT, camera.GetViewMatrix());				// view
 		shader->SetMat4(PROJECTION_MAT, camera.GetProjectionMatrix());	// projection

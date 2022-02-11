@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/Entity.h"
+#include <cstdint>
 
 class Component
 {
@@ -15,4 +15,3 @@ public:
 
 	const uint64_t GetEntityID() const { return m_EntityID; }
 };
-

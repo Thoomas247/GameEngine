@@ -20,22 +20,27 @@ int Engine::Run()
 {
 	Window::InitWindow(3200, 1800);
 
-	// TODO: create menu for engine to create/load project, fix ProjectManager to match SceneManager structure
 	ProjectManager::CreateProject("TestGame", "TestGame/");
 
-	// TODO: make this possible in the GUI, finish Scene class
-	Scene mainScene = Scene("Main", "");
+	Scene mainScene = Scene();
 
-	TextureManager::Init();
-	//EngineGUI::Init();
 	Renderer::Init();
 
-	// TODO: make all the operations below possible to do in the GUI
-	///////////////////////////////////////////////////////////
+	/*
+	for (int i = 0; i < 1000; i++)
+	{
+		uint64_t id = mainScene.CreateEntity("Test" + std::to_string(i));
+		mainScene.CreateMeshComponent(id, VertexArray(), Shader(), Material());
+	}
+	*/
+
+	//TextureManager::Init();
+	//EngineGUI::Init();
 
 	//Importer::ImportGLTF("Bird", "F:/Users/TM1/Downloads/phoenix_bird/scene.gltf");
 	//Importer::ImportGLTF("Tree", "F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 
+	/*
 	std::shared_ptr<GameObject> bird = ModelManager::LoadModel(ProjectManager::GetModelsPath() + "Bird.GEM");	// possible
 	bird->LocalPosition = glm::vec3(50.0f, 40.0f, 50.0f);	// possible
 	bird->LocalScale = glm::vec3(0.5f);	// possible
@@ -53,14 +58,11 @@ int Engine::Run()
 			SceneManager::AddGameObjectToScene(tree);	// possible
 		}
 	}
-
-	///////////////////////////////////////////////////////////
+	*/
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 	float currentFrame = 0.0f;
-
-	SceneManager::SetUpScene();
 
 	// main engine loop
 	while (!Window::ShouldClose())
@@ -76,10 +78,11 @@ int Engine::Run()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+		LOG_INFO(std::to_string(1 / deltaTime));
+
 		Input::Update();
-		SceneManager::UpdateScene(deltaTime);
-		//EngineGUI::Update(deltaTime);
-		Renderer::Draw(mainScene); // not needed here in "engine" mode
+		mainScene.Update(deltaTime);	// switch back to SceneManager
+		Renderer::Draw();
 
 		Window::SwapBuffers();
 		Window::PollEvents();

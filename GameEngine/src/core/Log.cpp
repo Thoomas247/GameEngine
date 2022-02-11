@@ -18,12 +18,14 @@ void Log::LogWarning(const std::string& warning)
 {
 	std::string line = "[warning] " + warning;
 	addLog(line.c_str());
+	std::cout << warning << std::endl;
 }
 
 void Log::LogInfo(const std::string& info)
 {
 	std::string line = "[info] " + info;
 	addLog(line.c_str());
+	std::cout << info << std::endl;
 }
 
 void Log::Clear()

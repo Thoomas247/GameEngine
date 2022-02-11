@@ -4,7 +4,7 @@
 
 #include "imgui/imgui.h"
 
-#define LOG_ERROR(x) Log::LogError(x)
+#define LOG_ERROR(x) Log::LogError(x); throw(x)
 #define LOG_WARN(x) Log::LogWarning(x)
 #define LOG_INFO(x) Log::LogInfo(x)
 
