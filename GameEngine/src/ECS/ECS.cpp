@@ -9,24 +9,24 @@ std::vector<CameraComponent> ECS::s_CameraComponents;
 
 /* CREATE */
 
-int ECS::CreateTransformComponent(const uint64_t& entityID, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
+int ECS::CreateTransformComponent(Entity* entity, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
 {
 	int index = (int)s_TransformComponents.size();
-	s_TransformComponents.push_back(TransformComponent(entityID, translation, rotation, scale));
+	s_TransformComponents.push_back(TransformComponent(entity, translation, rotation, scale));
 	return index;
 }
 
-int ECS::CreateMeshComponent(const uint64_t& entityID, const VertexArray& vertexArray, const Shader& shader, const Material& material)
+int ECS::CreateMeshComponent(Entity* entity, const VertexArray& vertexArray, const Shader& shader, const Material& material)
 {
 	int index = (int)s_MeshComponents.size();
-	s_MeshComponents.push_back(MeshComponent(entityID, vertexArray, shader, material));
+	s_MeshComponents.push_back(MeshComponent(entity, vertexArray, shader, material));
 	return index;
 }
 
-int ECS::CreateCameraComponent(const uint64_t& entityID, const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane)
+int ECS::CreateCameraComponent(Entity* entity, const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane)
 {
 	int index = (int)s_CameraComponents.size();
-	s_CameraComponents.push_back(CameraComponent(entityID, fov, aspectRatio, nearPlane, farPlane));
+	s_CameraComponents.push_back(CameraComponent(entity, fov, aspectRatio, nearPlane, farPlane));
 	return index;
 }
 
@@ -52,7 +52,7 @@ EntityModifier ECS::RemoveTransformComponent(const int& index)
 		s_TransformComponents[index] = s_TransformComponents.back();	// replace component to delete by last component
 		s_TransformComponents.erase(s_TransformComponents.end() - 1);	// delete last component
 
-		return EntityModifier(s_TransformComponents[index].GetEntityID(), index);
+		return EntityModifier(s_TransformComponents[index].GetEntity(), index);
 	}
 }
 
@@ -74,7 +74,7 @@ EntityModifier ECS::RemoveMeshComponent(const int& index)
 		s_MeshComponents[index] = s_MeshComponents.back();	// replace component to delete by last component
 		s_MeshComponents.erase(s_MeshComponents.end() - 1);	// delete last component
 
-		return EntityModifier(s_MeshComponents[index].GetEntityID(), index);
+		return EntityModifier(s_MeshComponents[index].GetEntity(), index);
 	}
 }
 
@@ -96,7 +96,7 @@ EntityModifier ECS::RemoveCameraComponent(const int& index)
 		s_CameraComponents[index] = s_CameraComponents.back();	// replace component to delete by last component
 		s_CameraComponents.erase(s_CameraComponents.end() - 1);	// delete last component
 
-		return EntityModifier(s_CameraComponents[index].GetEntityID(), index);
+		return EntityModifier(s_CameraComponents[index].GetEntity(), index);
 	}
 }
 

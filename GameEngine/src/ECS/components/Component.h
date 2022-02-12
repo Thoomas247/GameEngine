@@ -1,17 +1,18 @@
 #pragma once
 
-#include <cstdint>
+//#include "../Entity.h"
+class Entity;
 
 class Component
 {
 private:
-	uint64_t m_EntityID;
+	Entity* m_Entity;
 
 public:
-	Component(const uint64_t& entityID)
+	Component(Entity* entity)
 	{
-		m_EntityID = entityID;
+		m_Entity = entity;
 	}
 
-	const uint64_t GetEntityID() const { return m_EntityID; }
+	Entity* GetEntity() const { return m_Entity; }
 };

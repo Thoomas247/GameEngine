@@ -3,7 +3,6 @@
 #include "glad/gl.h"
 
 #include "../core/Log.h"
-
 #include "../ECS/ECS.h"
 
 // PUBLIC
@@ -47,10 +46,9 @@ void Renderer::Draw()
 		
 		shader->SetInt(ALBEDO_TEX, 0);	// albedo tex
 
-		CameraComponent camera = CameraComponent(1, 90.0f, 16/9, 0.1f, 1000.0f);	// TEMP camera
 		shader->SetMat4(MODEL_MAT, meshComponent.GetModelMat());		// model
-		shader->SetMat4(VIEW_MAT, camera.GetViewMatrix());				// view
-		shader->SetMat4(PROJECTION_MAT, camera.GetProjectionMatrix());	// projection
+		//shader->SetMat4(VIEW_MAT, camera.GetViewMatrix());				// view
+		//shader->SetMat4(PROJECTION_MAT, camera.GetProjectionMatrix());	// projection
 
 		// vertex array
 		VertexArray* vertexArray = meshComponent.GetVertexArray();

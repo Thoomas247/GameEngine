@@ -8,12 +8,12 @@
 
 struct EntityModifier
 {
-	uint64_t EntityID;
+	Entity* EntityToModify;
 	int NewComponentIndex;
 
-	EntityModifier(const uint64_t& entityID = 0, const int& newComponentIndex = 0)
+	EntityModifier(Entity* entity = nullptr, const int& newComponentIndex = 0)
 	{
-		EntityID = entityID;
+		EntityToModify = entity;
 		NewComponentIndex = newComponentIndex;
 	}
 };
@@ -31,9 +31,9 @@ public:
 	static std::vector<CameraComponent> GetCameraComponents() { return s_CameraComponents; }
 
 	// CREATE
-	static int CreateTransformComponent(const uint64_t& entityID, const glm::vec3& translation = glm::vec3(0.0f), const glm::quat& rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f), const glm::vec3& scale = glm::vec3(1.0f));
-	static int CreateMeshComponent(const uint64_t& entityID, const VertexArray& vertexArray = VertexArray(), const Shader& shader = Shader(), const Material& material = Material());
-	static int CreateCameraComponent(const uint64_t& entityID, const float& fov = 75.0f, const float& aspectRatio = 16 / 9, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f);
+	static int CreateTransformComponent(Entity* entity, const glm::vec3& translation = glm::vec3(0.0f), const glm::quat& rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f), const glm::vec3& scale = glm::vec3(1.0f));
+	static int CreateMeshComponent(Entity* entity, const VertexArray& vertexArray = VertexArray(), const Shader& shader = Shader(), const Material& material = Material());
+	static int CreateCameraComponent(Entity* entity, const float& fov = 75.0f, const float& aspectRatio = 16 / 9, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f);
 	
 	// REMOVE
 	static EntityModifier RemoveTransformComponent(const int& index);

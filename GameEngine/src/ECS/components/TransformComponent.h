@@ -34,8 +34,8 @@ public:
 	}
 	*/
 
-	TransformComponent(const uint64_t& entityID, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
-		: Component(entityID)
+	TransformComponent(Entity* entity, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
+		: Component(entity)
 	{
 		m_LocalTranslation = translation;
 		m_LocalRotation = rotation;
@@ -51,7 +51,7 @@ public:
 	/// Recalculates the local transform and global transform matrices given a parent transform and returns the new global transform.
 	/// </summary>
 	/// <param name="parentMatrix"></param>
-	void UpdateTransforms(const glm::mat4& parentMatrix)
+	glm::mat4 UpdateTransforms(const glm::mat4& parentMatrix)
 	{ 
 		if (m_HasChanged)
 		{
@@ -60,6 +60,7 @@ public:
 		}
 
 		m_GlobalTransform = parentMatrix * m_LocalTransform;
+		return m_GlobalTransform;
 	}
 
 	void SetLocalTranslation(const glm::vec3& translation) { m_LocalTranslation = translation; m_HasChanged = true; }

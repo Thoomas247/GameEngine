@@ -22,8 +22,8 @@ public:
 	}
 	*/
 
-	MeshComponent(const uint64_t& entityID, const VertexArray& vertexArray, const Shader& shader, const Material& material)
-		: Component(entityID)
+	MeshComponent(Entity* entity, const VertexArray& vertexArray, const Shader& shader, const Material& material)
+		: Component(entity)
 	{
 		m_VertexArray = vertexArray;
 		m_Shader = shader;

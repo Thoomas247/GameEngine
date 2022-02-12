@@ -2,12 +2,15 @@
 
 #include "../managers/SceneManager.h"
 #include "../core/Log.h"
+#include "ECS.h"
 
 /* -- PUBLIC -- */
 
-void Entity::CreateChild(const std::string& name)
+Entity* Entity::CreateChild(const std::string& name)
 {
-	m_ChildrenEntityIDs.push_back(SceneManager::AddEntity(name));
+	Entity* entity = SceneManager::AddEntity(name);
+	m_ChildrenEntityIDs.push_back(entity->GetUUID());
+	return entity;
 }
 
 void Entity::AddChild(const uint64_t& entityID)
@@ -31,17 +34,17 @@ void Entity::RemoveChild(const uint64_t& entityID)
 
 void Entity::AddTransformComponent(const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
 {
-	m_TransformComponent = ECS::CreateTransformComponent(m_UUID, translation, rotation, scale);
+	m_TransformComponent = ECS::CreateTransformComponent(this, translation, rotation, scale);
 }
 
 void Entity::AddMeshComponent(const VertexArray& vertexArray, const Shader& shader, const Material& material)
 {
-	m_MeshComponent = ECS::CreateMeshComponent(m_UUID, vertexArray, shader, material);
+	m_MeshComponent = ECS::CreateMeshComponent(this, vertexArray, shader, material);
 }
 
 void Entity::AddCameraComponent(const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane)
 {
-	m_CameraComponent = ECS::CreateCameraComponent(m_UUID, fov, aspectRatio, nearPlane, farPlane);
+	m_CameraComponent = ECS::CreateCameraComponent(this, fov, aspectRatio, nearPlane, farPlane);
 }
 
 
@@ -52,9 +55,9 @@ void Entity::RemoveTransformComponent()
 	EntityModifier modifier = ECS::RemoveTransformComponent(m_TransformComponent);
 	m_TransformComponent = NO_COMPONENT;
 
-	if (modifier.EntityID != 0)
+	if (modifier.EntityToModify != nullptr)
 	{
-		SceneManager::GetEntity(modifier.EntityID)->SetTransformIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
+		modifier.EntityToModify->SetTransformIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
 	}
 }
 
@@ -63,9 +66,9 @@ void Entity::RemoveMeshComponent()
 	EntityModifier modifier = ECS::RemoveMeshComponent(m_MeshComponent);
 	m_MeshComponent = NO_COMPONENT;
 
-	if (modifier.EntityID != 0)
+	if (modifier.EntityToModify != nullptr)
 	{
-		SceneManager::GetEntity(modifier.EntityID)->SetMeshIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
+		modifier.EntityToModify->SetMeshIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
 	}
 }
 
@@ -74,9 +77,9 @@ void Entity::RemoveCameraComponent()
 	EntityModifier modifier = ECS::RemoveCameraComponent(m_CameraComponent);
 	m_CameraComponent = NO_COMPONENT;
 
-	if (modifier.EntityID != 0)
+	if (modifier.EntityToModify != nullptr)
 	{
-		SceneManager::GetEntity(modifier.EntityID)->SetCameraIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
+		modifier.EntityToModify->SetCameraIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
 	}
 }
 

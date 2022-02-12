@@ -5,11 +5,17 @@
 
 /* -- PUBLIC -- */
 
-uint64_t Scene::AddEntity(const std::string& name)
+void Scene::Update(const float& deltaTime)
 {
-	Entity entity = Entity(name);
-	m_Entities[entity.GetUUID()] = entity;
-	return entity.GetUUID();
+	// hierarchy dependent update
+	updateTransformComponents(m_RootEntity, glm::mat4(1.0f));
+
+
+}
+
+Entity* Scene::AddEntity(const std::string& name)
+{
+	return m_RootEntity->CreateChild(name);
 }
 
 void Scene::RemoveEntity(const uint64_t& entityID)
@@ -27,4 +33,26 @@ Entity* Scene::GetEntity(const uint64_t& entityID)
 	}
 
 	LOG_ERROR("SCENE::Could not find entity with ID " + std::to_string(entityID) + "!");
+}
+
+
+/* -- PRIVATE -- */
+
+void Scene::updateTransformComponents(Entity* entity, const glm::mat4& parentMat)
+{
+	if (entity->HasTransform())
+	{
+		const glm::mat4& transform = entity->GetTransformComponent()->UpdateTransforms(parentMat);
+		for (const uint64_t& childID : entity->GetChildrenIDs())
+		{
+			updateTransformComponents(GetEntity(childID), transform);
+		}
+	}
+	else
+	{
+		for (const uint64_t& childID : entity->GetChildrenIDs())
+		{
+			updateTransformComponents(GetEntity(childID), parentMat);
+		}
+	}
 }

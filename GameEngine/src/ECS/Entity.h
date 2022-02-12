@@ -3,9 +3,15 @@
 #include <vector>
 #include <string>
 
+#include "glm/glm.hpp"
+#include "glm/gtx/quaternion.hpp"
+
 #include "../core/UUID.h"
 
-#include "ECS.h"
+#include "components/TransformComponent.h"
+#include "components/MeshComponent.h"
+#include "components/CameraComponent.h"
+
 
 constexpr auto NO_COMPONENT = -1;
 
@@ -37,12 +43,17 @@ public:
 	const std::string GetName() const { return m_Name; }
 	const std::vector<uint64_t> GetChildrenIDs() const { return m_ChildrenEntityIDs; }
 
-	void CreateChild(const std::string& name);
+	Entity* CreateChild(const std::string& name);
 	void AddChild(const uint64_t& entityID);
 	void RemoveChild(const uint64_t& entityID);
 
 
 	/* COMPONENT FUNCTIONS */
+
+	// HAS COMPONENT
+	bool HasTransform() { return m_TransformComponent != NO_COMPONENT; }
+	bool HasMesh() { return m_MeshComponent != NO_COMPONENT; }
+	bool HasCamera() { return m_CameraComponent != NO_COMPONENT; }
 
 	// SET INDEX
 	void SetTransformIndex(const int& index) { m_TransformComponent = index; }
