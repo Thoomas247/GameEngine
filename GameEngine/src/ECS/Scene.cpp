@@ -13,9 +13,24 @@ void Scene::Update(const float& deltaTime)
 
 }
 
-Entity* Scene::AddEntity(const std::string& name)
+std::shared_ptr<Entity> Scene::AddEntity(const std::string& name, const uint64_t& parentID)
 {
-	return m_RootEntity->CreateChild(name);
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(name);
+
+	uint64_t entityID = entity->GetUUID();
+
+	m_Entities[entityID] = entity;
+
+	if (parentID == 0)
+	{
+		m_RootEntity->AddChild(entityID);
+	}
+	else
+	{
+		GetEntity(parentID)->AddChild(entityID);
+	}
+
+	return m_Entities[entityID];
 }
 
 void Scene::RemoveEntity(const uint64_t& entityID)
@@ -23,13 +38,13 @@ void Scene::RemoveEntity(const uint64_t& entityID)
 	m_Entities.erase(entityID);
 }
 
-Entity* Scene::GetEntity(const uint64_t& entityID)
+std::shared_ptr<Entity> Scene::GetEntity(const uint64_t& entityID)
 {
 	auto it = m_Entities.find(entityID);
 
 	if (it != m_Entities.end())
 	{
-		return &it->second;
+		return it->second;
 	}
 
 	LOG_ERROR("SCENE::Could not find entity with ID " + std::to_string(entityID) + "!");
@@ -38,19 +53,19 @@ Entity* Scene::GetEntity(const uint64_t& entityID)
 
 /* -- PRIVATE -- */
 
-void Scene::updateTransformComponents(Entity* entity, const glm::mat4& parentMat)
+void Scene::updateTransformComponents(const std::shared_ptr<Entity>& entity, const glm::mat4& parentMat)
 {
 	if (entity->HasTransform())
 	{
 		const glm::mat4& transform = entity->GetTransformComponent()->UpdateTransforms(parentMat);
-		for (const uint64_t& childID : entity->GetChildrenIDs())
+		for (const auto& childID : entity->GetChildren())
 		{
 			updateTransformComponents(GetEntity(childID), transform);
 		}
 	}
 	else
 	{
-		for (const uint64_t& childID : entity->GetChildrenIDs())
+		for (const auto& childID : entity->GetChildren())
 		{
 			updateTransformComponents(GetEntity(childID), parentMat);
 		}

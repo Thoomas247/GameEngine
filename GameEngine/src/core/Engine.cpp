@@ -24,9 +24,13 @@ int Engine::Run()
 
 	Renderer::Init();
 
-	Entity* entity1 = SceneManager::AddEntity("Entity1");	// TODO: switch to shared_ptr structure for entities (instead of storing in a map)
-	entity1->AddTransformComponent();
-	entity1->AddCameraComponent(90.0f);
+	for (int i = 0; i < 1000; i++)
+	{
+		auto entity = SceneManager::AddEntity("Entity");
+		entity->AddTransformComponent();
+		entity->AddMeshComponent();
+		entity->AddCameraComponent(90.0f);
+	}
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -49,6 +53,7 @@ int Engine::Run()
 		LOG_INFO(std::to_string(1 / deltaTime));
 
 		Input::Update();
+		SceneManager::Update(deltaTime);
 
 		Renderer::Draw();
 

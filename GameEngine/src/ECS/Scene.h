@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <memory>
 
 #include "../core/UUID.h"
 #include "Entity.h"
@@ -12,8 +13,8 @@ private:
 	uint64_t m_UUID;
 	std::string m_Name;
 
-	Entity* m_RootEntity;	// the scene requires a root entity to define the hierarchy
-	std::unordered_map<uint64_t, Entity> m_Entities;
+	std::shared_ptr<Entity> m_RootEntity;	// the scene requires a root entity to define the hierarchy
+	std::unordered_map<uint64_t, std::shared_ptr<Entity>> m_Entities;
 
 public:
 	Scene()
@@ -21,9 +22,8 @@ public:
 		m_UUID = UUID::GenerateUUID();
 		m_Name = "New Scene";
 
-		Entity root = Entity("Root");
-		m_Entities[root.GetUUID()] = root;
-		m_RootEntity = &m_Entities[root.GetUUID()];
+		m_RootEntity = std::make_shared<Entity>("Root");
+		m_Entities[m_RootEntity->GetUUID()] = m_RootEntity;
 	}
 
 	Scene(const std::string& name)
@@ -31,9 +31,8 @@ public:
 		m_UUID = UUID::GenerateUUID();
 		m_Name = name;
 
-		Entity root = Entity("Root");
-		m_Entities[root.GetUUID()] = root;
-		m_RootEntity = &m_Entities[root.GetUUID()];
+		m_RootEntity = std::make_shared<Entity>("Root");
+		m_Entities[m_RootEntity->GetUUID()] = m_RootEntity;
 	}
 
 	const uint64_t GetUUID() const { return m_UUID; }
@@ -41,10 +40,10 @@ public:
 
 	void Update(const float& deltaTime);
 
-	Entity* AddEntity(const std::string& name);
+	std::shared_ptr<Entity> AddEntity(const std::string& name, const uint64_t& parentID = 0);
 	void RemoveEntity(const uint64_t& entityID);
-	Entity* GetEntity(const uint64_t& entityID);
+	std::shared_ptr<Entity> GetEntity(const uint64_t& entityID);
 
 private:
-	void updateTransformComponents(Entity* entity, const glm::mat4& parentMat);
+	void updateTransformComponents(const std::shared_ptr<Entity>&, const glm::mat4& parentMat);
 };

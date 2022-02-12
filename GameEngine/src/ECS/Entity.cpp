@@ -6,9 +6,9 @@
 
 /* -- PUBLIC -- */
 
-Entity* Entity::CreateChild(const std::string& name)
+std::shared_ptr<Entity> Entity::CreateChild(const std::string& name)
 {
-	Entity* entity = SceneManager::AddEntity(name);
+	std::shared_ptr<Entity> entity = SceneManager::AddEntity(name, m_UUID);
 	m_ChildrenEntityIDs.push_back(entity->GetUUID());
 	return entity;
 }

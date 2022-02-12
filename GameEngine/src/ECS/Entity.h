@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "glm/glm.hpp"
 #include "glm/gtx/quaternion.hpp"
@@ -13,7 +14,7 @@
 #include "components/CameraComponent.h"
 
 
-constexpr auto NO_COMPONENT = -1;
+constexpr int NO_COMPONENT = -1;
 
 class Entity
 {
@@ -41,9 +42,9 @@ public:
 
 	const uint64_t GetUUID() const { return m_UUID; }
 	const std::string GetName() const { return m_Name; }
-	const std::vector<uint64_t> GetChildrenIDs() const { return m_ChildrenEntityIDs; }
+	const std::vector<uint64_t> GetChildren() const { return m_ChildrenEntityIDs; }
 
-	Entity* CreateChild(const std::string& name);
+	std::shared_ptr<Entity> CreateChild(const std::string& name);
 	void AddChild(const uint64_t& entityID);
 	void RemoveChild(const uint64_t& entityID);
 

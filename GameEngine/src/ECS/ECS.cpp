@@ -105,7 +105,7 @@ EntityModifier ECS::RemoveCameraComponent(const int& index)
 
 TransformComponent* ECS::GetTransformComponent(const int& index)
 {
-	if (index > 0 && index < s_TransformComponents.size())
+	if (index >= 0 && index < s_TransformComponents.size())
 	{
 		return &s_TransformComponents[index];
 	}
@@ -115,7 +115,7 @@ TransformComponent* ECS::GetTransformComponent(const int& index)
 
 MeshComponent* ECS::GetMeshComponent(const int& index)
 {
-	if (index > 0 && index < s_MeshComponents.size())
+	if (index >= 0 && index < s_MeshComponents.size())
 	{
 		return &s_MeshComponents[index];
 	}
@@ -125,7 +125,7 @@ MeshComponent* ECS::GetMeshComponent(const int& index)
 
 CameraComponent* ECS::GetCameraComponent(const int& index)
 {
-	if (index > 0 && index < s_CameraComponents.size())
+	if (index >= 0 && index < s_CameraComponents.size())
 	{
 		return &s_CameraComponents[index];
 	}
