@@ -22,8 +22,6 @@ int Engine::Run()
 
 	ProjectManager::CreateProject("TestGame", "TestGame/");
 
-	Scene mainScene = Scene();
-
 	Renderer::Init();
 
 	/*
@@ -81,7 +79,7 @@ int Engine::Run()
 		LOG_INFO(std::to_string(1 / deltaTime));
 
 		Input::Update();
-		mainScene.Update(deltaTime);	// switch back to SceneManager
+
 		Renderer::Draw();
 
 		Window::SwapBuffers();

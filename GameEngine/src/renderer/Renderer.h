@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../core/Scene.h"
-
 class Renderer
 {
 public:

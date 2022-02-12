@@ -78,7 +78,7 @@
     <ClCompile Include="src\renderer\Skybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Scene.cpp">
+    <ClCompile Include="src\ECS\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\managers\ProjectManager.cpp">
@@ -93,7 +93,13 @@
     <ClCompile Include="src\renderer\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\component system\ECS.cpp">
+    <ClCompile Include="src\ECS\ECS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ECS\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\managers\SceneManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,7 +161,7 @@
     <ClInclude Include="src\renderer\Skybox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Scene.h">
+    <ClInclude Include="src\ECS\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\managers\ProjectManager.h">
@@ -167,25 +173,28 @@
     <ClInclude Include="src\core\MatrixUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\component system\Component.h">
+    <ClInclude Include="src\ECS\components\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\component system\MeshComponent.h">
+    <ClInclude Include="src\ECS\components\MeshComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\component system\TransformComponent.h">
+    <ClInclude Include="src\ECS\components\TransformComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\component system\Entity.h">
+    <ClInclude Include="src\ECS\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\renderer\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\component system\CameraComponent.h">
+    <ClInclude Include="src\ECS\components\CameraComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\component system\ECS.h">
+    <ClInclude Include="src\ECS\ECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\managers\SceneManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -97,9 +97,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\component system\ECS.cpp" />
+    <ClCompile Include="src\managers\SceneManager.cpp" />
+    <ClCompile Include="src\ECS\ECS.cpp" />
+    <ClCompile Include="src\ECS\Entity.cpp" />
     <ClCompile Include="src\core\Project.cpp" />
-    <ClCompile Include="src\core\Scene.cpp" />
+    <ClCompile Include="src\ECS\Scene.cpp" />
     <ClCompile Include="src\managers\ProjectManager.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp" />
@@ -126,15 +128,16 @@
     <ClCompile Include="src\core\UUID.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\component system\ECS.h" />
-    <ClInclude Include="src\component system\CameraComponent.h" />
-    <ClInclude Include="src\component system\Entity.h" />
-    <ClInclude Include="src\component system\MeshComponent.h" />
-    <ClInclude Include="src\component system\TransformComponent.h" />
-    <ClInclude Include="src\component system\Component.h" />
+    <ClInclude Include="src\managers\SceneManager.h" />
+    <ClInclude Include="src\ECS\ECS.h" />
+    <ClInclude Include="src\ECS\components\CameraComponent.h" />
+    <ClInclude Include="src\ECS\Entity.h" />
+    <ClInclude Include="src\ECS\components\MeshComponent.h" />
+    <ClInclude Include="src\ECS\components\TransformComponent.h" />
+    <ClInclude Include="src\ECS\components\Component.h" />
     <ClInclude Include="src\core\MatrixUtil.h" />
     <ClInclude Include="src\managers\ProjectManager.h" />
-    <ClInclude Include="src\core\Scene.h" />
+    <ClInclude Include="src\ECS\Scene.h" />
     <ClInclude Include="src\core\Log.h" />
     <ClInclude Include="src\core\Project.h" />
     <ClInclude Include="src\core\Engine.h" />

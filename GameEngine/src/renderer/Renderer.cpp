@@ -4,7 +4,7 @@
 
 #include "../core/Log.h"
 
-#include "../component system/ECS.h"
+#include "../ECS/ECS.h"
 
 // PUBLIC
 void Renderer::Init()
