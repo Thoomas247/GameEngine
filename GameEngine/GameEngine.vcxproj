@@ -97,6 +97,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\graphics\graphics assets\ShaderAsset.cpp" />
+    <ClCompile Include="src\graphics\GraphicsAssetManager.cpp" />
     <ClCompile Include="src\managers\SceneManager.cpp" />
     <ClCompile Include="src\ECS\ECS.cpp" />
     <ClCompile Include="src\ECS\Entity.cpp" />
@@ -115,19 +117,15 @@
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="include\glad\gl.c" />
     <ClCompile Include="src\importer\Importer.cpp" />
-    <ClCompile Include="src\core\GameObject.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\renderer\Camera.cpp" />
-    <ClCompile Include="src\renderer\Shader.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
-    <ClCompile Include="src\renderer\Skeleton.cpp" />
-    <ClCompile Include="src\renderer\Skybox.cpp" />
-    <ClCompile Include="src\renderer\VertexArray.cpp" />
-    <ClCompile Include="src\managers\TextureManager.cpp" />
+    <ClCompile Include="src\graphics\graphics assets\VertexArray.cpp" />
     <ClCompile Include="src\core\UUID.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\graphics\graphics assets\GraphicsAsset.h" />
+    <ClInclude Include="src\graphics\GraphicsAssetManager.h" />
     <ClInclude Include="src\managers\SceneManager.h" />
     <ClInclude Include="src\ECS\ECS.h" />
     <ClInclude Include="src\ECS\components\CameraComponent.h" />
@@ -142,27 +140,17 @@
     <ClInclude Include="src\core\Project.h" />
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
-    <ClInclude Include="src\renderer\Camera.h" />
-    <ClInclude Include="src\renderer\Skeleton.h" />
     <ClInclude Include="src\importer\Importer.h" />
-    <ClInclude Include="src\core\GameObject.h" />
     <ClInclude Include="src\core\Input.h" />
     <ClInclude Include="src\structs\Animation.h" />
     <ClInclude Include="src\structs\Joint.h" />
-    <ClInclude Include="src\structs\Material.h" />
-    <ClInclude Include="src\renderer\Shader.h" />
-    <ClInclude Include="src\structs\Model.h" />
-    <ClInclude Include="src\renderer\Skybox.h" />
-    <ClInclude Include="src\structs\Vertex.h" />
+    <ClInclude Include="src\graphics\graphics assets\ShaderAsset.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
-    <ClInclude Include="src\renderer\VertexArray.h" />
-    <ClInclude Include="src\structs\Texture.h" />
-    <ClInclude Include="src\managers\TextureManager.h" />
+    <ClInclude Include="src\graphics\graphics assets\VertexArray.h" />
+    <ClInclude Include="src\graphics\graphics assets\TextureAsset.h" />
     <ClInclude Include="src\core\UUID.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\Skybox.frag" />
-    <None Include="assets\shaders\Skybox.vert" />
     <None Include="test game\assets\shaders\Base.frag" />
     <None Include="test game\assets\shaders\Base.vert" />
   </ItemGroup>

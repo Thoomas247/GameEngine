@@ -8,6 +8,7 @@
 #include "glm/gtx/quaternion.hpp"
 
 #include "../core/UUID.h"
+#include "../graphics/GraphicsAssetManager.h"
 
 #include "components/TransformComponent.h"
 #include "components/MeshComponent.h"
@@ -63,7 +64,7 @@ public:
 
 	// ADD
 	void AddTransformComponent(const glm::vec3& translation = glm::vec3(0.0f), const glm::quat& rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f), const glm::vec3& scale = glm::vec3(1.0f));
-	void AddMeshComponent(const VertexArray& vertexArray = VertexArray(), const Shader& shader = Shader(), const Material& material = Material());
+	void AddMeshComponent(const VertexArray& vertexArray = VertexArray(), const ShaderAsset& shader = GraphicsAssetManager::LoadShader(), const Material& material = Material());
 	void AddCameraComponent(const float& fov = 75.0f, const float& aspectRatio = 16 / 9, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f);
 
 	// REMOVE

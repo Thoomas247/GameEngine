@@ -26,14 +26,14 @@ private:
 	static std::vector<CameraComponent> s_CameraComponents;
 
 public:
-	static std::vector<TransformComponent> GetTransformComponents() { return s_TransformComponents; }
-	static std::vector<MeshComponent> GetMeshComponents() { return s_MeshComponents; }
-	static std::vector<CameraComponent> GetCameraComponents() { return s_CameraComponents; }
+	static std::vector<TransformComponent>* GetTransformComponents() { return &s_TransformComponents; }
+	static std::vector<MeshComponent>* GetMeshComponents() { return &s_MeshComponents; }
+	static std::vector<CameraComponent>* GetCameraComponents() { return &s_CameraComponents; }
 
 	// CREATE
-	static int CreateTransformComponent(Entity* entity, const glm::vec3& translation = glm::vec3(0.0f), const glm::quat& rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f), const glm::vec3& scale = glm::vec3(1.0f));
-	static int CreateMeshComponent(Entity* entity, const VertexArray& vertexArray = VertexArray(), const Shader& shader = Shader(), const Material& material = Material());
-	static int CreateCameraComponent(Entity* entity, const float& fov = 75.0f, const float& aspectRatio = 16 / 9, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f);
+	static int CreateTransformComponent(Entity* entity, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale);
+	static int CreateMeshComponent(Entity* entity, const VertexArray& vertexArray, const ShaderAsset& shader, const Material& material);
+	static int CreateCameraComponent(Entity* entity, const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane);
 	
 	// REMOVE
 	static EntityModifier RemoveTransformComponent(const int& index);

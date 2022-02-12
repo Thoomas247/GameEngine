@@ -37,7 +37,7 @@ void Entity::AddTransformComponent(const glm::vec3& translation, const glm::quat
 	m_TransformComponent = ECS::CreateTransformComponent(this, translation, rotation, scale);
 }
 
-void Entity::AddMeshComponent(const VertexArray& vertexArray, const Shader& shader, const Material& material)
+void Entity::AddMeshComponent(const VertexArray& vertexArray, const ShaderAsset& shader, const Material& material)
 {
 	m_MeshComponent = ECS::CreateMeshComponent(this, vertexArray, shader, material);
 }

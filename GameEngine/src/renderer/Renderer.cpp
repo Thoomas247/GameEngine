@@ -33,22 +33,26 @@ void Renderer::Draw()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	for (MeshComponent& meshComponent : ECS::GetMeshComponents())
+
+	auto* meshVector = ECS::GetMeshComponents();
+	for(int i = 0; i < meshVector->size(); i++)
 	{
+		MeshComponent& meshComponent = meshVector->at(i);
+
 		// material
 		Material* material = meshComponent.GetMaterial();
 
-		glBindTextureUnit(0, material->BaseColorTexture.ID);	// albedo tex
+		glBindTextureUnit(0, material->BaseColorTexture.GetGLID());	// albedo tex
 
 		// shader
-		Shader* shader = meshComponent.GetShader();
+		ShaderAsset* shader = meshComponent.GetShader();
 		shader->Activate();
 		
-		shader->SetInt(ALBEDO_TEX, 0);	// albedo tex
+		shader->SetInt("albedo_tex", 0);	// albedo tex
 
-		shader->SetMat4(MODEL_MAT, meshComponent.GetModelMat());		// model
-		//shader->SetMat4(VIEW_MAT, camera.GetViewMatrix());				// view
-		//shader->SetMat4(PROJECTION_MAT, camera.GetProjectionMatrix());	// projection
+		shader->SetMat4("model_mat", meshComponent.GetModelMat());	// model
+		shader->SetMat4("view_mat", glm::mat4(1.0f));				// view
+		shader->SetMat4("projection_mat", glm::mat4(1.0f));			// projection
 
 		// vertex array
 		VertexArray* vertexArray = meshComponent.GetVertexArray();

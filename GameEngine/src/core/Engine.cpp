@@ -7,22 +7,30 @@
 #include "../managers/ProjectManager.h"
 #include "../managers/SceneManager.h"
 
+#include "../graphics/GraphicsAssetManager.h"
+
 #include "../renderer/Renderer.h"
-
-#include "../gui/EngineGUI.h"
-
-// debug:
-#include "../importer/Importer.h"
-#include "../managers/ModelManager.h"
 
 int Engine::Run()
 {
 	Window::InitWindow(3200, 1800);
+	GraphicsAssetManager::Init();
+	Renderer::Init();
 
 	ProjectManager::CreateProject("TestGame", "TestGame/");
 	SceneManager::CreateScene();
 
-	Renderer::Init();
+	// TODO:
+	// [] fix importing to match new format
+	// [] fix model loading to match new format
+	// [] create asset manager to manage GPU assets:
+	//		[x] Textures
+	//		[x] Shaders
+	//		[] VAOs
+	// [] make shaders only require 1 file
+	// [] find shader uniform locations on load
+	// [] create animator
+
 
 	for (int i = 0; i < 1000; i++)
 	{

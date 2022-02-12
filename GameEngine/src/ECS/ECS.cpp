@@ -16,7 +16,7 @@ int ECS::CreateTransformComponent(Entity* entity, const glm::vec3& translation, 
 	return index;
 }
 
-int ECS::CreateMeshComponent(Entity* entity, const VertexArray& vertexArray, const Shader& shader, const Material& material)
+int ECS::CreateMeshComponent(Entity* entity, const VertexArray& vertexArray, const ShaderAsset& shader, const Material& material)
 {
 	int index = (int)s_MeshComponents.size();
 	s_MeshComponents.push_back(MeshComponent(entity, vertexArray, shader, material));
