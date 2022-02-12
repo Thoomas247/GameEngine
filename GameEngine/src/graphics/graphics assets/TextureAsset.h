@@ -11,9 +11,6 @@ private:
 	int m_Channels;
 
 public:
-	/// <summary>
-	/// Default constructor should never be used.
-	/// </summary>
 	TextureAsset()
 		: GraphicsAsset("Invalid", "Invalid", 0)
 	{

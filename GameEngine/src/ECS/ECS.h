@@ -32,7 +32,7 @@ public:
 
 	// CREATE
 	static int CreateTransformComponent(Entity* entity, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale);
-	static int CreateMeshComponent(Entity* entity, const VertexArray& vertexArray, const ShaderAsset& shader, const Material& material);
+	static int CreateMeshComponent(Entity* entity, const VertexArrayAsset& vertexArray, const ShaderAsset& shader, const Material& material);
 	static int CreateCameraComponent(Entity* entity, const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane);
 	
 	// REMOVE

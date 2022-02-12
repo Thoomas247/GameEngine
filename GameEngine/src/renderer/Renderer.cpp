@@ -55,7 +55,7 @@ void Renderer::Draw()
 		shader->SetMat4("projection_mat", glm::mat4(1.0f));			// projection
 
 		// vertex array
-		VertexArray* vertexArray = meshComponent.GetVertexArray();
+		VertexArrayAsset* vertexArray = meshComponent.GetVertexArray();
 		vertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, (GLsizei)vertexArray->GetNumIndices(), GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
 		vertexArray->Unbind();

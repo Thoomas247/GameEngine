@@ -3,7 +3,7 @@
 #include "Component.h"
 
 #include "../../graphics/GraphicsAssetManager.h"
-#include "../../graphics/graphics assets/VertexArray.h"
+#include "../../graphics/graphics assets/VertexArrayAsset.h"
 #include "../../graphics/graphics assets/ShaderAsset.h"
 #include "../../graphics/graphics assets/TextureAsset.h"
 
@@ -54,7 +54,7 @@ struct Material
 class MeshComponent : public Component
 {
 private:
-	VertexArray m_VertexArray;
+	VertexArrayAsset m_VertexArray;
 	ShaderAsset m_Shader;
 	Material m_Material;
 	glm::mat4 m_ModelMat;
@@ -67,7 +67,7 @@ public:
 	}
 	*/
 
-	MeshComponent(Entity* entity, const VertexArray& vertexArray, const ShaderAsset& shader, const Material& material)
+	MeshComponent(Entity* entity, const VertexArrayAsset& vertexArray, const ShaderAsset& shader, const Material& material)
 		: Component(entity)
 	{
 		m_VertexArray = vertexArray;
@@ -76,7 +76,7 @@ public:
 		m_ModelMat = glm::mat4(1.0f);
 	}
 
-	VertexArray* GetVertexArray() { return &m_VertexArray; }
+	VertexArrayAsset* GetVertexArray() { return &m_VertexArray; }
 	ShaderAsset* GetShader() { return &m_Shader; }
 	Material* GetMaterial() { return &m_Material; }
 

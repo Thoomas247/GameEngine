@@ -27,7 +27,7 @@ void Window::InitWindow(const int& width, const int& height)
 
 	glfwSetFramebufferSizeCallback(s_WindowPtr, frameBufferSizeCallback);
 	glfwSetInputMode(s_WindowPtr, GLFW_CURSOR, /*GLFW_CURSOR_DISABLED*/ GLFW_CURSOR_NORMAL);
-	//glfwSwapInterval(1);	// vsync
+	glfwSwapInterval(1);	// vsync
 
 	// glad: load all OpenGL function pointers
 	int version = gladLoadGL(glfwGetProcAddress);

@@ -120,7 +120,7 @@
     <ClCompile Include="src\core\Input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
-    <ClCompile Include="src\graphics\graphics assets\VertexArray.cpp" />
+    <ClCompile Include="src\graphics\graphics assets\VertexArrayAsset.cpp" />
     <ClCompile Include="src\core\UUID.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -146,7 +146,7 @@
     <ClInclude Include="src\structs\Joint.h" />
     <ClInclude Include="src\graphics\graphics assets\ShaderAsset.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
-    <ClInclude Include="src\graphics\graphics assets\VertexArray.h" />
+    <ClInclude Include="src\graphics\graphics assets\VertexArrayAsset.h" />
     <ClInclude Include="src\graphics\graphics assets\TextureAsset.h" />
     <ClInclude Include="src\core\UUID.h" />
   </ItemGroup>

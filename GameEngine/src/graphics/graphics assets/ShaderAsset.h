@@ -10,9 +10,6 @@
 class ShaderAsset : public GraphicsAsset
 {
 public:
-	/// <summary>
-	/// Default constructor should never be used.
-	/// </summary>
 	ShaderAsset()
 		: GraphicsAsset("Invalid", "Invalid", 0)
 	{
@@ -21,9 +18,9 @@ public:
 		: GraphicsAsset(name, path, glID)
 	{
 	}
-	~ShaderAsset();
 
 	void Activate();
+	void Delete();
 
 	void SetBool(const std::string& uniform, const bool& value);
 	void SetInt(const std::string& uniform, const int& value);

@@ -5,14 +5,14 @@
 
 /* -- PUBLIC -- */
 
-ShaderAsset::~ShaderAsset()
-{
-	glDeleteProgram(m_GLID);
-}
-
 void ShaderAsset::Activate()
 {
 	glUseProgram(m_GLID);
+}
+
+void ShaderAsset::Delete()
+{
+	glDeleteProgram(m_GLID);
 }
 
 void ShaderAsset::SetBool(const std::string& uniform, const bool& value)

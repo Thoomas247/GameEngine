@@ -23,14 +23,13 @@ int Engine::Run()
 	// TODO:
 	// [] fix importing to match new format
 	// [] fix model loading to match new format
-	// [] create asset manager to manage GPU assets:
+	// [x] create asset manager to manage GPU assets:
 	//		[x] Textures
 	//		[x] Shaders
-	//		[] VAOs
+	//		[x] VAOs
 	// [] make shaders only require 1 file
 	// [] find shader uniform locations on load
 	// [] create animator
-
 
 	for (int i = 0; i < 1000; i++)
 	{

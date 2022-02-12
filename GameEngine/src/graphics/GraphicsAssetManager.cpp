@@ -8,9 +8,11 @@
 
 #include "../core/Log.h"
 
+const std::vector<Vertex> GraphicsAssetManager::c_SquareVertices = { Vertex(glm::vec3(0.0f, 0.0f, -1.0f)), Vertex(glm::vec3(0.0f, 1.0f, -1.0f)), Vertex(glm::vec3(1.0f, 0.0f, 1.0f)), Vertex(glm::vec3(1.0f, 1.0f, 1.0f)) };
+const std::vector<unsigned int> GraphicsAssetManager::c_SquareIndices = { 0, 2, 1, 1, 2, 3 };
 
-std::map<std::string, std::shared_ptr<TextureAsset>> GraphicsAssetManager::s_LoadedTextures;
-std::map<std::string, std::shared_ptr<ShaderAsset>> GraphicsAssetManager::s_LoadedShaders;
+std::map<std::string, std::shared_ptr<TextureAsset>> GraphicsAssetManager::s_UploadedTextures;
+std::map<std::string, std::shared_ptr<ShaderAsset>> GraphicsAssetManager::s_UploadedShaders;
 
 /* -- PUBLIC -- */
 
@@ -32,7 +34,7 @@ void GraphicsAssetManager::Init()
 	GLubyte data[] = { 255, 255, 255, 255 };
 	glTextureSubImage2D(glID, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
 
-	s_LoadedTextures["Default"] = std::make_shared<TextureAsset>("None", "Default", glID, width, height, channels);
+	s_UploadedTextures["Default"] = std::make_shared<TextureAsset>("None", "Default", glID, width, height, channels);
 
 	// create default shader
 	LoadShader();
@@ -40,9 +42,9 @@ void GraphicsAssetManager::Init()
 
 TextureAsset GraphicsAssetManager::LoadTexture(const std::string& absolutePath)
 {
-	auto it = s_LoadedTextures.find(absolutePath);
+	auto it = s_UploadedTextures.find(absolutePath);
 
-	if (it != s_LoadedTextures.end())
+	if (it != s_UploadedTextures.end())
 	{
 		auto& texturePtr = it->second;
 		return TextureAsset(texturePtr->GetName(), texturePtr->GetPath(), texturePtr->GetGLID(), texturePtr->GetWidth(), texturePtr->GetHeight(), texturePtr->GetChannels());
@@ -90,7 +92,7 @@ TextureAsset GraphicsAssetManager::LoadTexture(const std::string& absolutePath)
 
 	stbi_image_free(data);
 
-	auto pos = absolutePath.find_last_of("/");
+	auto pos = absolutePath.find_last_of("/") + 1;
 
 	std::string name;
 	if (pos != absolutePath.npos)
@@ -103,7 +105,7 @@ TextureAsset GraphicsAssetManager::LoadTexture(const std::string& absolutePath)
 	}
 
 	// store a copy of the asset for faster loading next time
-	s_LoadedTextures[absolutePath] = std::make_shared<TextureAsset>(name, absolutePath, glID, width, height, channels);
+	s_UploadedTextures[absolutePath] = std::make_shared<TextureAsset>(name, absolutePath, glID, width, height, channels);
 
 	return TextureAsset(name, absolutePath, glID, width, height, channels);
 }
@@ -142,7 +144,7 @@ ShaderAsset GraphicsAssetManager::LoadShader(const std::string& vertexPath, cons
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 
-	auto pos = vertexPath.find_last_of("/");
+	auto pos = vertexPath.find_last_of("/") + 1;
 
 	std::string name;
 	if (pos != vertexPath.npos)
@@ -155,9 +157,42 @@ ShaderAsset GraphicsAssetManager::LoadShader(const std::string& vertexPath, cons
 	}
 
 	// store a copy of the asset for faster loading next time
-	s_LoadedShaders[vertexPath] = std::make_shared<ShaderAsset>(name, vertexPath, glID);
+	s_UploadedShaders[vertexPath] = std::make_shared<ShaderAsset>(name, vertexPath, glID);
 
 	return ShaderAsset(name, vertexPath, glID);
+}
+
+VertexArrayAsset GraphicsAssetManager::LoadVertexArray(const std::vector<Vertex> vertices, const std::vector<unsigned int>& indices)
+{
+	unsigned int VBO;
+	unsigned int EBO;
+	unsigned int glID;
+
+	glCreateVertexArrays(1, &glID);
+	glCreateBuffers(1, &VBO);
+	glCreateBuffers(1, &EBO);
+
+	glBindVertexArray(glID);
+
+	glNamedBufferData(VBO, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+	glNamedBufferData(EBO, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+	glEnableVertexArrayAttrib(glID, 0);	// vertex positions attrib
+	glVertexAttribBinding(0, 0);
+	glVertexArrayAttribFormat(glID, 0, 3, GL_FLOAT, GL_FALSE, 0);
+
+	glEnableVertexArrayAttrib(glID, 1);	// vertex normals attrib
+	glVertexAttribBinding(1, 0);
+	glVertexArrayAttribFormat(glID, 1, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, Normal));
+
+	glEnableVertexArrayAttrib(glID, 2);	// vertex texcoords attrib
+	glVertexAttribBinding(2, 0);
+	glVertexArrayAttribFormat(glID, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, TexCoord));
+
+	glVertexArrayVertexBuffer(glID, 0, VBO, 0, sizeof(Vertex));	// bind VBO to VAO
+	glVertexArrayElementBuffer(glID, EBO);	// bind EBO to VAO
+
+	return VertexArrayAsset(glID, indices.size());
 }
 
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "GraphicsAsset.h"
 
 #include <vector>
 
@@ -25,20 +26,26 @@ struct Vertex
 	}
 };
 
-class VertexArray
+class VertexArrayAsset : public GraphicsAsset
 {
 private:
-	unsigned int m_ID = 0;
-	size_t m_NumIndices = 0;
+	uint64_t m_NumIndices;
 
 public:
-	VertexArray();
-	VertexArray(const std::vector<Vertex> vertices, const std::vector<unsigned int>& indices);
-	~VertexArray();
+	VertexArrayAsset()
+		: GraphicsAsset("Invalid", "Invalid", 0)
+	{
+		m_NumIndices = 0;
+	}
+	VertexArrayAsset(const unsigned int& glID, const uint64_t& numIndices)
+		: GraphicsAsset("", "", glID)
+	{
+		m_NumIndices = numIndices;
+	}
 
-	unsigned int GetID() const { return m_ID; }
-	size_t GetNumIndices() const { return m_NumIndices; }
+	uint64_t GetNumIndices() const { return m_NumIndices; }
 
+	void Delete();
 	void Bind();
 	void Unbind();
 };

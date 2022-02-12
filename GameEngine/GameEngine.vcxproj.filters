@@ -60,7 +60,7 @@
     <ClCompile Include="src\core\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\graphics assets\VertexArray.cpp">
+    <ClCompile Include="src\graphics\graphics assets\VertexArrayAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ECS\Scene.cpp">
@@ -122,7 +122,7 @@
     <ClInclude Include="src\core\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\graphics assets\VertexArray.h">
+    <ClInclude Include="src\graphics\graphics assets\VertexArrayAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\graphics\graphics assets\TextureAsset.h">
