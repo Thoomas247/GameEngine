@@ -38,7 +38,7 @@ int Engine::Run()
 	// [] find shader uniform locations on load
 	// [] create animator
 
-	GLTFImporter::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
+	//GLTFImporter::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 
 	for (int i = 0; i < 1000; i++)
 	{
