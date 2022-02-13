@@ -24,9 +24,6 @@
     <ClCompile Include="include\glad\gl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\importer\Importer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,15 +87,15 @@
     <ClCompile Include="src\graphics\graphics assets\ShaderAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\importer\GLTFImporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\importer\Importer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Input.h">
@@ -165,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\graphics\graphics assets\GraphicsAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\importer\GLTFImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

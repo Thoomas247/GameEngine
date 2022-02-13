@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\importer\GLTFImporter.cpp" />
     <ClCompile Include="src\graphics\graphics assets\ShaderAsset.cpp" />
     <ClCompile Include="src\graphics\GraphicsAssetManager.cpp" />
     <ClCompile Include="src\managers\SceneManager.cpp" />
@@ -116,7 +117,6 @@
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="include\glad\gl.c" />
-    <ClCompile Include="src\importer\Importer.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
@@ -124,6 +124,7 @@
     <ClCompile Include="src\core\UUID.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\importer\GLTFImporter.h" />
     <ClInclude Include="src\graphics\graphics assets\GraphicsAsset.h" />
     <ClInclude Include="src\graphics\GraphicsAssetManager.h" />
     <ClInclude Include="src\managers\SceneManager.h" />
@@ -140,7 +141,6 @@
     <ClInclude Include="src\core\Project.h" />
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
-    <ClInclude Include="src\importer\Importer.h" />
     <ClInclude Include="src\core\Input.h" />
     <ClInclude Include="src\structs\Animation.h" />
     <ClInclude Include="src\structs\Joint.h" />

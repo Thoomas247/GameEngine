@@ -2,57 +2,58 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STBI_MSC_SECURE_CRT
-#include "Importer.h"
+#include "GLTFImporter.h"
 
 #include <iostream>
 #include <filesystem>
 
-#include "../managers/ProjectManager.h"
+#include "glm/gtx/quaternion.hpp"
+
 #include "../core/Log.h"
+#include "../core/UUID.h"
+#include "../managers/ProjectManager.h"
 
-// PUBLIC
 
-/// <summary>
-/// Converts a GLTF file to a format which the engine can use.
-/// Textures are copied to the default directory set in ProjectManager.
-/// </summary>
-/// <param name="name"></param>
-/// <param name="path"></param>
-void Importer::ImportGLTF(const std::string& name, const std::string& path)
+/* -- PUBLIC -- */
+
+void GLTFImporter::Import(const std::string& absolutePath)
 {
+	auto dotPos = absolutePath.find_last_of(".");
+	auto slashPos = absolutePath.find_last_of("/");
+	if (dotPos == absolutePath.npos || slashPos == absolutePath.npos || dotPos < slashPos)
+	{
+		LOG_ERROR("IMPORTER::Invalid file path!");
+	}
+	slashPos++;
+
+	// parse GLTF file
 	tinygltf::Model model;
 	tinygltf::TinyGLTF loader;
-	std::string err;
-	std::string warn;
+	std::string err, warn;
 
-	std::string fileType = path.substr(path.find_last_of(".") + 1);
-
-	// parse GLTF
+	std::string fileType = absolutePath.substr(dotPos + 1);
 	bool ret = false;
 	if (std::strcmp(fileType.c_str(), "gltf") == 0)
 	{
-		ret = loader.LoadASCIIFromFile(&model, &err, &warn, path);
+		ret = loader.LoadASCIIFromFile(&model, &err, &warn, absolutePath);
 	}
 	else if (std::strcmp(fileType.c_str(), "glb") == 0)
 	{
-		ret = loader.LoadBinaryFromFile(&model, &err, &warn, path);
+		ret = loader.LoadBinaryFromFile(&model, &err, &warn, absolutePath);
 	}
 	else
 	{
 		LOG_ERROR("IMPORTER::Invalid file format!");
-		return;
 	}
 
-	if (!warn.empty()) {
+	if (!err.empty() || !ret) {
+		LOG_ERROR("IMPORTER::Failed to parse GLTF! (" + err + ")");
+	}
+	else if (!warn.empty())
+	{
 		LOG_WARN("IMPORTER::" + warn);
 	}
-	if (!err.empty()) {
-		LOG_ERROR("IMPORTER::Invalid file format!");
-	}
-	if (!ret) {
-		LOG_ERROR("IMPORTER::Failed to parse GLTF!");
-		return;
-	}
+
 
 	json j;
 
@@ -62,35 +63,13 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	{
 		tinygltf::Texture& texture = model.textures[i];
 		std::string& uri = model.images[texture.source].uri;
-		if (!uri.empty())
+		if (uri.empty())
 		{
-			std::string texturePath = path.substr(0, path.find_last_of("/") + 1) + uri;
-			std::string destPath = ProjectManager::GetTexturesPath() + name + "_textures/";
-
-			std::filesystem::create_directories(destPath);
-
-			size_t pos = uri.find_last_of("/") + 1;
-			std::string texName;
-			if (pos == uri.npos)
-				texName = uri;
-			else
-				texName = uri.substr(pos);
-
-			destPath += texName;
-
-			if (!std::filesystem::copy_file(texturePath, destPath, std::filesystem::copy_options::overwrite_existing))
-			{
-				LOG_ERROR("IMPORTER::Texture could not be copied! (" + uri + ")");
-			}
-			else
-			{
-				textureDict[i] = name + "_textures/" + texName;	// store relative path of texture
-			}
+			LOG_WARN("IMPORTER::Texture does not have uri! Cannot import.");
+			continue;
 		}
-		else
-		{
-			LOG_WARN("IMPORTER::Texture does not have uri, not importing");
-		}
+
+		textureDict[i] = copyTexture(absolutePath, uri, slashPos, dotPos);
 	}
 
 	// scenes
@@ -105,64 +84,16 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 		if (node.mesh != -1)
 		{
-			nameToIndex[getNewName(model.meshes[node.mesh].name, nameToIndex, 0)] = nodeIndex;
+			// change mesh names if needed
+			model.meshes[node.mesh].name = getNewMeshName(model.meshes[node.mesh].name, nameToIndex);
+			nameToIndex[model.meshes[node.mesh].name] = nodeIndex;
 			glm::mat4 transform = getNodeTransform(node);
 			nodeTransforms[nodeIndex] = transform;
 		}
 	}
 
 	// skin
-	std::map<unsigned int, unsigned int> indexDict;	// gltf indices to my indices
-
-	if (model.skins.size() > 1)
-	{
-		LOG_WARN("IMPORTER::More than one skin not supported. Please fix model " + name + ".");
-	}
-
-	if (model.skins.size() == 0)
-	{
-		LOG_INFO("IMPORTER::Model " + name + " has no skinning information");
-	}
-
-	else
-	{
-		tinygltf::Skin skin = model.skins[0];
-
-		// read invBindMatrices and assign them to their joints
-		tinygltf::Accessor& matrixAccessor = model.accessors[skin.inverseBindMatrices];
-		tinygltf::BufferView& matrixBufferView = model.bufferViews[matrixAccessor.bufferView];
-		tinygltf::Buffer& matrixBuffer = model.buffers[matrixBufferView.buffer];
-
-		float* matrices = reinterpret_cast<float*>(&matrixBuffer.data[matrixBufferView.byteOffset + matrixAccessor.byteOffset]);
-
-		for (unsigned int i = 0; i < matrixAccessor.count; i++)
-		{
-			indexDict[skin.joints[i]] = i;
-
-			j["joints"][i]["inverseBindMatrix"] = { matrices[i * 16 + 0], matrices[i * 16 + 1], matrices[i * 16 + 2], matrices[i * 16 + 3],
-				matrices[i * 16 + 4], matrices[i * 16 + 5], matrices[i * 16 + 6], matrices[i * 16 + 7],
-				matrices[i * 16 + 8], matrices[i * 16 + 9], matrices[i * 16 + 10], matrices[i * 16 + 11],
-				matrices[i * 16 + 12], matrices[i * 16 + 13], matrices[i * 16 + 14], matrices[i * 16 + 15] };
-
-			j["joints"][i]["index"] = skin.joints[i];
-		}
-
-		// set joint parents
-		bool first = true;
-		for (int& jointIndex : skin.joints)
-		{
-			if (first)
-			{
-				j["joints"][indexDict[jointIndex]]["parentID"] = -1;
-				first = false;
-			}
-			for (int& childIndex : model.nodes[jointIndex].children)
-			{
-				int parentID = indexDict[jointIndex];
-				j["joints"][indexDict[childIndex]]["parentID"] = parentID;
-			}
-		}
-	}
+	//std::map<unsigned int, unsigned int> indexDict = processJoints(model, j); // TODO: Create skeleton asset
 
 	// meshes
 	for (tinygltf::Mesh& mesh : model.meshes)
@@ -172,16 +103,15 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 
 		if (primitive.mode != TINYGLTF_MODE_TRIANGLES && primitive.mode != TINYGLTF_MODE_TRIANGLE_FAN && primitive.mode != TINYGLTF_MODE_TRIANGLE_STRIP)
 		{
-			LOG_ERROR("IMPORTER::Primitive mode is not supported! Please fix model " + name + ".");
-			return;
+			LOG_ERROR("IMPORTER::Primitive mode is not supported! Please fix model " + absolutePath + ".");
 		}
 
 		std::vector<float> positions = getVertexPositions(model, primitive);
 		std::vector<float> normals = getVertexNormals(model, primitive);
 		std::vector<float> texCoords = getVertexTextureCoords(model, primitive);
 		std::vector<float> colors = getVertexColors(model, primitive);
-		std::vector<unsigned short> joints = getVertexJoints(model, primitive, indexDict);
-		std::vector<float> weights = getVertexWeights(model, primitive);
+		//std::vector<unsigned short> joints = getVertexJoints(model, primitive, indexDict);
+		//std::vector<float> weights = getVertexWeights(model, primitive);
 
 		if (normals.size() == 0)
 		{
@@ -195,6 +125,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		{
 			colors = std::vector<float>((positions.size() / 3) * 4, 1.0f);
 		}
+		/*
 		if (joints.size() == 0)
 		{
 			joints = std::vector<unsigned short>((positions.size() / 3) * 4, 0);
@@ -203,6 +134,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		{
 			weights = std::vector<float>((positions.size() / 3) * 4, 0.0f);
 		}
+		*/
 
 		// interleave vertex data
 		std::vector<float> vertices;
@@ -225,6 +157,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 			vertices.push_back(colors[i * 4 + 2]);
 			vertices.push_back(colors[i * 4 + 3]);
 
+			/*
 			vertices.push_back(joints[i * 4 + 0]);
 			vertices.push_back(joints[i * 4 + 1]);
 			vertices.push_back(joints[i * 4 + 2]);
@@ -234,16 +167,21 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 			vertices.push_back(weights[i * 4 + 1]);
 			vertices.push_back(weights[i * 4 + 2]);
 			vertices.push_back(weights[i * 4 + 3]);
+			*/
 		}
 
-		// check if mesh name already exists
-		std::string meshName = getNewName(mesh.name, j["meshes"], 0);
 
-		j["meshes"][meshName]["vertices"] = vertices;
+		std::string entityID = std::to_string(UUID::GenerateUUID());
+		std::string vertexArrayAssetID = std::to_string(UUID::GenerateUUID());
+		std::string transformComponentID = std::to_string(UUID::GenerateUUID());
+		std::string meshComponentID = std::to_string(UUID::GenerateUUID());
+
+		// vertices
+		j["vertexArrayAssets"][vertexArrayAssetID]["vertices"] = vertices;
 
 		// indices
 		std::vector<unsigned int> indices = getIndices(model, primitive);
-		j["meshes"][meshName]["indices"] = indices;
+		j["vertexArrayAssets"][vertexArrayAssetID]["indices"] = indices;
 
 		// material
 		int& materialIndex = primitive.material;
@@ -259,20 +197,20 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 		std::string			normalTexture = textureDict[material.normalTexture.index];
 		std::string			occlusionTexture = textureDict[material.occlusionTexture.index];
 
-		j["meshes"][meshName]["baseColorFactor"] = baseColorFactor;
-		j["meshes"][meshName]["baseColorTexture"] = baseColorTexture;
-		j["meshes"][meshName]["metallicFactor"] = metallicFactor;
-		j["meshes"][meshName]["roughnessFactor"] = roughnessFactor;
-		j["meshes"][meshName]["metallicRoughnessTexture"] = metallicRoughnessTexture;
-		j["meshes"][meshName]["emissiveFactor"] = emissiveFactor;
-		j["meshes"][meshName]["emissiveTexture"] = emissiveTexture;
-		j["meshes"][meshName]["normalTexture"] = normalTexture;
-		j["meshes"][meshName]["occlusionTexture"] = occlusionTexture;
+		j["meshComponents"][meshComponentID]["baseColorFactor"] = baseColorFactor;
+		j["meshComponents"][meshComponentID]["baseColorTexture"] = baseColorTexture;
+		j["meshComponents"][meshComponentID]["metallicFactor"] = metallicFactor;
+		j["meshComponents"][meshComponentID]["roughnessFactor"] = roughnessFactor;
+		j["meshComponents"][meshComponentID]["metallicRoughnessTexture"] = metallicRoughnessTexture;
+		j["meshComponents"][meshComponentID]["emissiveFactor"] = emissiveFactor;
+		j["meshComponents"][meshComponentID]["emissiveTexture"] = emissiveTexture;
+		j["meshComponents"][meshComponentID]["normalTexture"] = normalTexture;
+		j["meshComponents"][meshComponentID]["occlusionTexture"] = occlusionTexture;
 
 		// transform
 		glm::mat4 transform = glm::mat4(1.0f);
 
-		auto it = nameToIndex.find(meshName);
+		auto it = nameToIndex.find(mesh.name);
 		if (it != nameToIndex.end())
 		{
 			transform = nodeTransforms[it->second];
@@ -283,10 +221,16 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 												transform[0][2], transform[1][2], transform[2][2], transform[3][2],
 												transform[0][3], transform[1][3], transform[2][3], transform[3][3] };
 
-		j["meshes"][meshName]["transform"] = transformVec;
+
+		j["transformComponents"][transformComponentID]["localTransform"] = transformVec;
+
+		// add components to entity
+		j["entities"][entityID]["meshComponent"] = meshComponentID;
+		j["entities"][entityID]["transformComponent"] = transformComponentID;
 	}
 
 	// animations
+	/*
 	for (tinygltf::Animation& anim : model.animations)
 	{
 		for (tinygltf::AnimationChannel& channel : anim.channels)
@@ -329,6 +273,7 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 	}
 
 	// animation repair
+	// TODO: add linear interpolation where there are gaps for proper repair
 	std::vector<float> lastTranslation = { 1.0f, 1.0f, 1.0f };
 	std::vector<float> lastRotation = { 0.0f, 0.0f, 0.0f, 1.0f };
 	std::vector<float> lastScale = { 1.0f, 1.0f, 1.0f };
@@ -369,40 +314,61 @@ void Importer::ImportGLTF(const std::string& name, const std::string& path)
 			}
 		}
 	}
+	*/
 
 	// write to file - importing done
-	std::string modelDestPath = ProjectManager::GetModelsPath();
-	std::filesystem::create_directories(modelDestPath);
-	modelDestPath += name + ".GEM";
+	std::string destFolder = ProjectManager::GetModelsPath();
+	std::filesystem::create_directories(destFolder);
+	std::string modelDestPath = destFolder + absolutePath.substr(slashPos, dotPos - slashPos) + ".scene";
 
 	std::ofstream fileOut = std::ofstream(modelDestPath, std::ios::out | std::ios::binary);
-	std::vector<unsigned char> dataVec = json::to_bson(j);
-	fileOut.write(reinterpret_cast<const char*>(dataVec.data()), dataVec.size());
+	//std::vector<unsigned char> dataVec = json::to_bson(j);
+	//fileOut.write(reinterpret_cast<const char*>(dataVec.data()), dataVec.size());
+	std::string output = j.dump(1);
+	fileOut.write(output.c_str(), output.length());
+
 	fileOut.close();
 }
 
-// PRIVATE
-std::string Importer::getNewName(const std::string& name, const json& j, const int& count)
+
+/* -- PRIVATE -- */
+
+std::string GLTFImporter::copyTexture(const std::string& modelPath, const std::string& uri, const size_t& slashPos, const size_t& dotPos)
 {
-	std::string newName = name + std::to_string(count);
-	if (j.count(newName) == 0)
+	// get texture's current path and destination path
+	std::string texturePath = modelPath.substr(0, slashPos) + uri;
+	std::string destPath = ProjectManager::GetTexturesPath() + modelPath.substr(slashPos, dotPos - slashPos) + "_textures/";
+
+	// create destination path if it does not already exist
+	std::filesystem::create_directories(destPath);
+
+	// extract texture name from uri
+	size_t pos = uri.find_last_of("/");
+	std::string texName;
+	if (pos == uri.npos)
 	{
-		return newName;
+		texName = uri;
 	}
-	return getNewName(name, j, count + 1);
+	else
+	{
+		texName = uri.substr(pos + 1);
+	}
+
+	// complete destination path
+	destPath += texName;
+
+	// copy texture to destination path
+	bool copySuccess = std::filesystem::copy_file(texturePath, destPath, std::filesystem::copy_options::overwrite_existing);
+	if (!copySuccess)
+	{
+		LOG_ERROR("IMPORTER::Texture could not be copied! (" + uri + ")");
+	}
+
+	// return texture path to be saved in model file
+	return destPath;
 }
 
-std::string Importer::getNewName(const std::string& name, const std::map<std::string, int>& map, const int& count)
-{
-	std::string newName = name + std::to_string(count);
-	if (map.count(newName) == 0)
-	{
-		return newName;
-	}
-	return getNewName(name, map, count + 1);
-}
-
-glm::mat4 Importer::getNodeTransform(const tinygltf::Node& node)
+glm::mat4 GLTFImporter::getNodeTransform(const tinygltf::Node& node)
 {
 	if (node.matrix.size() != 0)
 	{
@@ -437,7 +403,63 @@ glm::mat4 Importer::getNodeTransform(const tinygltf::Node& node)
 	}
 }
 
-std::vector<float> Importer::getVertexPositions(tinygltf::Model& model, tinygltf::Primitive& primitive)
+std::string GLTFImporter::getNewMeshName(const std::string& name, const std::map<std::string, int>& map, const int& count)
+{
+	std::string newName = name + std::to_string(count);
+	if (map.count(newName) == 0)
+	{
+		return newName;
+	}
+	return getNewMeshName(name, map, count + 1);
+}
+
+/*
+std::map<unsigned int, unsigned int> GLTFImporter::processJoints(tinygltf::Model& model, json& j)
+{
+	std::map<unsigned int, unsigned int> indexDict;
+	if (model.skins.size() != 0)
+	{
+		tinygltf::Skin skin = model.skins[0];
+
+		// read invBindMatrices and assign them to their joints
+		tinygltf::Accessor& matrixAccessor = model.accessors[skin.inverseBindMatrices];
+		tinygltf::BufferView& matrixBufferView = model.bufferViews[matrixAccessor.bufferView];
+		tinygltf::Buffer& matrixBuffer = model.buffers[matrixBufferView.buffer];
+
+		float* matrices = reinterpret_cast<float*>(&matrixBuffer.data[matrixBufferView.byteOffset + matrixAccessor.byteOffset]);
+
+		for (unsigned int i = 0; i < matrixAccessor.count; i++)
+		{
+			indexDict[skin.joints[i]] = i;
+
+			j["joints"][i]["inverseBindMatrix"] = { matrices[i * 16 + 0], matrices[i * 16 + 1], matrices[i * 16 + 2], matrices[i * 16 + 3],
+				matrices[i * 16 + 4], matrices[i * 16 + 5], matrices[i * 16 + 6], matrices[i * 16 + 7],
+				matrices[i * 16 + 8], matrices[i * 16 + 9], matrices[i * 16 + 10], matrices[i * 16 + 11],
+				matrices[i * 16 + 12], matrices[i * 16 + 13], matrices[i * 16 + 14], matrices[i * 16 + 15] };
+
+			j["joints"][i]["index"] = skin.joints[i];
+		}
+
+		// set joint parents
+		bool first = true;
+		for (int& jointIndex : skin.joints)
+		{
+			if (first)
+			{
+				j["joints"][indexDict[jointIndex]]["parentID"] = -1;
+				first = false;
+			}
+			for (int& childIndex : model.nodes[jointIndex].children)
+			{
+				int parentID = indexDict[jointIndex];
+				j["joints"][indexDict[childIndex]]["parentID"] = parentID;
+			}
+		}
+	}
+}
+*/
+
+std::vector<float> GLTFImporter::getVertexPositions(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
 	tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
@@ -456,7 +478,7 @@ std::vector<float> Importer::getVertexPositions(tinygltf::Model& model, tinygltf
 	return vertexPositions;
 }
 
-std::vector<float> Importer::getVertexNormals(tinygltf::Model& model, tinygltf::Primitive& primitive)
+std::vector<float> GLTFImporter::getVertexNormals(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	if (primitive.attributes.count("NORMAL") == 0)
 	{
@@ -482,7 +504,7 @@ std::vector<float> Importer::getVertexNormals(tinygltf::Model& model, tinygltf::
 	return vertexNormals;
 }
 
-std::vector<float> Importer::getVertexTextureCoords(tinygltf::Model& model, tinygltf::Primitive& primitive)
+std::vector<float> GLTFImporter::getVertexTextureCoords(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	if (primitive.attributes.count("TEXCOORD_0") == 0)
 	{
@@ -516,7 +538,7 @@ std::vector<float> Importer::getVertexTextureCoords(tinygltf::Model& model, tiny
 	return vertexTextureCoords;
 }
 
-std::vector<float> Importer::getVertexColors(tinygltf::Model& model, tinygltf::Primitive& primitive)
+std::vector<float> GLTFImporter::getVertexColors(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	if (primitive.attributes.count("COLOR_0") == 0)
 	{
@@ -542,7 +564,8 @@ std::vector<float> Importer::getVertexColors(tinygltf::Model& model, tinygltf::P
 	return vertexColors;
 }
 
-std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, tinygltf::Primitive& primitive, std::map<unsigned int, unsigned int> indexDict)
+/*
+std::vector<unsigned short> GLTFImporter::getVertexJoints(tinygltf::Model& model, tinygltf::Primitive& primitive, std::map<unsigned int, unsigned int> indexDict)
 {
 	if (primitive.attributes.count("JOINTS_0") == 0)
 	{
@@ -568,7 +591,7 @@ std::vector<unsigned short> Importer::getVertexJoints(tinygltf::Model& model, ti
 	return vertexJoints;
 }
 
-std::vector<float> Importer::getVertexWeights(tinygltf::Model& model, tinygltf::Primitive& primitive)
+std::vector<float> GLTFImporter::getVertexWeights(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	if (primitive.attributes.count("WEIGHTS_0") == 0)
 	{
@@ -593,8 +616,9 @@ std::vector<float> Importer::getVertexWeights(tinygltf::Model& model, tinygltf::
 
 	return vertexWeights;
 }
+*/
 
-std::vector<unsigned int> Importer::getIndices(tinygltf::Model& model, tinygltf::Primitive& primitive)
+std::vector<unsigned int> GLTFImporter::getIndices(tinygltf::Model& model, tinygltf::Primitive& primitive)
 {
 	tinygltf::Accessor& accessor = model.accessors[primitive.indices];
 	tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];

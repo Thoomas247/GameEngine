@@ -7,6 +7,8 @@
 #include "../managers/ProjectManager.h"
 #include "../managers/SceneManager.h"
 
+#include "../importer/GLTFImporter.h"
+
 #include "../graphics/GraphicsAssetManager.h"
 
 #include "../renderer/Renderer.h"
@@ -21,7 +23,12 @@ int Engine::Run()
 	SceneManager::CreateScene();
 
 	// TODO:
-	// [] fix importing to match new format
+	// [] fix importing to match new format:
+	//		 [x] import into .scene file which contains each component type in separate lists
+	//		 [] create skeleton component
+	//		 [] save skeleton in new format
+	//		 [] save animations in new format
+	//		 [] fix animation linear interpolation on import
 	// [] fix model loading to match new format
 	// [x] create asset manager to manage GPU assets:
 	//		[x] Textures
@@ -30,6 +37,8 @@ int Engine::Run()
 	// [] make shaders only require 1 file
 	// [] find shader uniform locations on load
 	// [] create animator
+
+	GLTFImporter::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 
 	for (int i = 0; i < 1000; i++)
 	{
