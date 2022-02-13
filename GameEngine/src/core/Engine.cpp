@@ -29,7 +29,8 @@ int Engine::Run()
 	//		[] save skeleton in new format
 	//		[] save animations in new format
 	//		[] fix animation linear interpolation on import
-	// [] fix scene loading to match new format
+	// [x] fix scene loading to match new format
+	// [] add scene saving to file
 	// [] add skeleton loading to scene loading
 	// [x] create asset manager to manage GPU assets:
 	//		[x] Textures
@@ -42,6 +43,7 @@ int Engine::Run()
 
 	//GLTFImporter::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
+	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
