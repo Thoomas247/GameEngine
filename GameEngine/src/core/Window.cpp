@@ -19,9 +19,8 @@ void Window::InitWindow(const int& width, const int& height)
 	s_WindowPtr = glfwCreateWindow(width, height, "Game Engine", NULL, NULL);
 	if (s_WindowPtr == nullptr)
 	{
-		LOG_ERROR("MAIN::Failed to create GLFW window!");
 		glfwTerminate();
-		return;
+		LOG_ERROR("MAIN::Failed to create GLFW window!");
 	}
 	glfwMakeContextCurrent(s_WindowPtr);
 

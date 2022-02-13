@@ -146,8 +146,8 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const uint64_t&
 	std::string sceneName = absolutePath.substr(slashPos, dotPos - slashPos);
 
 	// this entity is the root of the scene that is being loaded into the current scene
-	auto entity = AddEntity(sceneName, parentID);
-	uint64_t sceneRootID = entity->GetUUID();
+	auto rootEntity = AddEntity(sceneName, parentID);
+	uint64_t sceneRootID = rootEntity->GetUUID();
 
 	// load from file
 	std::streamsize size = std::filesystem::file_size(absolutePath);
