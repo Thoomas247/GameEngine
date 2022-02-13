@@ -2,7 +2,7 @@
 
 std::unique_ptr<Project> ProjectManager::s_CurrentProject = nullptr;
 
-// PUBLIC
+/* -- PUBLIC -- */
 
 // TODO: Remove this
 void ProjectManager::CreateProject(const std::string& name, const std::string& directory)

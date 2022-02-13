@@ -24,29 +24,24 @@ int Engine::Run()
 
 	// TODO:
 	// [] fix importing to match new format:
-	//		 [x] import into .scene file which contains each component type in separate lists
-	//		 [] create skeleton component
-	//		 [] save skeleton in new format
-	//		 [] save animations in new format
-	//		 [] fix animation linear interpolation on import
-	// [] fix model loading to match new format
+	//		[x] import into .scene file which contains each component type in separate lists
+	//		[] create skeleton component
+	//		[] save skeleton in new format
+	//		[] save animations in new format
+	//		[] fix animation linear interpolation on import
+	// [] fix scene loading to match new format
+	// [] add skeleton loading to scene loading
 	// [x] create asset manager to manage GPU assets:
 	//		[x] Textures
 	//		[x] Shaders
 	//		[x] VAOs
+	//		[] Make material a GPU asset (buffer) which can be set depending on an ID, instead of just being a part of the mesh component
 	// [] make shaders only require 1 file
 	// [] find shader uniform locations on load
 	// [] create animator
 
 	//GLTFImporter::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
-
-	for (int i = 0; i < 1000; i++)
-	{
-		auto entity = SceneManager::AddEntity("Entity");
-		entity->AddTransformComponent();
-		entity->AddMeshComponent();
-		entity->AddCameraComponent(90.0f);
-	}
+	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;

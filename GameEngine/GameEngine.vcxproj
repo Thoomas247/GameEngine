@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\MatrixUtil.cpp" />
     <ClCompile Include="src\importer\GLTFImporter.cpp" />
     <ClCompile Include="src\graphics\graphics assets\ShaderAsset.cpp" />
     <ClCompile Include="src\graphics\GraphicsAssetManager.cpp" />

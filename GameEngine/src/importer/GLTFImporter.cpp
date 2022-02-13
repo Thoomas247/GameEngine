@@ -11,6 +11,7 @@
 
 #include "../core/Log.h"
 #include "../core/UUID.h"
+#include "../core/MatrixUtil.h"
 #include "../managers/ProjectManager.h"
 
 
@@ -111,7 +112,9 @@ void GLTFImporter::Import(const std::string& absolutePath)
 		std::vector<float> texCoords = getVertexTextureCoords(model, primitive);
 		std::vector<float> colors = getVertexColors(model, primitive);
 		//std::vector<unsigned short> joints = getVertexJoints(model, primitive, indexDict);
+		std::vector<unsigned short> joints = {};
 		//std::vector<float> weights = getVertexWeights(model, primitive);
+		std::vector<float> weights = {};
 
 		if (normals.size() == 0)
 		{
@@ -125,7 +128,6 @@ void GLTFImporter::Import(const std::string& absolutePath)
 		{
 			colors = std::vector<float>((positions.size() / 3) * 4, 1.0f);
 		}
-		/*
 		if (joints.size() == 0)
 		{
 			joints = std::vector<unsigned short>((positions.size() / 3) * 4, 0);
@@ -134,7 +136,6 @@ void GLTFImporter::Import(const std::string& absolutePath)
 		{
 			weights = std::vector<float>((positions.size() / 3) * 4, 0.0f);
 		}
-		*/
 
 		// interleave vertex data
 		std::vector<float> vertices;
@@ -157,7 +158,6 @@ void GLTFImporter::Import(const std::string& absolutePath)
 			vertices.push_back(colors[i * 4 + 2]);
 			vertices.push_back(colors[i * 4 + 3]);
 
-			/*
 			vertices.push_back(joints[i * 4 + 0]);
 			vertices.push_back(joints[i * 4 + 1]);
 			vertices.push_back(joints[i * 4 + 2]);
@@ -167,7 +167,6 @@ void GLTFImporter::Import(const std::string& absolutePath)
 			vertices.push_back(weights[i * 4 + 1]);
 			vertices.push_back(weights[i * 4 + 2]);
 			vertices.push_back(weights[i * 4 + 3]);
-			*/
 		}
 
 
@@ -197,15 +196,17 @@ void GLTFImporter::Import(const std::string& absolutePath)
 		std::string			normalTexture = textureDict[material.normalTexture.index];
 		std::string			occlusionTexture = textureDict[material.occlusionTexture.index];
 
-		j["meshComponents"][meshComponentID]["baseColorFactor"] = baseColorFactor;
-		j["meshComponents"][meshComponentID]["baseColorTexture"] = baseColorTexture;
-		j["meshComponents"][meshComponentID]["metallicFactor"] = metallicFactor;
-		j["meshComponents"][meshComponentID]["roughnessFactor"] = roughnessFactor;
-		j["meshComponents"][meshComponentID]["metallicRoughnessTexture"] = metallicRoughnessTexture;
-		j["meshComponents"][meshComponentID]["emissiveFactor"] = emissiveFactor;
-		j["meshComponents"][meshComponentID]["emissiveTexture"] = emissiveTexture;
-		j["meshComponents"][meshComponentID]["normalTexture"] = normalTexture;
-		j["meshComponents"][meshComponentID]["occlusionTexture"] = occlusionTexture;
+		j["meshComponents"][meshComponentID]["material"]["baseColorFactor"]				= baseColorFactor;
+		j["meshComponents"][meshComponentID]["material"]["baseColorTexture"]			= baseColorTexture;
+		j["meshComponents"][meshComponentID]["material"]["metallicFactor"]				= metallicFactor;
+		j["meshComponents"][meshComponentID]["material"]["roughnessFactor"]				= roughnessFactor;
+		j["meshComponents"][meshComponentID]["material"]["metallicRoughnessTexture"]	= metallicRoughnessTexture;
+		j["meshComponents"][meshComponentID]["material"]["emissiveFactor"]				= emissiveFactor;
+		j["meshComponents"][meshComponentID]["material"]["emissiveTexture"]				= emissiveTexture;
+		j["meshComponents"][meshComponentID]["material"]["normalTexture"]				= normalTexture;
+		j["meshComponents"][meshComponentID]["material"]["occlusionTexture"]			= occlusionTexture;
+
+		j["meshComponents"][meshComponentID]["vertexArrayAsset"] = vertexArrayAssetID;
 
 		// transform
 		glm::mat4 transform = glm::mat4(1.0f);
@@ -216,15 +217,12 @@ void GLTFImporter::Import(const std::string& absolutePath)
 			transform = nodeTransforms[it->second];
 		}
 
-		std::vector<float> transformVec = { transform[0][0],  transform[1][0], transform[2][0], transform[3][0],
-												transform[0][1], transform[1][1], transform[2][1], transform[3][1],
-												transform[0][2], transform[1][2], transform[2][2], transform[3][2],
-												transform[0][3], transform[1][3], transform[2][3], transform[3][3] };
-
+		std::vector<float> transformVec = MatrixUtil::FromMat4(transform);
 
 		j["transformComponents"][transformComponentID]["localTransform"] = transformVec;
 
 		// add components to entity
+		j["entities"][entityID]["name"] = mesh.name;
 		j["entities"][entityID]["meshComponent"] = meshComponentID;
 		j["entities"][entityID]["transformComponent"] = transformComponentID;
 	}
@@ -317,7 +315,7 @@ void GLTFImporter::Import(const std::string& absolutePath)
 	*/
 
 	// write to file - importing done
-	std::string destFolder = ProjectManager::GetModelsPath();
+	std::string destFolder = ProjectManager::GetScenesPath();
 	std::filesystem::create_directories(destFolder);
 	std::string modelDestPath = destFolder + absolutePath.substr(slashPos, dotPos - slashPos) + ".scene";
 
@@ -372,10 +370,7 @@ glm::mat4 GLTFImporter::getNodeTransform(const tinygltf::Node& node)
 {
 	if (node.matrix.size() != 0)
 	{
-		return glm::mat4(node.matrix[0], node.matrix[1], node.matrix[2], node.matrix[3],
-			node.matrix[4], node.matrix[5], node.matrix[6], node.matrix[7],
-			node.matrix[8], node.matrix[9], node.matrix[10], node.matrix[11],
-			node.matrix[12], node.matrix[13], node.matrix[14], node.matrix[15]);
+		return MatrixUtil::ToMat4(node.matrix);
 	}
 	else if (node.translation.size() != 0)
 	{

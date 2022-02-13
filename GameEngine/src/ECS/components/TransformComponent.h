@@ -68,6 +68,7 @@ public:
 	void SetLocalScale(const glm::vec3& scale) { m_LocalScale = scale; m_HasChanged = true; }
 
 	const glm::mat4 GetLocalTransform() { return m_LocalTransform; }
+
 	const glm::mat4 GetGlobalTransform() { return m_GlobalTransform; }
 
 	const bool HasChanged() { return m_HasChanged; }

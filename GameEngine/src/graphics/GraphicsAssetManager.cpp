@@ -42,6 +42,12 @@ void GraphicsAssetManager::Init()
 
 TextureAsset GraphicsAssetManager::LoadTexture(const std::string& absolutePath)
 {
+	if (absolutePath == "")
+	{
+		auto& texturePtr = s_UploadedTextures["Default"];
+		return TextureAsset(texturePtr->GetName(), texturePtr->GetPath(), texturePtr->GetGLID(), texturePtr->GetWidth(), texturePtr->GetHeight(), texturePtr->GetChannels());
+	}
+
 	auto it = s_UploadedTextures.find(absolutePath);
 
 	if (it != s_UploadedTextures.end())
