@@ -14,7 +14,7 @@ private:
 
 public:
 	Project(const std::string& name, const std::string& projectDir);
-	
+
 	std::string GetProjectDir() { return m_ProjectDir; }
 	std::string GetDefaultScenesPath() { return m_DefaultScenesPath; }
 	std::string GetDefaultTexturesPath() { return m_DefaultTexturesPath; }

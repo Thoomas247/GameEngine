@@ -2,7 +2,6 @@
 
 #include "glad/gl.h"
 
-
 /* -- PUBLIC -- */
 
 void VertexArrayAsset::Delete()

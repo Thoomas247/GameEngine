@@ -6,7 +6,6 @@ std::vector<TransformComponent> ECS::s_TransformComponents;
 std::vector<MeshComponent> ECS::s_MeshComponents;
 std::vector<CameraComponent> ECS::s_CameraComponents;
 
-
 /* CREATE */
 
 int ECS::CreateTransformComponent(Entity* entity, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
@@ -30,12 +29,10 @@ int ECS::CreateCameraComponent(Entity* entity, const float& fov, const float& as
 	return index;
 }
 
-
 /* REMOVE */
 
 EntityModifier ECS::RemoveTransformComponent(const int& index)
 {
-
 	if (index < 0 || index >= s_TransformComponents.size())
 	{
 		LOG_ERROR("ECS::Transform component with ID " + std::to_string(index) + " doesn't exist!");
@@ -99,7 +96,6 @@ EntityModifier ECS::RemoveCameraComponent(const int& index)
 		return EntityModifier(s_CameraComponents[index].GetEntity(), index);
 	}
 }
-
 
 /* GET */
 

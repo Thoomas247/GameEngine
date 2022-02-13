@@ -30,4 +30,3 @@ private:
 	static void shaderCheckCompileErrors(const unsigned int& shader, const std::string& type);
 	static std::string shaderLoadFileContents(const std::string& absolutePath);
 };
-

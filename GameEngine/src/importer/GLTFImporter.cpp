@@ -12,8 +12,7 @@
 #include "../core/Log.h"
 #include "../core/UUID.h"
 #include "../core/MatrixUtil.h"
-#include "../managers/ProjectManager.h"
-
+#include "../project/ProjectManager.h"
 
 /* -- PUBLIC -- */
 
@@ -54,7 +53,6 @@ void GLTFImporter::Import(const std::string& absolutePath)
 	{
 		LOG_WARN("IMPORTER::" + warn);
 	}
-
 
 	json j;
 
@@ -169,7 +167,6 @@ void GLTFImporter::Import(const std::string& absolutePath)
 			vertices.push_back(weights[i * 4 + 3]);
 		}
 
-
 		std::string entityID = std::to_string(UUID::GenerateUUID());
 		std::string vertexArrayAssetID = std::to_string(UUID::GenerateUUID());
 		std::string transformComponentID = std::to_string(UUID::GenerateUUID());
@@ -196,15 +193,15 @@ void GLTFImporter::Import(const std::string& absolutePath)
 		std::string			normalTexture = textureDict[material.normalTexture.index];
 		std::string			occlusionTexture = textureDict[material.occlusionTexture.index];
 
-		j["meshComponents"][meshComponentID]["material"]["baseColorFactor"]				= baseColorFactor;
-		j["meshComponents"][meshComponentID]["material"]["baseColorTexture"]			= baseColorTexture;
-		j["meshComponents"][meshComponentID]["material"]["metallicFactor"]				= metallicFactor;
-		j["meshComponents"][meshComponentID]["material"]["roughnessFactor"]				= roughnessFactor;
-		j["meshComponents"][meshComponentID]["material"]["metallicRoughnessTexture"]	= metallicRoughnessTexture;
-		j["meshComponents"][meshComponentID]["material"]["emissiveFactor"]				= emissiveFactor;
-		j["meshComponents"][meshComponentID]["material"]["emissiveTexture"]				= emissiveTexture;
-		j["meshComponents"][meshComponentID]["material"]["normalTexture"]				= normalTexture;
-		j["meshComponents"][meshComponentID]["material"]["occlusionTexture"]			= occlusionTexture;
+		j["meshComponents"][meshComponentID]["material"]["baseColorFactor"] = baseColorFactor;
+		j["meshComponents"][meshComponentID]["material"]["baseColorTexture"] = baseColorTexture;
+		j["meshComponents"][meshComponentID]["material"]["metallicFactor"] = metallicFactor;
+		j["meshComponents"][meshComponentID]["material"]["roughnessFactor"] = roughnessFactor;
+		j["meshComponents"][meshComponentID]["material"]["metallicRoughnessTexture"] = metallicRoughnessTexture;
+		j["meshComponents"][meshComponentID]["material"]["emissiveFactor"] = emissiveFactor;
+		j["meshComponents"][meshComponentID]["material"]["emissiveTexture"] = emissiveTexture;
+		j["meshComponents"][meshComponentID]["material"]["normalTexture"] = normalTexture;
+		j["meshComponents"][meshComponentID]["material"]["occlusionTexture"] = occlusionTexture;
 
 		j["meshComponents"][meshComponentID]["vertexArrayAsset"] = vertexArrayAssetID;
 
@@ -327,7 +324,6 @@ void GLTFImporter::Import(const std::string& absolutePath)
 
 	fileOut.close();
 }
-
 
 /* -- PRIVATE -- */
 

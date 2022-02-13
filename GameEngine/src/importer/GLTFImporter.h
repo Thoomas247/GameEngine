@@ -29,4 +29,3 @@ private:
 
 	static std::vector<unsigned int> getIndices(tinygltf::Model& model, tinygltf::Primitive& primitive);
 };
-

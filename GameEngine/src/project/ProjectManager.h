@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-#include "../core/Project.h"
+#include "../project/Project.h"
 
 class ProjectManager
 {

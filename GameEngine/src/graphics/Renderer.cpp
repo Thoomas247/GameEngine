@@ -33,9 +33,8 @@ void Renderer::Draw()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	auto* meshVector = ECS::GetMeshComponents();
-	for(int i = 0; i < meshVector->size(); i++)
+	for (int i = 0; i < meshVector->size(); i++)
 	{
 		MeshComponent& meshComponent = meshVector->at(i);
 
@@ -47,7 +46,7 @@ void Renderer::Draw()
 		// shader
 		ShaderAsset* shader = meshComponent.GetShader();
 		shader->Activate();
-		
+
 		shader->SetInt("albedo_tex", 0);	// albedo tex
 
 		shader->SetMat4("model_mat", meshComponent.GetModelMat());	// model

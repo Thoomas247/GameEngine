@@ -52,7 +52,7 @@ public:
 	/// </summary>
 	/// <param name="parentMatrix"></param>
 	glm::mat4 UpdateTransforms(const glm::mat4& parentMatrix)
-	{ 
+	{
 		if (m_HasChanged)
 		{
 			m_LocalTransform = glm::translate(glm::mat4(1.0f), m_LocalTranslation) * glm::mat4_cast(m_LocalRotation) * glm::scale(glm::mat4(1.0f), m_LocalScale);
@@ -72,5 +72,4 @@ public:
 	const glm::mat4 GetGlobalTransform() { return m_GlobalTransform; }
 
 	const bool HasChanged() { return m_HasChanged; }
-
 };

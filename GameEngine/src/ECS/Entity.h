@@ -14,7 +14,6 @@
 #include "components/MeshComponent.h"
 #include "components/CameraComponent.h"
 
-
 constexpr int NO_COMPONENT = -1;
 
 class Entity
@@ -24,12 +23,12 @@ private:
 	std::string m_Name;
 	std::vector<uint64_t> m_ChildrenEntityIDs;
 
-	int m_TransformComponent	= NO_COMPONENT;
-	int m_MeshComponent			= NO_COMPONENT;
-	int m_CameraComponent		= NO_COMPONENT;
+	int m_TransformComponent = NO_COMPONENT;
+	int m_MeshComponent = NO_COMPONENT;
+	int m_CameraComponent = NO_COMPONENT;
 
 public:
-	Entity() 
+	Entity()
 	{
 		m_UUID = UUID::GenerateUUID();
 		m_Name = "Empty Entity";
@@ -48,7 +47,6 @@ public:
 	std::shared_ptr<Entity> CreateChild(const std::string& name);
 	void AddChild(const uint64_t& entityID);
 	void RemoveChild(const uint64_t& entityID);
-
 
 	/* COMPONENT FUNCTIONS */
 

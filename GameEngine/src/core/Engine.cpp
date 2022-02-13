@@ -4,14 +4,11 @@
 #include "Input.h"
 #include "Log.h"
 
-#include "../managers/ProjectManager.h"
-#include "../managers/SceneManager.h"
-
+#include "../project/ProjectManager.h"
+#include "../scene/SceneManager.h"
 #include "../importer/GLTFImporter.h"
-
 #include "../graphics/GraphicsAssetManager.h"
-
-#include "../renderer/Renderer.h"
+#include "../graphics/Renderer.h"
 
 int Engine::Run()
 {
@@ -23,6 +20,7 @@ int Engine::Run()
 	SceneManager::CreateScene();
 
 	// TODO:
+	// [] implement camera component properly
 	// [] fix importing to match new format:
 	//		[x] import into .scene file which contains each component type in separate lists
 	//		[] create skeleton component

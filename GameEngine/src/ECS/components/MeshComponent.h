@@ -7,7 +7,6 @@
 #include "../../graphics/graphics assets/ShaderAsset.h"
 #include "../../graphics/graphics assets/TextureAsset.h"
 
-
 struct Material
 {
 	glm::vec4 BaseColorFactor;
@@ -27,11 +26,11 @@ struct Material
 		EmissiveFactor = glm::vec3(0.0f);
 		MetallicFactor = 0.0f;
 		RoughnessFactor = 0.0f;
-		BaseColorTexture			= GraphicsAssetManager::LoadTexture();
-		EmissiveTexture				= GraphicsAssetManager::LoadTexture();
-		MetallicRoughnessTexture	= GraphicsAssetManager::LoadTexture();
-		NormalTexture				= GraphicsAssetManager::LoadTexture();
-		OcclusionTexture			= GraphicsAssetManager::LoadTexture();
+		BaseColorTexture = GraphicsAssetManager::LoadTexture();
+		EmissiveTexture = GraphicsAssetManager::LoadTexture();
+		MetallicRoughnessTexture = GraphicsAssetManager::LoadTexture();
+		NormalTexture = GraphicsAssetManager::LoadTexture();
+		OcclusionTexture = GraphicsAssetManager::LoadTexture();
 	}
 
 	Material(const glm::vec4& baseF, const glm::vec3& emissiveF, const float& metallicF, const float& roughnessF, const TextureAsset& baseT,
@@ -49,7 +48,6 @@ struct Material
 		OcclusionTexture = occlusionT;
 	}
 };
-
 
 class MeshComponent : public Component
 {
@@ -82,6 +80,4 @@ public:
 
 	void SetModelMat(const glm::mat4& mat) { m_ModelMat = mat; }
 	const glm::mat4 GetModelMat() { return m_ModelMat; }
-
 };
-

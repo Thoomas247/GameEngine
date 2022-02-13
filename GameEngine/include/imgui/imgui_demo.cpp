@@ -5473,7 +5473,7 @@ static void ShowDemoWindowTables()
 
 						ImGui::PopID();
 					}
-			}
+				}
 				ImGui::PopButtonRepeat();
 
 				// Store some info to display debug details below
@@ -5481,7 +5481,7 @@ static void ShowDemoWindowTables()
 				table_scroll_max = ImVec2(ImGui::GetScrollMaxX(), ImGui::GetScrollMaxY());
 				table_draw_list = ImGui::GetWindowDrawList();
 				ImGui::EndTable();
-		}
+			}
 		static bool show_debug_details = false;
 		ImGui::Checkbox("Debug details", &show_debug_details);
 		if (show_debug_details && table_draw_list)
@@ -5496,7 +5496,7 @@ static void ShowDemoWindowTables()
 					table_draw_list_draw_cmd_count - 1, table_scroll_cur.x, table_scroll_max.x, table_scroll_cur.y, table_scroll_max.y);
 		}
 		ImGui::TreePop();
-	}
+		}
 
 	ImGui::PopID();
 
@@ -5504,7 +5504,7 @@ static void ShowDemoWindowTables()
 
 	if (disable_indent)
 		ImGui::PopStyleVar();
-}
+	}
 
 // Demonstrate old/legacy Columns API!
 // [2020: Columns are under-featured and not maintained. Prefer using the more flexible and powerful BeginTable() API!]

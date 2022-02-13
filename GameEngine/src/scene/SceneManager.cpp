@@ -8,10 +8,8 @@ using json = nlohmann::json;
 
 #include "../core/MatrixUtil.h"
 
-
 Scene* SceneManager::s_CurrentScene = nullptr;
 std::unordered_map<uint64_t, Scene> SceneManager::s_Scenes;
-
 
 /* -- PUBLIC -- */
 
@@ -106,7 +104,6 @@ void SceneManager::LoadScene(const std::string& absolutePath)
 
 				// indices
 				std::vector<unsigned int> indices = j["vertexArrayAssets"][vaoID]["indices"];
-
 
 				vao = GraphicsAssetManager::LoadVertexArray(vertices, indices);
 			}
@@ -216,7 +213,6 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const uint64_t&
 
 				// indices
 				std::vector<unsigned int> indices = j["vertexArrayAssets"][vaoID]["indices"];
-
 
 				vao = GraphicsAssetManager::LoadVertexArray(vertices, indices);
 			}

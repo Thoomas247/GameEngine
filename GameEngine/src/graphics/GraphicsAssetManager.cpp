@@ -201,7 +201,6 @@ VertexArrayAsset GraphicsAssetManager::LoadVertexArray(const std::vector<Vertex>
 	return VertexArrayAsset(glID, indices.size());
 }
 
-
 /* -- PRIVATE -- */
 
 void GraphicsAssetManager::shaderCheckCompileErrors(const unsigned int& shader, const std::string& type)

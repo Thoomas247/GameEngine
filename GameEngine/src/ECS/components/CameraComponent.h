@@ -17,7 +17,7 @@ private:
 
 	glm::mat4 m_ViewMatrix;
 	glm::mat4 m_ProjectionMatrix;
-	
+
 	float m_FOV;
 	float m_AspectRatio;
 	float m_NearPlane;

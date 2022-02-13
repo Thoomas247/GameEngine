@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "../core/UUID.h"
-#include "Entity.h"
+#include "../ECS/Entity.h"
 
 class Scene
 {

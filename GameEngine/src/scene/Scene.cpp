@@ -2,15 +2,12 @@
 
 #include "../core/Log.h"
 
-
 /* -- PUBLIC -- */
 
 void Scene::Update(const float& deltaTime)
 {
 	// hierarchy dependent update
 	updateTransformComponents(m_RootEntity, glm::mat4(1.0f));
-
-
 }
 
 std::shared_ptr<Entity> Scene::AddEntity(const std::string& name, const uint64_t& parentID)
@@ -49,7 +46,6 @@ std::shared_ptr<Entity> Scene::GetEntity(const uint64_t& entityID)
 
 	LOG_ERROR("SCENE::Could not find entity with ID " + std::to_string(entityID) + "!");
 }
-
 
 /* -- PRIVATE -- */
 

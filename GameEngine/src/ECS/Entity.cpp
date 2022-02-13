@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-#include "../managers/SceneManager.h"
+#include "../scene/SceneManager.h"
 #include "../core/Log.h"
 #include "ECS.h"
 
@@ -29,7 +29,6 @@ void Entity::RemoveChild(const uint64_t& entityID)
 	}
 }
 
-
 /* ADD */
 
 void Entity::AddTransformComponent(const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
@@ -46,7 +45,6 @@ void Entity::AddCameraComponent(const float& fov, const float& aspectRatio, cons
 {
 	m_CameraComponent = ECS::CreateCameraComponent(this, fov, aspectRatio, nearPlane, farPlane);
 }
-
 
 /* REMOVE */
 
@@ -82,7 +80,6 @@ void Entity::RemoveCameraComponent()
 		modifier.EntityToModify->SetCameraIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
 	}
 }
-
 
 /* GET */
 

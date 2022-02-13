@@ -2,7 +2,6 @@
 
 #include "glad/gl.h"
 
-
 /* -- PUBLIC -- */
 
 void ShaderAsset::Activate()

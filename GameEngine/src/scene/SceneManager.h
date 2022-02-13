@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "../ECS/Scene.h"
+#include "../scene/Scene.h"
 
 class SceneManager
 {
@@ -29,4 +29,3 @@ public:
 	static void RemoveEntity(const uint64_t& entityID) { s_CurrentScene->RemoveEntity(entityID); }
 	static std::shared_ptr<Entity> GetEntity(const uint64_t& entityID) { return s_CurrentScene->GetEntity(entityID); }
 };
-

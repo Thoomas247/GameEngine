@@ -1,8 +1,8 @@
 #include "Project.h"
 
-#include "Log.h"
+#include "../core/Log.h"
 
-// PUBLIC
+/* -- PUBLIC -- */
 
 Project::Project(const std::string& name, const std::string& projectDir)
 {
