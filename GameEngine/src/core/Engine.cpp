@@ -41,7 +41,9 @@ int Engine::Run()
 
 	//GLTFImporter::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
-	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
+
+	for (int i = 0; i < 10; i++)
+		SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -61,7 +63,7 @@ int Engine::Run()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		LOG_INFO(std::to_string(1 / deltaTime));
+		//LOG_INFO(std::to_string(1 / deltaTime));
 
 		Input::Update();
 		SceneManager::Update(deltaTime);

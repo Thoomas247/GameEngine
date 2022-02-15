@@ -26,6 +26,9 @@ private:
 	static std::vector<CameraComponent> s_CameraComponents;
 
 public:
+
+	/* Component Functions */
+
 	static std::vector<TransformComponent>* GetTransformComponents() { return &s_TransformComponents; }
 	static std::vector<MeshComponent>* GetMeshComponents() { return &s_MeshComponents; }
 	static std::vector<CameraComponent>* GetCameraComponents() { return &s_CameraComponents; }

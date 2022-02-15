@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include "../core/Log.h"
+#include "../ECS/ECS.h"
 
 /* -- PUBLIC -- */
 
@@ -8,6 +9,8 @@ void Scene::Update(const float& deltaTime)
 {
 	// hierarchy dependent update
 	updateTransformComponents(m_RootEntity, glm::mat4(1.0f));
+
+
 }
 
 std::shared_ptr<Entity> Scene::AddEntity(const std::string& name, const uint64_t& parentID)
@@ -58,6 +61,11 @@ void Scene::updateTransformComponents(const std::shared_ptr<Entity>& entity, con
 		{
 			updateTransformComponents(GetEntity(childID), transform);
 		}
+
+		if (entity->HasMesh())
+		{
+			entity->GetMeshComponent()->SetModelMat(transform);
+		}
 	}
 	else
 	{
@@ -67,3 +75,4 @@ void Scene::updateTransformComponents(const std::shared_ptr<Entity>& entity, con
 		}
 	}
 }
+

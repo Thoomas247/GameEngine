@@ -35,7 +35,9 @@ void Window::InitWindow(const int& width, const int& height)
 		LOG_ERROR("MAIN::Failed to initialize OpenGL context!");
 		return;
 	}
-	LOG_INFO("MAIN::Loaded OpenGL " + std::string(GLAD_VERSION_MAJOR(version) + "." + GLAD_VERSION_MINOR(version)));
+
+	std::string ver = std::to_string(GLAD_VERSION_MAJOR(version)) + "." + std::to_string(GLAD_VERSION_MINOR(version));
+	LOG_INFO("MAIN::Loaded OpenGL " + ver);
 }
 
 void Window::CloseWindow()

@@ -24,8 +24,7 @@ void Renderer::Draw()
 	/*
 	if (s_CurrentCamera == nullptr)
 	{
-		LOG_ERROR("RENDERER::Camera is null!");
-		return;
+		LOG_ERROR("RENDERER::No camera has been set!");
 	}
 	*/
 
