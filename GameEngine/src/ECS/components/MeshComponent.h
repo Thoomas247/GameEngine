@@ -74,9 +74,9 @@ public:
 		m_ModelMat = glm::mat4(1.0f);
 	}
 
-	VertexArrayAsset* GetVertexArray() { return &m_VertexArray; }
-	ShaderAsset* GetShader() { return &m_Shader; }
-	Material* GetMaterial() { return &m_Material; }
+	VertexArrayAsset& GetVertexArray() { return m_VertexArray; }
+	ShaderAsset& GetShader() { return m_Shader; }
+	Material& GetMaterial() { return m_Material; }
 
 	void SetModelMat(const glm::mat4& mat) { m_ModelMat = mat; }
 	const glm::mat4 GetModelMat() { return m_ModelMat; }

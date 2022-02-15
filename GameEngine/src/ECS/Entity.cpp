@@ -8,26 +8,21 @@
 
 std::shared_ptr<Entity> Entity::CreateChild(const std::string& name)
 {
-	std::shared_ptr<Entity> entity = SceneManager::AddEntity(name, m_UUID);
-	m_ChildrenEntityIDs.push_back(entity->GetUUID());
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(name);
+	m_ChildrenEntities[entity->GetUUID()] = entity;
 	return entity;
 }
 
-void Entity::AddChild(const uint64_t& entityID)
+void Entity::AddChild(const std::shared_ptr<Entity>& entity)
 {
-	m_ChildrenEntityIDs.push_back(entityID);
+	m_ChildrenEntities[entity->GetUUID()] = entity;
 }
 
 void Entity::RemoveChild(const uint64_t& entityID)
 {
-	for (unsigned int i = 0; i < m_ChildrenEntityIDs.size(); i++)
-	{
-		if (m_ChildrenEntityIDs[i] == entityID)
-		{
-			m_ChildrenEntityIDs.erase(m_ChildrenEntityIDs.begin() + i);
-		}
-	}
+	m_ChildrenEntities.erase(entityID);
 }
+
 
 /* ADD */
 
@@ -45,6 +40,7 @@ void Entity::AddCameraComponent(const float& fov, const float& aspectRatio, cons
 {
 	m_CameraComponent = ECS::CreateCameraComponent(this, fov, aspectRatio, nearPlane, farPlane);
 }
+
 
 /* REMOVE */
 
@@ -81,9 +77,10 @@ void Entity::RemoveCameraComponent()
 	}
 }
 
+
 /* GET */
 
-TransformComponent* Entity::GetTransformComponent()
+TransformComponent& Entity::GetTransformComponent()
 {
 	if (m_TransformComponent != NO_COMPONENT)
 	{
@@ -93,7 +90,7 @@ TransformComponent* Entity::GetTransformComponent()
 	LOG_ERROR("ENTITY::Entity " + std::to_string(m_UUID) + " does not have a transform component!");
 }
 
-MeshComponent* Entity::GetMeshComponent()
+MeshComponent& Entity::GetMeshComponent()
 {
 	if (m_MeshComponent != NO_COMPONENT)
 	{
@@ -103,7 +100,7 @@ MeshComponent* Entity::GetMeshComponent()
 	LOG_ERROR("ENTITY::Entity " + std::to_string(m_UUID) + " does not have a mesh component!");
 }
 
-CameraComponent* Entity::GetCameraComponent()
+CameraComponent& Entity::GetCameraComponent()
 {
 	if (m_CameraComponent != NO_COMPONENT)
 	{

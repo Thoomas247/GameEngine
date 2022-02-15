@@ -41,9 +41,12 @@ int Engine::Run()
 
 	//GLTFImporter::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
+	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
-	for (int i = 0; i < 10; i++)
-		SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
+	/*
+	for (int i = 0; i < 1000; i++)
+		SceneManager::AddEntity("test")->AddMeshComponent();
+	*/
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;

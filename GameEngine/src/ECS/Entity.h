@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <map>
 #include <string>
 #include <memory>
 
@@ -21,7 +21,7 @@ class Entity
 private:
 	uint64_t m_UUID;
 	std::string m_Name;
-	std::vector<uint64_t> m_ChildrenEntityIDs;
+	std::map<uint64_t, std::shared_ptr<Entity>> m_ChildrenEntities;
 
 	int m_TransformComponent = NO_COMPONENT;
 	int m_MeshComponent = NO_COMPONENT;
@@ -41,11 +41,11 @@ public:
 	}
 
 	const uint64_t GetUUID() const { return m_UUID; }
-	const std::string GetName() const { return m_Name; }
-	const std::vector<uint64_t> GetChildren() const { return m_ChildrenEntityIDs; }
+	const std::string& GetName() const { return m_Name; }
+	const std::map<uint64_t, std::shared_ptr<Entity>>& GetChildren() const { return m_ChildrenEntities; }
 
 	std::shared_ptr<Entity> CreateChild(const std::string& name);
-	void AddChild(const uint64_t& entityID);
+	void AddChild(const std::shared_ptr<Entity>& entity);
 	void RemoveChild(const uint64_t& entityID);
 
 	/* COMPONENT FUNCTIONS */
@@ -71,7 +71,7 @@ public:
 	void RemoveCameraComponent();
 
 	// GET
-	TransformComponent* GetTransformComponent();
-	MeshComponent* GetMeshComponent();
-	CameraComponent* GetCameraComponent();
+	TransformComponent& GetTransformComponent();
+	MeshComponent& GetMeshComponent();
+	CameraComponent& GetCameraComponent();
 };

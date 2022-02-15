@@ -29,9 +29,9 @@ public:
 
 	/* Component Functions */
 
-	static std::vector<TransformComponent>* GetTransformComponents() { return &s_TransformComponents; }
-	static std::vector<MeshComponent>* GetMeshComponents() { return &s_MeshComponents; }
-	static std::vector<CameraComponent>* GetCameraComponents() { return &s_CameraComponents; }
+	static std::vector<TransformComponent>& GetTransformComponents() { return s_TransformComponents; }
+	static std::vector<MeshComponent>& GetMeshComponents() { return s_MeshComponents; }
+	static std::vector<CameraComponent>& GetCameraComponents() { return s_CameraComponents; }
 
 	// CREATE
 	static int CreateTransformComponent(Entity* entity, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale);
@@ -44,7 +44,7 @@ public:
 	static EntityModifier RemoveCameraComponent(const int& index);
 
 	// GET
-	static TransformComponent* GetTransformComponent(const int& index);
-	static MeshComponent* GetMeshComponent(const int& index);
-	static CameraComponent* GetCameraComponent(const int& index);
+	static TransformComponent& GetTransformComponent(const int& index);
+	static MeshComponent& GetMeshComponent(const int& index);
+	static CameraComponent& GetCameraComponent(const int& index);
 };

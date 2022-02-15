@@ -55,7 +55,7 @@ void SceneManager::LoadScene(const std::string& absolutePath)
 	// entities
 	for (auto& [key, jEntity] : j["entities"].items())
 	{
-		auto entity = AddEntity(jEntity["name"]);
+		auto entity = CreateEntityAtRoot(jEntity["name"]);
 
 		// transform component
 		if (!jEntity["transformComponent"].is_null())
@@ -133,7 +133,7 @@ void SceneManager::LoadScene(const std::string& absolutePath)
 	}
 }
 
-void SceneManager::LoadSubScene(const std::string& absolutePath, const uint64_t& parentID)
+void SceneManager::LoadSubScene(const std::string& absolutePath, const std::shared_ptr<Entity>& parent)
 {
 	size_t dotPos = absolutePath.find_last_of(".");
 	size_t slashPos = absolutePath.find_last_of("/");
@@ -146,8 +146,7 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const uint64_t&
 	std::string sceneName = absolutePath.substr(slashPos, dotPos - slashPos);
 
 	// this entity is the root of the scene that is being loaded into the current scene
-	auto rootEntity = AddEntity(sceneName, parentID);
-	uint64_t sceneRootID = rootEntity->GetUUID();
+	auto rootEntity = parent->CreateChild(sceneName);
 
 	// load from file
 	std::streamsize size = std::filesystem::file_size(absolutePath);
@@ -164,7 +163,7 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const uint64_t&
 	for (auto& [key, jEntity] : j["entities"].items())
 	{
 		// add this new entity to the root of the new scene, not of the current scene
-		auto entity = AddEntity(jEntity["name"], sceneRootID);
+		auto entity = rootEntity->CreateChild(jEntity["name"]);
 
 		// transform component
 		if (!jEntity["transformComponent"].is_null())

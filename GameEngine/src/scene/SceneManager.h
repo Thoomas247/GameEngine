@@ -20,12 +20,9 @@ public:
 	/// <param name="absolutePath"></param>
 	static void LoadScene(const std::string& absolutePath);
 	/// <summary>
-	/// Load a scene and add it to the current scene.
+	/// Load a scene and add it to the current scene as a child of the specified entity.
 	/// </summary>
 	/// <param name="absolutePath"></param>
-	static void LoadSubScene(const std::string& absolutePath, const uint64_t& parentID = 0);
-
-	static std::shared_ptr<Entity> AddEntity(const std::string& name, const uint64_t& parentID = 0) { return s_CurrentScene->AddEntity(name, parentID); }
-	static void RemoveEntity(const uint64_t& entityID) { s_CurrentScene->RemoveEntity(entityID); }
-	static std::shared_ptr<Entity> GetEntity(const uint64_t& entityID) { return s_CurrentScene->GetEntity(entityID); }
+	static void LoadSubScene(const std::string& absolutePath, const std::shared_ptr<Entity>& parent = s_CurrentScene->GetRoot());
+	static std::shared_ptr<Entity> CreateEntityAtRoot(const std::string& name) { return s_CurrentScene->AddEntityToRoot(name); }
 };

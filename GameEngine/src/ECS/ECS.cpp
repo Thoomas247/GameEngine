@@ -99,31 +99,31 @@ EntityModifier ECS::RemoveCameraComponent(const int& index)
 
 /* GET */
 
-TransformComponent* ECS::GetTransformComponent(const int& index)
+TransformComponent& ECS::GetTransformComponent(const int& index)
 {
 	if (index >= 0 && index < s_TransformComponents.size())
 	{
-		return &s_TransformComponents[index];
+		return s_TransformComponents[index];
 	}
 
 	LOG_ERROR("ECS::Failed to remove transform component with ID " + std::to_string(index) + ". It doesn't exist!");
 }
 
-MeshComponent* ECS::GetMeshComponent(const int& index)
+MeshComponent& ECS::GetMeshComponent(const int& index)
 {
 	if (index >= 0 && index < s_MeshComponents.size())
 	{
-		return &s_MeshComponents[index];
+		return s_MeshComponents[index];
 	}
 
 	LOG_ERROR("ECS::Failed to remove mesh component with ID " + std::to_string(index) + ". It doesn't exist!");
 }
 
-CameraComponent* ECS::GetCameraComponent(const int& index)
+CameraComponent& ECS::GetCameraComponent(const int& index)
 {
 	if (index >= 0 && index < s_CameraComponents.size())
 	{
-		return &s_CameraComponents[index];
+		return s_CameraComponents[index];
 	}
 
 	LOG_ERROR("ECS::Failed to remove camera component with ID " + std::to_string(index) + ". It doesn't exist!");
