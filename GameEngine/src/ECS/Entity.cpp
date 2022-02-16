@@ -47,17 +47,17 @@ int Entity::FindNearestParentTransformIndex()
 
 void Entity::AddTransformComponent(const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
 {
-	m_TransformComponent = ECS::CreateTransformComponent(this, FindNearestParentTransformIndex(), translation, rotation, scale);
+	m_TransformComponent = ECS::CreateComponent<TransformComponent>(this, FindNearestParentTransformIndex(), translation, rotation, scale);
 }
 
 void Entity::AddMeshComponent(const VertexArrayAsset& vertexArray, const ShaderAsset& shader, const Material& material)
 {
-	m_MeshComponent = ECS::CreateMeshComponent(this, vertexArray, shader, material);
+	m_MeshComponent = ECS::CreateComponent<MeshComponent>(this, vertexArray, shader, material);
 }
 
 void Entity::AddCameraComponent(const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane)
 {
-	m_CameraComponent = ECS::CreateCameraComponent(this, fov, aspectRatio, nearPlane, farPlane);
+	m_CameraComponent = ECS::CreateComponent<CameraComponent>(this, fov, aspectRatio, nearPlane, farPlane);
 }
 
 

@@ -8,6 +8,7 @@ std::vector<CameraComponent> ECS::s_CameraComponents;
 
 /* CREATE */
 
+/* Older version not using templates
 int ECS::CreateTransformComponent(Entity* entity, const int& parentIndex, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
 {
 	int index = (int)s_TransformComponents.size();
@@ -28,6 +29,7 @@ int ECS::CreateCameraComponent(Entity* entity, const float& fov, const float& as
 	s_CameraComponents.push_back(CameraComponent(entity, fov, aspectRatio, nearPlane, farPlane));
 	return index;
 }
+*/
 
 /* REMOVE */
 
