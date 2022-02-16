@@ -9,6 +9,8 @@
 class TransformComponent : public Component
 {
 private:
+	int m_ParentID;	// this is not necessarily the same as the entity's parent's transform index
+
 	glm::vec3 m_LocalTranslation;
 	glm::quat m_LocalRotation;
 	glm::vec3 m_LocalScale;
@@ -34,9 +36,11 @@ public:
 	}
 	*/
 
-	TransformComponent(Entity* entity, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
+	TransformComponent(Entity* entity, const int& parentIndex, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
 		: Component(entity)
 	{
+		m_ParentID = parentIndex;
+
 		m_LocalTranslation = translation;
 		m_LocalRotation = rotation;
 		m_LocalScale = scale;
@@ -63,13 +67,16 @@ public:
 		return m_GlobalTransform;
 	}
 
+	int GetParentIndex() { return m_ParentID; }
+	void SetParentIndex(const int& index) { m_ParentID = index; }
+
 	void SetLocalTranslation(const glm::vec3& translation) { m_LocalTranslation = translation; m_HasChanged = true; }
 	void SetLocalRotation(const glm::quat& rotation) { m_LocalRotation = rotation; m_HasChanged = true; }
 	void SetLocalScale(const glm::vec3& scale) { m_LocalScale = scale; m_HasChanged = true; }
 
 	const glm::mat4 GetLocalTransform() { return m_LocalTransform; }
-
 	const glm::mat4 GetGlobalTransform() { return m_GlobalTransform; }
 
 	const bool HasChanged() { return m_HasChanged; }
+	void SetChanged(const bool& changed) { m_HasChanged = changed; }
 };

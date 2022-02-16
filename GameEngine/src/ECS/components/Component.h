@@ -1,6 +1,8 @@
 #pragma once
 
 //#include "../Entity.h"
+
+/* forward declaration */
 class Entity;
 
 class Component
@@ -14,5 +16,5 @@ public:
 		m_Entity = entity;
 	}
 
-	Entity* GetEntity() const { return m_Entity; }
+	Entity* GetEntity() { return m_Entity; }
 };

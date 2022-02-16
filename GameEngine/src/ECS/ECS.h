@@ -33,8 +33,12 @@ public:
 	static std::vector<MeshComponent>& GetMeshComponents() { return s_MeshComponents; }
 	static std::vector<CameraComponent>& GetCameraComponents() { return s_CameraComponents; }
 
+	static size_t GetNumTransforms() { return s_TransformComponents.size(); }
+	static size_t GetNumMeshes() { return s_MeshComponents.size(); }
+	static size_t GetNumCameras() { return s_CameraComponents.size(); }
+
 	// CREATE
-	static int CreateTransformComponent(Entity* entity, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale);
+	static int CreateTransformComponent(Entity* entity, const int& parentIndex, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale);
 	static int CreateMeshComponent(Entity* entity, const VertexArrayAsset& vertexArray, const ShaderAsset& shader, const Material& material);
 	static int CreateCameraComponent(Entity* entity, const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane);
 

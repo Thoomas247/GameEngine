@@ -6,14 +6,11 @@
 
 #include "Component.h"
 
-class CameraComponent : public Component
+struct CameraComponent : Component
 {
 private:
 	glm::vec3 m_WorldFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 m_WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-	glm::vec3 m_Translation;
-	glm::quat m_Rotation;
 
 	glm::mat4 m_ViewMatrix;
 	glm::mat4 m_ProjectionMatrix;
@@ -34,15 +31,13 @@ public:
 		m_NearPlane = nearPlane;
 		m_FarPlane = farPlane;
 
-		m_Translation = glm::vec3(0.0f);
-		m_Rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-
 		m_ViewMatrix = glm::lookAt(glm::vec3(0.0f), m_WorldFront, m_WorldUp);
 		m_ProjectionMatrix = glm::perspective<float>(glm::radians(m_FOV), m_AspectRatio, m_NearPlane, m_FarPlane);
 
 		m_ProjectionChanged = false;
 	}
 
+	/*
 	void UpdateViewAndProjection()
 	{
 		if (m_ProjectionChanged)
@@ -50,15 +45,18 @@ public:
 			m_ProjectionMatrix = glm::perspective<float>(glm::radians(m_FOV), m_AspectRatio, m_NearPlane, m_FarPlane);
 		}
 
-		glm::vec3 front = glm::mat3_cast(m_Rotation) * m_WorldFront;
-		glm::vec3 up = glm::mat3_cast(m_Rotation) * m_WorldUp;
+		glm::mat3 rotationMat = glm::mat3(m_Entity->GetTransformComponent().GetGlobalTransform())
+
+		glm::vec3 front = rotationMat * m_WorldFront;
+		glm::vec3 up = rotationMat * m_WorldUp;
 
 		m_ViewMatrix = glm::lookAt(m_Translation, m_Translation + front, up);
 	}
+	*/
 
 	void SetFOV(const float& fov) { m_FOV = fov; m_ProjectionChanged = true; }
-	void SetNearPlane(const float& fov) { m_FOV = fov; m_ProjectionChanged = true; }
-	void SetFarPlane(const float& fov) { m_FOV = fov; m_ProjectionChanged = true; }
+	void SetNearPlane(const float& nearPlane) { m_NearPlane = nearPlane; m_ProjectionChanged = true; }
+	void SetFarPlane(const float& farPlane) { m_FarPlane = farPlane; m_ProjectionChanged = true; }
 
 	const glm::mat4 GetViewMatrix() { return m_ViewMatrix; }
 	const glm::mat4 GetProjectionMatrix() { return m_ProjectionMatrix; }

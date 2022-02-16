@@ -20,6 +20,7 @@ int Engine::Run()
 	SceneManager::CreateScene();
 
 	// TODO:
+	// [] clean up header files and create cpp files where needed (especially entity class)
 	// [] implement camera component properly
 	// [] fix importing to match new format:
 	//		[x] import into .scene file which contains each component type in separate lists
@@ -44,8 +45,20 @@ int Engine::Run()
 	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
 	/*
-	for (int i = 0; i < 1000; i++)
-		SceneManager::AddEntity("test")->AddMeshComponent();
+	auto ent = SceneManager::CreateEntityAtRoot("test");
+	ent->AddTransformComponent();
+
+	for (int i = 0; i < 100; i++)
+	{
+		auto child = ent->CreateChild("test");
+		child->AddTransformComponent();
+
+		for (int j = 0; j < 10; j++)
+		{
+			auto child2 = child->CreateChild("test");
+			child2->AddTransformComponent();
+		}
+	}
 	*/
 
 	float deltaTime = 0.0f;
@@ -66,7 +79,7 @@ int Engine::Run()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		//LOG_INFO(std::to_string(1 / deltaTime));
+		LOG_INFO(std::to_string(1 / deltaTime));
 
 		Input::Update();
 		SceneManager::Update(deltaTime);
