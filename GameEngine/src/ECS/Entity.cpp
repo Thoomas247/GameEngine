@@ -65,7 +65,7 @@ void Entity::AddCameraComponent(const float& fov, const float& aspectRatio, cons
 
 void Entity::RemoveTransformComponent()
 {
-	EntityModifier modifier = ECS::RemoveTransformComponent(m_TransformComponent);
+	EntityModifier modifier = ECS::RemoveComponent<TransformComponent>(m_TransformComponent);
 	m_TransformComponent = NO_COMPONENT;
 
 	if (modifier.EntityToModify != nullptr)
@@ -76,7 +76,7 @@ void Entity::RemoveTransformComponent()
 
 void Entity::RemoveMeshComponent()
 {
-	EntityModifier modifier = ECS::RemoveMeshComponent(m_MeshComponent);
+	EntityModifier modifier = ECS::RemoveComponent<MeshComponent>(m_MeshComponent);
 	m_MeshComponent = NO_COMPONENT;
 
 	if (modifier.EntityToModify != nullptr)
@@ -87,7 +87,7 @@ void Entity::RemoveMeshComponent()
 
 void Entity::RemoveCameraComponent()
 {
-	EntityModifier modifier = ECS::RemoveCameraComponent(m_CameraComponent);
+	EntityModifier modifier = ECS::RemoveComponent<CameraComponent>(m_CameraComponent);
 	m_CameraComponent = NO_COMPONENT;
 
 	if (modifier.EntityToModify != nullptr)
@@ -103,7 +103,7 @@ TransformComponent& Entity::GetTransformComponent()
 {
 	if (m_TransformComponent != NO_COMPONENT)
 	{
-		return ECS::GetTransformComponent(m_TransformComponent);
+		return ECS::GetComponent<TransformComponent>(m_TransformComponent);
 	}
 
 	LOG_ERROR("ENTITY::Entity " + std::to_string(m_UUID) + " does not have a transform component!");
@@ -113,7 +113,7 @@ MeshComponent& Entity::GetMeshComponent()
 {
 	if (m_MeshComponent != NO_COMPONENT)
 	{
-		return ECS::GetMeshComponent(m_MeshComponent);
+		return ECS::GetComponent<MeshComponent>(m_MeshComponent);
 	}
 
 	LOG_ERROR("ENTITY::Entity " + std::to_string(m_UUID) + " does not have a mesh component!");
@@ -123,7 +123,7 @@ CameraComponent& Entity::GetCameraComponent()
 {
 	if (m_CameraComponent != NO_COMPONENT)
 	{
-		return ECS::GetCameraComponent(m_CameraComponent);
+		return ECS::GetComponent<CameraComponent>(m_CameraComponent);
 	}
 
 	LOG_ERROR("ENTITY::Entity " + std::to_string(m_UUID) + " does not have a camera component!");

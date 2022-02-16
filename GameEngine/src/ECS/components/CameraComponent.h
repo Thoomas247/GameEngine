@@ -6,7 +6,7 @@
 
 #include "Component.h"
 
-struct CameraComponent : Component
+class CameraComponent : public Component
 {
 private:
 	glm::vec3 m_WorldFront = glm::vec3(0.0f, 0.0f, -1.0f);

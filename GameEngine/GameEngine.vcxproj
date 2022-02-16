@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -102,7 +102,6 @@
     <ClCompile Include="src\graphics\graphics assets\ShaderAsset.cpp" />
     <ClCompile Include="src\graphics\GraphicsAssetManager.cpp" />
     <ClCompile Include="src\scene\SceneManager.cpp" />
-    <ClCompile Include="src\ECS\ECS.cpp" />
     <ClCompile Include="src\ECS\Entity.cpp" />
     <ClCompile Include="src\project\Project.cpp" />
     <ClCompile Include="src\scene\Scene.cpp" />
@@ -125,6 +124,8 @@
     <ClCompile Include="src\core\UUID.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ECS\ComponentContainer.h" />
+    <ClInclude Include="src\ECS\EntityModifier.h" />
     <ClInclude Include="src\importer\GLTFImporter.h" />
     <ClInclude Include="src\graphics\graphics assets\GraphicsAsset.h" />
     <ClInclude Include="src\graphics\GraphicsAssetManager.h" />

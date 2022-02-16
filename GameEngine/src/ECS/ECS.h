@@ -2,78 +2,67 @@
 
 #include <vector>
 
-#include "components/TransformComponent.h"
-#include "components/MeshComponent.h"
-#include "components/CameraComponent.h"
-
-struct EntityModifier
-{
-	Entity* EntityToModify;
-	int NewComponentIndex;
-
-	EntityModifier(Entity* entity = nullptr, const int& newComponentIndex = 0)
-	{
-		EntityToModify = entity;
-		NewComponentIndex = newComponentIndex;
-	}
-};
+#include "ComponentContainer.h"
 
 class ECS
 {
-private:
-	static std::vector<TransformComponent> s_TransformComponents;
-	static std::vector<MeshComponent> s_MeshComponents;
-	static std::vector<CameraComponent> s_CameraComponents;
-
-	/// <summary>
-	/// Overloaded AddComponent method to determine in which vector to add the component depending on its type
-	/// </summary>
-	/// <param name="component">The component to add to the vector</param>
-	/// <returns>The 0 based index of the component that was added</returns>
-	static int AddComponent(const TransformComponent& component) { s_TransformComponents.push_back(component); return (int)s_TransformComponents.size() - 1; }
-	static int AddComponent(const MeshComponent& component) { s_MeshComponents.push_back(component); return (int)s_MeshComponents.size() - 1; }
-	static int AddComponent(const CameraComponent& component) { s_CameraComponents.push_back(component);  return (int)s_CameraComponents.size() - 1; }
-
 public:
 
-	/* Component Functions */
-
-	static std::vector<TransformComponent>& GetTransformComponents() { return s_TransformComponents; }
-	static std::vector<MeshComponent>& GetMeshComponents() { return s_MeshComponents; }
-	static std::vector<CameraComponent>& GetCameraComponents() { return s_CameraComponents; }
-
-	static size_t GetNumTransforms() { return s_TransformComponents.size(); }
-	static size_t GetNumMeshes() { return s_MeshComponents.size(); }
-	static size_t GetNumCameras() { return s_CameraComponents.size(); }
-
-	// CREATE
-	
 	/// <summary>
-	/// Fancier way of creating components using templates
-	/// This might be a bit complicated because the arguments are not the same for all component types
+	/// Create a component and add it to the appropriate vector.
 	/// </summary>
-	/// <typeparam name="T">The type of component (Transform, Mesh or Camera)</typeparam>
+	/// <typeparam name="T">The type of component (Transform, Mesh, Camera...)</typeparam>
 	/// <typeparam name="...P">Variable list of parameters to pass to constructor</typeparam>
-	/// <returns></returns>
+	/// <returns>The index where the component was added</returns>
 	template <class T, typename... P>
 	static int CreateComponent(P... params)
 	{
-		return AddComponent(T(params...));
+		return ComponentContainer<T>::AddComponent(T(params...));
 	}
 
-	/* Old versions, not using templates
-	static int CreateTransformComponent(Entity* entity, const int& parentIndex, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale);
-	static int CreateMeshComponent(Entity* entity, const VertexArrayAsset& vertexArray, const ShaderAsset& shader, const Material& material);
-	static int CreateCameraComponent(Entity* entity, const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane);
-	*/
+	/// <summary>
+	/// Delete the component with the given type and index.
+	/// </summary>
+	/// <typeparam name="T">The type of component (Transform, Mesh, Camera...)</typeparam>
+	/// <param name="index">The index where the component was added</param>
+	/// <returns>An EntityModifier instance</returns>
+	template <class T>
+	static EntityModifier RemoveComponent(const int& index)
+	{
+		return ComponentContainer<T>::RemoveComponent(index);
+	}
 
-	// REMOVE
-	static EntityModifier RemoveTransformComponent(const int& index);
-	static EntityModifier RemoveMeshComponent(const int& index);
-	static EntityModifier RemoveCameraComponent(const int& index);
+	/// <summary>
+	/// Get the component with the given type and index.
+	/// </summary>
+	/// <typeparam name="T">The type of component (Transform, Mesh, Camera...)</typeparam>
+	/// <param name="index">The index where the component was added</param>
+	/// <returns>The component at the given index</returns>
+	template <class T>
+	static T& GetComponent(const int& index)
+	{
+		return ComponentContainer<T>::GetComponent(index);
+	}
 
-	// GET
-	static TransformComponent& GetTransformComponent(const int& index);
-	static MeshComponent& GetMeshComponent(const int& index);
-	static CameraComponent& GetCameraComponent(const int& index);
+	/// <summary>
+	/// Get the whole vector of components of the given type.
+	/// </summary>
+	/// <typeparam name="T">The type of component (Transform, Mesh, Camera...)</typeparam>
+	/// <returns>A reference to a vector of components of type T</returns>
+	template <class T>
+	static std::vector<T>& GetComponents()
+	{
+		return ComponentContainer<T>::GetAllComponents();
+	}
+
+	/// <summary>
+	/// Get the number of components of a given type.
+	/// </summary>
+	/// <typeparam name="T">The type of component (Transform, Mesh, Camera...)</typeparam>
+	/// <returns>An int representing the size of the vector of components of type T</returns>
+	template <class T>
+	static int GetNumComponents()
+	{
+		return ComponentContainer<T>::GetNumComponents();
+	}
 };

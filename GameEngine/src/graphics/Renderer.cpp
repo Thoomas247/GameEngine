@@ -30,7 +30,7 @@ void Renderer::Draw()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	for (auto& meshComponent : ECS::GetMeshComponents())
+	for (auto& meshComponent : ECS::GetComponents<MeshComponent>())
 	{
 		// material
 		Material& material = meshComponent.GetMaterial();

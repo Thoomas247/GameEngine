@@ -72,9 +72,6 @@
     <ClCompile Include="src\project\Project.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ECS\ECS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ECS\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -168,6 +165,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\importer\GLTFImporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\ComponentContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\EntityModifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

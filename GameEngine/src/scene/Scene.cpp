@@ -12,15 +12,15 @@
 void Scene::Update(const float& deltaTime)
 {
 	// transforms update:
-	std::vector<bool> dirty = std::vector<bool>(ECS::GetNumTransforms(), true);
-	auto& transformComponents = ECS::GetTransformComponents();
+	std::vector<bool> dirty = std::vector<bool>(ECS::GetNumComponents<TransformComponent>(), true);
+	auto& transformComponents = ECS::GetComponents<TransformComponent>();
 
 	bool done = false;
 	while (!done)
 	{
 		done = true;
 
-		for (int i = 0; i < ECS::GetNumTransforms(); i++)
+		for (int i = 0; i < ECS::GetNumComponents<TransformComponent>(); i++)
 		{
 			TransformComponent& transform = transformComponents[i];
 
@@ -40,7 +40,7 @@ void Scene::Update(const float& deltaTime)
 			}
 
 			// otherwise update normally
-			TransformComponent& parent = ECS::GetTransformComponent(parentIndex);
+			TransformComponent& parent = ECS::GetComponent<TransformComponent>(parentIndex);
 			transform.UpdateTransforms(parent.GetGlobalTransform());
 			dirty[i] = false;
 		}
