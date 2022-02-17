@@ -14,7 +14,28 @@
 #include "components/MeshComponent.h"
 #include "components/CameraComponent.h"
 
-constexpr int NO_COMPONENT = -1;
+#include "ECS.h"
+
+constexpr int MAX_NUM_COMPONENT_TYPES = 32;
+
+
+class ComponentTypeID
+{
+private:
+	static int m_Counter;
+public:
+	/// <summary>
+	/// Returns a unique ID for each type that is passed in.
+	/// </summary>
+	/// <typeparam name="T">Component type</typeparam>
+	/// <returns>A unique int belonging to the given type</returns>
+	template<class T>
+	static int Value()
+	{
+		static int id = m_Counter++;
+		return id;
+	}
+};
 
 class Entity
 {
@@ -25,9 +46,7 @@ private:
 	Entity* m_Parent;
 	std::map<uint64_t, std::shared_ptr<Entity>> m_ChildrenEntities;
 
-	int m_TransformComponent = NO_COMPONENT;
-	int m_MeshComponent = NO_COMPONENT;
-	int m_CameraComponent = NO_COMPONENT;
+	int m_Components[MAX_NUM_COMPONENT_TYPES];
 
 public:
 	Entity()
@@ -46,11 +65,10 @@ public:
 
 	const uint64_t GetUUID() const { return m_UUID; }
 	const std::string& GetName() const { return m_Name; }
-
-	Entity* GetParent() { if (m_Parent == nullptr) { LOG_ERROR("ENTITY::Parent is nullptr!"); } return m_Parent; }
-	void SetParent(Entity* parent) { m_Parent = parent; }
-
 	const std::map<uint64_t, std::shared_ptr<Entity>>& GetChildren() const { return m_ChildrenEntities; }
+
+	Entity* GetParent();
+	void SetParent(Entity* parent) { m_Parent = parent; }
 
 	std::shared_ptr<Entity> CreateChild(const std::string& name);
 	void AddChild(const std::shared_ptr<Entity>& entity);
@@ -60,51 +78,70 @@ public:
 	/// Finds the closest transform component which is above this entity in the scene tree.
 	/// </summary>
 	/// <returns></returns>
-	int FindNearestParentTransformIndex();
+	int FindTransformParent();
 
 
 	/* COMPONENT FUNCTIONS */
 
-	// HAS COMPONENT
-	bool HasTransform() { return m_TransformComponent != NO_COMPONENT; }
-	bool HasMesh() { return m_MeshComponent != NO_COMPONENT; }
-	bool HasCamera() { return m_CameraComponent != NO_COMPONENT; }
+	template <class T>
+	bool HasComponent()
+	{
+		static int n = ComponentTypeID::Value<T>();
+		return m_Components[n] != -1;
+	}
 
-	// SET INDEX
-	void SetTransformIndex(const int& index) { setChildrenTransformParents(index); m_TransformComponent = index; }
-	void SetMeshIndex(const int& index) { m_MeshComponent = index; }
-	void SetCameraIndex(const int& index) { m_CameraComponent = index; }
+	template <class T>
+	void SetIndex(const int& index)
+	{
+		static int n = ComponentTypeID::Value<T>();
+		m_Components[n] = index;
+	}
 
-	// GET INDEX
-	int GetTransformIndex() { return m_TransformComponent; }
-	int GetMeshIndex() { return m_MeshComponent; }
-	int GetCameraIndex() { return m_CameraComponent; }
+	template <class T>
+	int GetIndex()
+	{
+		static int n = ComponentTypeID::Value<T>();
+		return m_Components[n];
+	}
 
-	// ADD
-	void AddTransformComponent(const glm::vec3& translation = glm::vec3(0.0f), const glm::quat& rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f), const glm::vec3& scale = glm::vec3(1.0f));
-	void AddMeshComponent(const VertexArrayAsset& vertexArray = GraphicsAssetManager::LoadVertexArray(), const ShaderAsset& shader = GraphicsAssetManager::LoadShader(), const Material& material = Material());
-	void AddCameraComponent(const float& fov = 75.0f, const float& aspectRatio = 16 / 9, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f);
+	template <class T, typename... P>
+	void AddComponent(P... params)
+	{
+		static int n = ComponentTypeID::Value<T>();
+		m_Components[n] = ECS::CreateComponent<T>(this, params...);
+	}
 
-	// REMOVE
-	void RemoveTransformComponent();
-	void RemoveMeshComponent();
-	void RemoveCameraComponent();
+	template<class T>
+	void RemoveComponent()
+	{
+		static int n = ComponentTypeID::Value<T>();
+		EntityModifier modifier = ECS::RemoveComponent<T>(m_Components[n]);
+		m_Components[n] = -1;
 
-	// GET
-	TransformComponent& GetTransformComponent();
-	MeshComponent& GetMeshComponent();
-	CameraComponent& GetCameraComponent();
+		if (modifier.EntityToModify != nullptr)
+		{
+			modifier.EntityToModify->SetIndex<T>(modifier.NewComponentIndex);	// update the entity whose component was moved
+		}
+	}
+
+	template<class T>
+	T& GetComponent()
+	{
+		static int n = ComponentTypeID::Value<T>();
+
+		if (m_Components[n] != -1)
+		{
+			return ECS::GetComponent<T>(m_Components[n]);
+		}
+
+		LOG_ERROR("ENTITY::Could not find component for entity " + std::to_string(m_UUID) + "!");
+	}
+
 
 private:
 	/// <summary>
 	/// Helper function to update this entity's children's transform's parents when this entity's transform has moved.
 	/// </summary>
 	/// <param name="index"></param>
-	void setChildrenTransformParents(const int& index)
-	{
-		for (auto& [key, child] : m_ChildrenEntities)
-		{
-			child->GetTransformComponent().SetParentIndex(index);
-		}
-	}
+	void setChildrenTransformParents(const int& index);
 };

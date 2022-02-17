@@ -51,6 +51,9 @@ struct Material
 
 class MeshComponent : public Component
 {
+public:
+	static const int FLAG = 1;
+
 private:
 	VertexArrayAsset m_VertexArray;
 	ShaderAsset m_Shader;

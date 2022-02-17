@@ -72,7 +72,7 @@ void SceneManager::LoadScene(const std::string& absolutePath)
 
 			glm::decompose(localTransform, scale, rotation, translation, skew, perspective);
 
-			entity->AddTransformComponent(translation, rotation, scale);
+			entity->AddComponent<TransformComponent>(-1, translation, rotation, scale);
 		}
 
 		// mesh component
@@ -128,7 +128,7 @@ void SceneManager::LoadScene(const std::string& absolutePath)
 
 			Material mat = Material(baseF, esmissiveF, metallicF, roughnessF, baseT, emissiveT, metallicRoughnessT, normalT, occlusionT);
 
-			entity->AddMeshComponent(vao, GraphicsAssetManager::LoadShader(), mat);
+			entity->AddComponent<MeshComponent>(vao, GraphicsAssetManager::LoadShader(), mat);
 		}
 	}
 }
@@ -180,7 +180,7 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const std::shar
 
 			glm::decompose(localTransform, scale, rotation, translation, skew, perspective);
 
-			entity->AddTransformComponent(translation, rotation, scale);
+			entity->AddComponent<TransformComponent>(entity->FindTransformParent(), translation, rotation, scale);
 		}
 
 		// mesh component
@@ -236,7 +236,7 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const std::shar
 
 			Material mat = Material(baseF, esmissiveF, metallicF, roughnessF, baseT, emissiveT, metallicRoughnessT, normalT, occlusionT);
 
-			entity->AddMeshComponent(vao, GraphicsAssetManager::LoadShader(), mat);
+			entity->AddComponent<MeshComponent>(vao, GraphicsAssetManager::LoadShader(), mat);
 		}
 	}
 }

@@ -21,20 +21,6 @@ private:
 	bool m_HasChanged;
 
 public:
-	/*
-	TransformComponent(const uint64_t& entityID)
-		: Component(entityID)
-	{
-		m_LocalTranslation = glm::vec3(0.0f);
-		m_LocalRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-		m_LocalScale = glm::vec3(1.0f);
-
-		m_LocalTransform = glm::translate(glm::mat4(1.0f), m_LocalTranslation) * glm::mat4_cast(m_LocalRotation) * glm::scale(glm::mat4(1.0f), m_LocalScale);
-		m_GlobalTransform = m_LocalTransform;
-
-		m_HasChanged = false;
-	}
-	*/
 
 	TransformComponent(Entity* entity, const int& parentIndex, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
 		: Component(entity)

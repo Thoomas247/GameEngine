@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Entity.h"
+/* Forward declaration */
+class Entity;
 
 struct EntityModifier
 {

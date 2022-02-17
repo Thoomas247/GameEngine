@@ -2,9 +2,21 @@
 
 #include "../scene/SceneManager.h"
 #include "../core/Log.h"
-#include "ECS.h"
+
+
+int ComponentTypeID::m_Counter = -1;
+
 
 /* -- PUBLIC -- */
+
+Entity* Entity::GetParent()
+{
+	if (m_Parent == nullptr) 
+	{ 
+		LOG_ERROR("ENTITY::Parent is nullptr!"); 
+	} 
+	return m_Parent;
+}
 
 std::shared_ptr<Entity> Entity::CreateChild(const std::string& name)
 {
@@ -24,107 +36,31 @@ void Entity::RemoveChild(const uint64_t& entityID)
 	m_ChildrenEntities.erase(entityID);
 }
 
-int Entity::FindNearestParentTransformIndex()
+int Entity::FindTransformParent()
 {
 	if (m_Parent == nullptr)
 	{
 		return -1;
 	}
 
-	if (m_Parent->HasTransform())
+	if (m_Parent->HasComponent<TransformComponent>())
 	{
-		return m_Parent->GetTransformIndex();
+		return m_Parent->GetIndex<TransformComponent>();
 	}
 
 	else
 	{
-		return m_Parent->FindNearestParentTransformIndex();
+		return m_Parent->FindTransformParent();
 	}
 }
 
 
-/* ADD */
+/* -- PRIVATE -- */
 
-void Entity::AddTransformComponent(const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
+void Entity::setChildrenTransformParents(const int& index)
 {
-	m_TransformComponent = ECS::CreateComponent<TransformComponent>(this, FindNearestParentTransformIndex(), translation, rotation, scale);
-}
-
-void Entity::AddMeshComponent(const VertexArrayAsset& vertexArray, const ShaderAsset& shader, const Material& material)
-{
-	m_MeshComponent = ECS::CreateComponent<MeshComponent>(this, vertexArray, shader, material);
-}
-
-void Entity::AddCameraComponent(const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane)
-{
-	m_CameraComponent = ECS::CreateComponent<CameraComponent>(this, fov, aspectRatio, nearPlane, farPlane);
-}
-
-
-/* REMOVE */
-
-void Entity::RemoveTransformComponent()
-{
-	EntityModifier modifier = ECS::RemoveComponent<TransformComponent>(m_TransformComponent);
-	m_TransformComponent = NO_COMPONENT;
-
-	if (modifier.EntityToModify != nullptr)
+	for (auto& [key, child] : m_ChildrenEntities)
 	{
-		modifier.EntityToModify->SetTransformIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
+		child->GetComponent<TransformComponent>().SetParentIndex(index);
 	}
-}
-
-void Entity::RemoveMeshComponent()
-{
-	EntityModifier modifier = ECS::RemoveComponent<MeshComponent>(m_MeshComponent);
-	m_MeshComponent = NO_COMPONENT;
-
-	if (modifier.EntityToModify != nullptr)
-	{
-		modifier.EntityToModify->SetMeshIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
-	}
-}
-
-void Entity::RemoveCameraComponent()
-{
-	EntityModifier modifier = ECS::RemoveComponent<CameraComponent>(m_CameraComponent);
-	m_CameraComponent = NO_COMPONENT;
-
-	if (modifier.EntityToModify != nullptr)
-	{
-		modifier.EntityToModify->SetCameraIndex(modifier.NewComponentIndex);	// update the entity whose component was moved
-	}
-}
-
-
-/* GET */
-
-TransformComponent& Entity::GetTransformComponent()
-{
-	if (m_TransformComponent != NO_COMPONENT)
-	{
-		return ECS::GetComponent<TransformComponent>(m_TransformComponent);
-	}
-
-	LOG_ERROR("ENTITY::Entity " + std::to_string(m_UUID) + " does not have a transform component!");
-}
-
-MeshComponent& Entity::GetMeshComponent()
-{
-	if (m_MeshComponent != NO_COMPONENT)
-	{
-		return ECS::GetComponent<MeshComponent>(m_MeshComponent);
-	}
-
-	LOG_ERROR("ENTITY::Entity " + std::to_string(m_UUID) + " does not have a mesh component!");
-}
-
-CameraComponent& Entity::GetCameraComponent()
-{
-	if (m_CameraComponent != NO_COMPONENT)
-	{
-		return ECS::GetComponent<CameraComponent>(m_CameraComponent);
-	}
-
-	LOG_ERROR("ENTITY::Entity " + std::to_string(m_UUID) + " does not have a camera component!");
 }
