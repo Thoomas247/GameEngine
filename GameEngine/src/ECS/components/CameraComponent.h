@@ -23,7 +23,7 @@ private:
 	bool m_ProjectionChanged;
 
 public:
-	CameraComponent(Entity* entity, const float& fov, const float& aspectRatio, const float& nearPlane, const float& farPlane)
+	CameraComponent(Entity* entity, const float& fov = 90.0f, const float& aspectRatio = 16/9, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f)
 		: Component(entity)
 	{
 		m_FOV = fov;

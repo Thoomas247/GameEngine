@@ -6,6 +6,7 @@
 
 #include "../core/Log.h"
 #include "../ECS/ECS.h"
+#include "../ECS/components/TransformComponent.h"
 
 /* -- PUBLIC -- */
 

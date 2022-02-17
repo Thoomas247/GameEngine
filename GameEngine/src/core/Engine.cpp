@@ -10,6 +10,10 @@
 #include "../graphics/GraphicsAssetManager.h"
 #include "../graphics/Renderer.h"
 
+// debug:
+#include "../ECS/components/TransformComponent.h"
+#include "../ECS/components/MeshComponent.h"
+
 int Engine::Run()
 {
 	Window::InitWindow(3200, 1800);
@@ -44,22 +48,23 @@ int Engine::Run()
 	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
-	/*
+	
 	auto ent = SceneManager::CreateEntityAtRoot("test");
-	ent->AddTransformComponent();
+	ent->AddComponent<TransformComponent>();
+	ent->AddComponent<MeshComponent>();
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		auto child = ent->CreateChild("test");
-		child->AddTransformComponent();
+		child->AddComponent<TransformComponent>();
 
 		for (int j = 0; j < 10; j++)
 		{
 			auto child2 = child->CreateChild("test");
-			child2->AddTransformComponent();
+			child2->AddComponent<TransformComponent>();
 		}
 	}
-	*/
+	
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;

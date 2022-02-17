@@ -7,6 +7,8 @@ using json = nlohmann::json;
 #include "glm/gtx/matrix_decompose.hpp"
 
 #include "../core/MatrixUtil.h"
+#include "../ECS/components/TransformComponent.h"
+#include "../ECS/components/MeshComponent.h"
 
 Scene* SceneManager::s_CurrentScene = nullptr;
 std::unordered_map<uint64_t, Scene> SceneManager::s_Scenes;
@@ -72,7 +74,7 @@ void SceneManager::LoadScene(const std::string& absolutePath)
 
 			glm::decompose(localTransform, scale, rotation, translation, skew, perspective);
 
-			entity->AddComponent<TransformComponent>(-1, translation, rotation, scale);
+			entity->AddComponent<TransformComponent>(translation, rotation, scale);
 		}
 
 		// mesh component
@@ -180,7 +182,7 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const std::shar
 
 			glm::decompose(localTransform, scale, rotation, translation, skew, perspective);
 
-			entity->AddComponent<TransformComponent>(entity->FindTransformParent(), translation, rotation, scale);
+			entity->AddComponent<TransformComponent>(translation, rotation, scale);
 		}
 
 		// mesh component

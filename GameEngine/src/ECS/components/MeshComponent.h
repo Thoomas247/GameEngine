@@ -61,14 +61,8 @@ private:
 	glm::mat4 m_ModelMat;
 
 public:
-	/*
-	MeshComponent(const uint64_t& entityID)
-		: Component(entityID)
-	{
-	}
-	*/
 
-	MeshComponent(Entity* entity, const VertexArrayAsset& vertexArray, const ShaderAsset& shader, const Material& material)
+	MeshComponent(Entity* entity, const VertexArrayAsset& vertexArray = VertexArrayAsset(), const ShaderAsset& shader = ShaderAsset(), const Material& material = Material())
 		: Component(entity)
 	{
 		m_VertexArray = vertexArray;

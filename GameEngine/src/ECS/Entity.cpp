@@ -3,8 +3,10 @@
 #include "../scene/SceneManager.h"
 #include "../core/Log.h"
 
+#include "components/TransformComponent.h"
 
-int ComponentTypeID::m_Counter = -1;
+
+int ComponentTypeID::m_Counter = 0;
 
 
 /* -- PUBLIC -- */

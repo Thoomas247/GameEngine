@@ -10,10 +10,6 @@
 #include "../core/UUID.h"
 #include "../graphics/GraphicsAssetManager.h"
 
-#include "components/TransformComponent.h"
-#include "components/MeshComponent.h"
-#include "components/CameraComponent.h"
-
 #include "ECS.h"
 
 constexpr int MAX_NUM_COMPONENT_TYPES = 32;
@@ -53,6 +49,10 @@ public:
 	{
 		m_UUID = UUID::GenerateUUID();
 		m_Name = "Empty Entity";
+
+		for (int i = 0; i < MAX_NUM_COMPONENT_TYPES; i++) {
+			m_Components[i] = -1;
+		}
 	}
 
 	Entity(const std::string& name, Entity* parent)
@@ -61,6 +61,10 @@ public:
 		m_Name = name;
 
 		m_Parent = parent;
+
+		for (int i = 0; i < MAX_NUM_COMPONENT_TYPES; i++) {
+			m_Components[i] = -1;
+		}
 	}
 
 	const uint64_t GetUUID() const { return m_UUID; }
