@@ -22,21 +22,17 @@ private:
 	float m_FarPlane;
 
 public:
-	CameraComponent(Entity* entity, const float& fov = 90.0f, const float& aspectRatio = 16 / 9, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f);
+	CameraComponent(Entity* entity, const float& fov = 90.0f, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f);
 
 	bool IsActive() { return m_Active; }
 	void SetActive(bool active) { m_Active = active; }
 
 	void SetFOV(const float& fov) { m_FOV = fov; recalculateProjection(); }
-	void SetAspectRatio(const float& aspectRatio) { m_AspectRatio = aspectRatio; recalculateProjection(); }
 	void SetNearPlane(const float& nearPlane) { m_NearPlane = nearPlane; recalculateProjection(); }
 	void SetFarPlane(const float& farPlane) { m_FarPlane = farPlane; recalculateProjection(); }
 
-	const glm::mat4 GetProjectionMatrix() { return m_ProjectionMatrix; }
+	const glm::mat4 GetProjectionMatrix();
 
 private:
-	void recalculateProjection()
-	{
-		m_ProjectionMatrix = glm::perspective<float>(glm::radians(m_FOV), m_AspectRatio, m_NearPlane, m_FarPlane);
-	}
+	void recalculateProjection();
 };

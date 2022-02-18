@@ -4,10 +4,15 @@
 
 GLFWwindow* Window::s_WindowPtr = nullptr;
 bool Window::s_ShouldClose = false;
+WindowSize Window::s_Size = WindowSize();
 
-// PUBLIC
+
+/* -- PUBLIC -- */
+
 void Window::InitWindow(const int& width, const int& height)
 {
+	s_Size = WindowSize(width, height);
+
 	// glfw: initialize and configure
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -16,7 +21,7 @@ void Window::InitWindow(const int& width, const int& height)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// glfw: window creation
-	s_WindowPtr = glfwCreateWindow(width, height, "Game Engine", NULL, NULL);
+	s_WindowPtr = glfwCreateWindow(s_Size.Width, s_Size.Height, "Game Engine", NULL, NULL);
 	if (s_WindowPtr == nullptr)
 	{
 		glfwTerminate();
@@ -71,8 +76,11 @@ void Window::UnlockCursor()
 	glfwSetInputMode(s_WindowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
-// PRIVATE
+
+/* -- PRIVATE -- */
+
 void Window::frameBufferSizeCallback(GLFWwindow*, int width, int height)
 {
-	glViewport(0, 0, width, height);
+	s_Size = WindowSize(width, height);
+	glViewport(0, 0, s_Size.Width, s_Size.Height);
 }

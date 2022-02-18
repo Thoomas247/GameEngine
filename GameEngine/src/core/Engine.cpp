@@ -51,7 +51,7 @@ int Engine::Run()
 	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
-	// testing:
+	// testing: //
 	auto cameraOrbiter = SceneManager::CreateEntityAtRoot("Orbiter");
 	cameraOrbiter->AddComponent<TransformComponent>();
 	auto testCamera = cameraOrbiter->CreateChild("Camera");
@@ -60,7 +60,7 @@ int Engine::Run()
 	testCamera->GetComponent<CameraComponent>().SetActive(true);
 
 	float yaw = 0.0f;
-	///////////
+	/////////////
 
 
 	/*
@@ -97,10 +97,10 @@ int Engine::Run()
 
 		LOG_INFO(std::to_string(1 / deltaTime));
 
-		// for fun:
+		// for fun: //
 		yaw += deltaTime;
 		cameraOrbiter->GetComponent<TransformComponent>().SetLocalRotation(glm::quat(glm::vec3(0.0f, yaw, 0.0f)));
-		//////////
+		/////////////
 
 		Input::Update();
 		SceneManager::Update(deltaTime);
