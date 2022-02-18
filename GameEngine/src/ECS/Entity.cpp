@@ -47,7 +47,7 @@ int Entity::FindTransformParent()
 
 	if (m_Parent->HasComponent<TransformComponent>())
 	{
-		return m_Parent->GetIndex<TransformComponent>();
+		return m_Parent->GetComponentIndex<TransformComponent>();
 	}
 
 	else

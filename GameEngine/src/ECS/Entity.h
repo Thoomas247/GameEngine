@@ -11,9 +11,10 @@
 #include "../graphics/GraphicsAssetManager.h"
 
 #include "ECS.h"
+#include "components/TransformComponent.h" // for SetComponentIndex<TransformComponent> and RemoveComponent<TransformComponent> specializations
+
 
 constexpr int MAX_NUM_COMPONENT_TYPES = 32;
-
 
 class ComponentTypeID
 {
@@ -79,9 +80,9 @@ public:
 	void RemoveChild(const uint64_t& entityID);
 
 	/// <summary>
-	/// Finds the closest transform component which is above this entity in the scene tree.
+	/// Finds the index of the closest transform component which is above this entity in the scene tree.
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>Index of the transform component's parent (not always the same as this entity's parent)</returns>
 	int FindTransformParent();
 
 
@@ -95,14 +96,27 @@ public:
 	}
 
 	template <class T>
-	void SetIndex(const int& index)
+	void SetComponentIndex(const int& index)
 	{
 		static int n = ComponentTypeID::Value<T>();
 		m_Components[n] = index;
 	}
+	/// <summary>
+	/// Specialized function for the case where a TransformComponent has moved.
+	/// This is the only component which is hierarchy dependent, and therefore this entity's
+	/// children must be notified that the TransformComponent has moved.
+	/// </summary>
+	/// <param name="index">The new index of the TransformComponent</param>
+	template<>
+	void SetComponentIndex<TransformComponent>(const int& index)
+	{
+		static int n = ComponentTypeID::Value<TransformComponent>();
+		m_Components[n] = index;
+		setChildrenTransformParents(index);
+	}
 
 	template <class T>
-	int GetIndex()
+	int GetComponentIndex()
 	{
 		static int n = ComponentTypeID::Value<T>();
 		return m_Components[n];
@@ -124,8 +138,27 @@ public:
 
 		if (modifier.EntityToModify != nullptr)
 		{
-			modifier.EntityToModify->SetIndex<T>(modifier.NewComponentIndex);	// update the entity whose component was moved
+			modifier.EntityToModify->SetComponentIndex<T>(modifier.NewComponentIndex);	// update the entity whose component was moved
 		}
+	}
+	/// <summary>
+	/// Specialized function for the case where a TransformComponent has been removed.
+	/// This is the only component which is hierarchy dependent, and therefore this entity's
+	/// children must be notified that the TransformComponent has been removed.
+	/// </summary>
+	template <>
+	void RemoveComponent<TransformComponent>()
+	{
+		static int n = ComponentTypeID::Value<TransformComponent>();
+		EntityModifier modifier = ECS::RemoveComponent<TransformComponent>(m_Components[n]);
+		m_Components[n] = -1;
+
+		if (modifier.EntityToModify != nullptr)
+		{
+			modifier.EntityToModify->SetComponentIndex<TransformComponent>(modifier.NewComponentIndex);	// update the entity whose component was moved
+		}
+
+		setChildrenTransformParents(FindTransformParent());
 	}
 
 	template<class T>

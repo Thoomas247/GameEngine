@@ -24,7 +24,7 @@ int Engine::Run()
 	SceneManager::CreateScene();
 
 	// TODO:
-	// [] clean up header files and create cpp files where needed (especially entity class)
+	// [x] clean up header files and create cpp files where needed (especially entity class)
 	// [] implement camera component properly
 	// [] fix importing to match new format:
 	//		[x] import into .scene file which contains each component type in separate lists
@@ -64,7 +64,6 @@ int Engine::Run()
 			child2->AddComponent<TransformComponent>();
 		}
 	}
-	
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;

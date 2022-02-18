@@ -22,20 +22,7 @@ private:
 
 public:
 
-	TransformComponent(Entity* entity, const glm::vec3& translation = glm::vec3(0.0f), const glm::quat& rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f), const glm::vec3& scale = glm::vec3(1.0f))
-		: Component(entity)
-	{
-		m_ParentID = entity->FindTransformParent();
-
-		m_LocalTranslation = translation;
-		m_LocalRotation = rotation;
-		m_LocalScale = scale;
-
-		m_LocalTransform = glm::translate(glm::mat4(1.0f), m_LocalTranslation) * glm::mat4_cast(m_LocalRotation) * glm::scale(glm::mat4(1.0f), m_LocalScale);
-		m_GlobalTransform = m_LocalTransform;
-
-		m_HasChanged = false;
-	}
+	TransformComponent(Entity* entity, const glm::vec3& translation = glm::vec3(0.0f), const glm::quat& rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f), const glm::vec3& scale = glm::vec3(1.0f));
 
 	/// <summary>
 	/// Recalculates the local transform and global transform matrices given a parent transform and returns the new global transform.

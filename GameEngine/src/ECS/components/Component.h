@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../Entity.h"
+//#include "../Entity.h"
+
+/* forward declaration */
+class Entity;
 
 class Component
 {

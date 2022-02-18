@@ -98,6 +98,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\MatrixUtil.cpp" />
+    <ClCompile Include="src\ECS\components\CameraComponent.cpp" />
+    <ClCompile Include="src\ECS\components\MeshComponent.cpp" />
+    <ClCompile Include="src\ECS\components\TransformComponent.cpp" />
     <ClCompile Include="src\importer\GLTFImporter.cpp" />
     <ClCompile Include="src\graphics\graphics assets\ShaderAsset.cpp" />
     <ClCompile Include="src\graphics\GraphicsAssetManager.cpp" />

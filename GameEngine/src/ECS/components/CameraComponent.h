@@ -23,19 +23,7 @@ private:
 	bool m_ProjectionChanged;
 
 public:
-	CameraComponent(Entity* entity, const float& fov = 90.0f, const float& aspectRatio = 16/9, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f)
-		: Component(entity)
-	{
-		m_FOV = fov;
-		m_AspectRatio = aspectRatio;
-		m_NearPlane = nearPlane;
-		m_FarPlane = farPlane;
-
-		m_ViewMatrix = glm::lookAt(glm::vec3(0.0f), m_WorldFront, m_WorldUp);
-		m_ProjectionMatrix = glm::perspective<float>(glm::radians(m_FOV), m_AspectRatio, m_NearPlane, m_FarPlane);
-
-		m_ProjectionChanged = false;
-	}
+	CameraComponent(Entity* entity, const float& fov = 90.0f, const float& aspectRatio = 16 / 9, const float& nearPlane = 0.1f, const float& farPlane = 1000.0f);
 
 	/*
 	void UpdateViewAndProjection()

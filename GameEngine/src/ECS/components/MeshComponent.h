@@ -62,14 +62,7 @@ private:
 
 public:
 
-	MeshComponent(Entity* entity, const VertexArrayAsset& vertexArray = VertexArrayAsset(), const ShaderAsset& shader = ShaderAsset(), const Material& material = Material())
-		: Component(entity)
-	{
-		m_VertexArray = vertexArray;
-		m_Shader = shader;
-		m_Material = material;
-		m_ModelMat = glm::mat4(1.0f);
-	}
+	MeshComponent(Entity* entity, const VertexArrayAsset& vertexArray = VertexArrayAsset(), const ShaderAsset& shader = ShaderAsset(), const Material& material = Material());
 
 	VertexArrayAsset& GetVertexArray() { return m_VertexArray; }
 	ShaderAsset& GetShader() { return m_Shader; }
