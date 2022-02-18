@@ -5,11 +5,14 @@
 #include "glm/glm.hpp"
 
 #include "../core/Log.h"
+#include "../graphics/Renderer.h"
 #include "../ECS/ECS.h"
 #include "../ECS/components/TransformComponent.h"
+#include "../ECS/components/CameraComponent.h"
 
 /* -- PUBLIC -- */
 
+// TODO: move update to SceneManager since entities might be removed
 void Scene::Update(const float& deltaTime)
 {
 	// transforms update:
@@ -44,6 +47,18 @@ void Scene::Update(const float& deltaTime)
 			TransformComponent& parent = ECS::GetComponent<TransformComponent>(parentIndex);
 			transform.UpdateTransforms(parent.GetGlobalTransform());
 			dirty[i] = false;
+		}
+	}
+
+	// camera update:
+	auto& cameraComponents = ECS::GetComponents<CameraComponent>();
+	for (auto& camera : cameraComponents)
+	{
+		// in the future we will have multiple render targets, but for now the last active camera will be used
+		if (camera.IsActive())
+		{
+			Renderer::SetViewMatrix(glm::inverse(camera.GetEntity()->GetComponent<TransformComponent>().GetGlobalTransform()));
+			Renderer::SetProjectionMatrix(camera.GetProjectionMatrix());
 		}
 	}
 }

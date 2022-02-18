@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "EntityModifier.h"
+#include "../core/Log.h"
 
 template <class T>
 class ComponentContainer 

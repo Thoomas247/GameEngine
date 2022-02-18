@@ -51,14 +51,10 @@ struct Material
 
 class MeshComponent : public Component
 {
-public:
-	static const int FLAG = 1;
-
 private:
 	VertexArrayAsset m_VertexArray;
 	ShaderAsset m_Shader;
 	Material m_Material;
-	glm::mat4 m_ModelMat;
 
 public:
 
@@ -67,7 +63,4 @@ public:
 	VertexArrayAsset& GetVertexArray() { return m_VertexArray; }
 	ShaderAsset& GetShader() { return m_Shader; }
 	Material& GetMaterial() { return m_Material; }
-
-	void SetModelMat(const glm::mat4& mat) { m_ModelMat = mat; }
-	const glm::mat4 GetModelMat() { return m_ModelMat; }
 };

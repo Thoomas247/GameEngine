@@ -6,5 +6,4 @@ MeshComponent::MeshComponent(Entity* entity, const VertexArrayAsset& vertexArray
 	m_VertexArray = vertexArray;
 	m_Shader = shader;
 	m_Material = material;
-	m_ModelMat = glm::mat4(1.0f);
 }

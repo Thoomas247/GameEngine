@@ -5,8 +5,15 @@
 #include "../core/Log.h"
 #include "../ECS/ECS.h"
 #include "../ECS/components/MeshComponent.h"
+#include "../ECS/components/TransformComponent.h"
 
-// PUBLIC
+
+glm::mat4 Renderer::s_ViewMatrix = glm::lookAt(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.f));
+glm::mat4 Renderer::s_ProjectionMatrix = glm::perspective<float>(glm::radians(60.0f), 16 / 9, 0.1f, 1000.0f);
+
+
+/* -- PUBLIC -- */
+
 void Renderer::Init()
 {
 	glEnable(GL_DEPTH_TEST);
@@ -44,9 +51,9 @@ void Renderer::Draw()
 
 		shader.SetInt("albedo_tex", 0);	// albedo tex
 
-		shader.SetMat4("model_mat", meshComponent.GetModelMat());	// model
-		shader.SetMat4("view_mat", glm::mat4(1.0f));				// view
-		shader.SetMat4("projection_mat", glm::mat4(1.0f));			// projection
+		shader.SetMat4("model_mat", meshComponent.GetEntity()->GetComponent<TransformComponent>().GetGlobalTransform());	// model
+		shader.SetMat4("view_mat", s_ViewMatrix);					// view
+		shader.SetMat4("projection_mat", s_ProjectionMatrix);		// projection
 
 		// vertex array
 		VertexArrayAsset& vertexArray = meshComponent.GetVertexArray();

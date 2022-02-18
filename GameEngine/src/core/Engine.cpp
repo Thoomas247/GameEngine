@@ -13,6 +13,7 @@
 // debug:
 #include "../ECS/components/TransformComponent.h"
 #include "../ECS/components/MeshComponent.h"
+#include "../ECS/components/CameraComponent.h"
 
 int Engine::Run()
 {
@@ -25,7 +26,7 @@ int Engine::Run()
 
 	// TODO:
 	// [x] clean up header files and create cpp files where needed (especially entity class)
-	// [] implement camera component properly
+	// [x] implement camera component properly
 	// [] fix importing to match new format:
 	//		[x] import into .scene file which contains each component type in separate lists
 	//		[] create skeleton component
@@ -43,16 +44,26 @@ int Engine::Run()
 	// [] make shaders only require 1 file
 	// [] find shader uniform locations on load
 	// [] create animator
+	// [] (maybe) remove entity pointer in Component class and store a copy of the m_Components array in each component (higher mem usage, slower entity deletion/moving, faster access?)
+	//		since TransformComponents keep track of their parent the hierarchy will be maintained
 
 	//GLTFImporter::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
-	
-	auto ent = SceneManager::CreateEntityAtRoot("test");
-	ent->AddComponent<TransformComponent>();
-	ent->AddComponent<MeshComponent>();
+	// testing:
+	auto cameraOrbiter = SceneManager::CreateEntityAtRoot("Orbiter");
+	cameraOrbiter->AddComponent<TransformComponent>();
+	auto testCamera = cameraOrbiter->CreateChild("Camera");
+	testCamera->AddComponent<TransformComponent>(glm::vec3(0.0f, 30.0f, 40.0f), glm::quat(glm::vec3(-0.5f, 0.0f, 0.0f)));
+	testCamera->AddComponent<CameraComponent>();
+	testCamera->GetComponent<CameraComponent>().SetActive(true);
 
+	float yaw = 0.0f;
+	///////////
+
+
+	/*
 	for (int i = 0; i < 10; i++)
 	{
 		auto child = ent->CreateChild("test");
@@ -64,6 +75,7 @@ int Engine::Run()
 			child2->AddComponent<TransformComponent>();
 		}
 	}
+	*/
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -85,6 +97,11 @@ int Engine::Run()
 
 		LOG_INFO(std::to_string(1 / deltaTime));
 
+		// for fun:
+		yaw += deltaTime;
+		cameraOrbiter->GetComponent<TransformComponent>().SetLocalRotation(glm::quat(glm::vec3(0.0f, yaw, 0.0f)));
+		//////////
+
 		Input::Update();
 		SceneManager::Update(deltaTime);
 
@@ -95,7 +112,6 @@ int Engine::Run()
 	}
 
 	Window::CleanUp();
-	//EngineGUI::CleanUp();
 
 	return 0;
 }
