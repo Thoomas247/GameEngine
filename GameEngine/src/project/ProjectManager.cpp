@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "ProjectManager.h"
 
 std::unique_ptr<Project> ProjectManager::s_CurrentProject = nullptr;

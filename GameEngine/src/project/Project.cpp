@@ -1,6 +1,5 @@
+#include "precompiled.h"
 #include "Project.h"
-
-#include "../core/Log.h"
 
 /* -- PUBLIC -- */
 

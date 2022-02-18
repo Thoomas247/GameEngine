@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "TransformComponent.h"
 
 #include "../Entity.h"

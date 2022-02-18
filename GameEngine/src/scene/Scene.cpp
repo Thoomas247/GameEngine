@@ -1,11 +1,6 @@
+#include "precompiled.h"
 #include "Scene.h"
 
-#include <vector>
-
-#include "glm/glm.hpp"
-
-#include "../core/Log.h"
-#include "../graphics/Renderer.h"
 #include "../ECS/ECS.h"
 #include "../ECS/components/TransformComponent.h"
 #include "../ECS/components/CameraComponent.h"

@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "Log.h"
 
 #include <iostream>

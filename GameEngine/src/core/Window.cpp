@@ -1,6 +1,5 @@
+#include "precompiled.h"
 #include "Window.h"
-
-#include "Log.h"
 
 GLFWwindow* Window::s_WindowPtr = nullptr;
 bool Window::s_ShouldClose = false;

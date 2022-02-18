@@ -1,8 +1,6 @@
 #pragma once
 #include "GraphicsAsset.h"
 
-#include "../../core/Log.h"
-
 class TextureAsset : public GraphicsAsset
 {
 private:

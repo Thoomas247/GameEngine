@@ -1,6 +1,5 @@
+#include "precompiled.h"
 #include "ShaderAsset.h"
-
-#include "glad/gl.h"
 
 /* -- PUBLIC -- */
 

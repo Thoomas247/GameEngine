@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string>
-#include <memory>
-
 #include "../project/Project.h"
 
 class ProjectManager

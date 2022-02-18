@@ -1,12 +1,9 @@
+#include "precompiled.h"
 #include "Renderer.h"
 
-#include "glad/gl.h"
-
-#include "../core/Log.h"
 #include "../ECS/ECS.h"
 #include "../ECS/components/MeshComponent.h"
 #include "../ECS/components/TransformComponent.h"
-
 
 glm::mat4 Renderer::s_ViewMatrix = glm::lookAt(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.f));
 glm::mat4 Renderer::s_ProjectionMatrix = glm::perspective<float>(glm::radians(60.0f), 16 / 9, 0.1f, 1000.0f);

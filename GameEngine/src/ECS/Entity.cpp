@@ -1,7 +1,5 @@
+#include "precompiled.h"
 #include "Entity.h"
-
-#include "../scene/SceneManager.h"
-#include "../core/Log.h"
 
 #include "components/TransformComponent.h" // for SetComponentIndex<TransformComponent> and RemoveComponent<TransformComponent> specializations
 

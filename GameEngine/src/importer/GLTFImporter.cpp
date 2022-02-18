@@ -1,50 +1,25 @@
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#define STBI_MSC_SECURE_CRT
+#include "precompiled.h"
 #include "GLTFImporter.h"
-
-#include <iostream>
-#include <filesystem>
-
-#include "glm/gtx/quaternion.hpp"
-
-#include "../core/Log.h"
-#include "../core/UUID.h"
-#include "../core/MatrixUtil.h"
-#include "../project/ProjectManager.h"
 
 /* -- PUBLIC -- */
 
-void GLTFImporter::Import(const std::string& absolutePath)
+void GLTFImporter::Import(const std::string& absolutePath, const size_t& slashPos, const size_t& dotPos, const bool& binary)
 {
-	auto dotPos = absolutePath.find_last_of(".");
-	auto slashPos = absolutePath.find_last_of("/");
-	if (dotPos == absolutePath.npos || slashPos == absolutePath.npos || dotPos < slashPos)
-	{
-		LOG_ERROR("IMPORTER::Invalid file path!");
-	}
-	slashPos++;
-
 	// parse GLTF file
 	tinygltf::Model model;
 	tinygltf::TinyGLTF loader;
 	std::string err, warn;
 
-	std::string fileType = absolutePath.substr(dotPos + 1);
 	bool ret = false;
-	if (std::strcmp(fileType.c_str(), "gltf") == 0)
-	{
-		ret = loader.LoadASCIIFromFile(&model, &err, &warn, absolutePath);
-	}
-	else if (std::strcmp(fileType.c_str(), "glb") == 0)
+	if (binary)
 	{
 		ret = loader.LoadBinaryFromFile(&model, &err, &warn, absolutePath);
 	}
 	else
 	{
-		LOG_ERROR("IMPORTER::Invalid file format!");
+		ret = loader.LoadASCIIFromFile(&model, &err, &warn, absolutePath);
 	}
+
 
 	if (!err.empty() || !ret) {
 		LOG_ERROR("IMPORTER::Failed to parse GLTF! (" + err + ")");

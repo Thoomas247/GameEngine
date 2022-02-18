@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "UUID.h"
 
 std::random_device UUID::s_RandomDevice;

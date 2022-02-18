@@ -1,18 +1,9 @@
 #pragma once
 
-#include <string>
-#include <map>
-
-#include "glm/glm.hpp"
-#include "tinygltf/tiny_gltf.h"
-
-#include "json/json.hpp"
-using json = nlohmann::json;
-
 class GLTFImporter
 {
 public:
-	static void Import(const std::string& absolutePath);
+	static void Import(const std::string& absolutePath, const size_t& slashPos, const size_t& dotPos, const bool& binary = false);
 
 private:
 	static std::string copyTexture(const std::string& modelPath, const std::string& uri, const size_t& slashPos, const size_t& dotPos);

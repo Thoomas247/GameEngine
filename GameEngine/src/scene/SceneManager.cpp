@@ -1,12 +1,6 @@
+#include "precompiled.h"
 #include "SceneManager.h"
 
-#include <fstream>
-
-#include "json/json.hpp"
-using json = nlohmann::json;
-#include "glm/gtx/matrix_decompose.hpp"
-
-#include "../core/MatrixUtil.h"
 #include "../ECS/components/TransformComponent.h"
 #include "../ECS/components/MeshComponent.h"
 

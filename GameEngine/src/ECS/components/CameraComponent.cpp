@@ -1,6 +1,5 @@
+#include "precompiled.h"
 #include "CameraComponent.h"
-
-#include "../../core/Window.h"
 
 /* -- PUBLIC -- */
 

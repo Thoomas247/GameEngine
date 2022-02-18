@@ -1,8 +1,6 @@
 #pragma once
-
 #include "Component.h"
 
-#include "../../graphics/GraphicsAssetManager.h"
 #include "../../graphics/graphics assets/VertexArrayAsset.h"
 #include "../../graphics/graphics assets/ShaderAsset.h"
 #include "../../graphics/graphics assets/TextureAsset.h"

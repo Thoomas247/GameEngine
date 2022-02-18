@@ -1,8 +1,5 @@
 #pragma once
 
-#include <map>
-#include <memory>
-
 #include "graphics assets/TextureAsset.h"
 #include "graphics assets/ShaderAsset.h"
 #include "graphics assets/VertexArrayAsset.h"

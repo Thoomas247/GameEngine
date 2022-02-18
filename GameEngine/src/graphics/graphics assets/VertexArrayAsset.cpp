@@ -1,6 +1,5 @@
+#include "precompiled.h"
 #include "VertexArrayAsset.h"
-
-#include "glad/gl.h"
 
 /* -- PUBLIC -- */
 

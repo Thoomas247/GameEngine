@@ -1,14 +1,5 @@
+#include "precompiled.h"
 #include "Engine.h"
-
-#include "Window.h"
-#include "Input.h"
-#include "Log.h"
-
-#include "../project/ProjectManager.h"
-#include "../scene/SceneManager.h"
-#include "../importer/GLTFImporter.h"
-#include "../graphics/GraphicsAssetManager.h"
-#include "../graphics/Renderer.h"
 
 // debug:
 #include "../ECS/components/TransformComponent.h"
@@ -47,7 +38,7 @@ int Engine::Run()
 	// [] (maybe) remove entity pointer in Component class and store a copy of the m_Components array in each component (higher mem usage, slower entity deletion/moving, faster access?)
 	//		since TransformComponents keep track of their parent the hierarchy will be maintained
 
-	//GLTFImporter::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
+	//Importer::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 

@@ -1,15 +1,5 @@
 #pragma once
 
-#include <map>
-#include <string>
-#include <memory>
-
-#include "glm/glm.hpp"
-#include "glm/gtx/quaternion.hpp"
-
-#include "../core/UUID.h"
-#include "../graphics/GraphicsAssetManager.h"
-
 #include "ECS.h"
 
 

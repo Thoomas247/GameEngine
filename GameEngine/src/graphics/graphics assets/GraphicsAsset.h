@@ -1,9 +1,5 @@
 #pragma once
 
-#include <string>
-
-#include "../../core/UUID.h"
-
 /// <summary>
 /// Represents any asset which is stored on the GPU.
 /// </summary>

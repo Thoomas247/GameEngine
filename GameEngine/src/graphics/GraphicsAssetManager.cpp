@@ -1,12 +1,5 @@
+#include "precompiled.h"
 #include "GraphicsAssetManager.h"
-
-#include <fstream>
-#include <sstream>
-
-#include "glad/gl.h"
-#include "stb/stb_image.h"
-
-#include "../core/Log.h"
 
 const std::vector<Vertex> GraphicsAssetManager::c_SquareVertices = { Vertex(glm::vec3(0.0f, 0.0f, -1.0f)), Vertex(glm::vec3(0.0f, 1.0f, -1.0f)), Vertex(glm::vec3(1.0f, 0.0f, 1.0f)), Vertex(glm::vec3(1.0f, 1.0f, 1.0f)) };
 const std::vector<unsigned int> GraphicsAssetManager::c_SquareIndices = { 0, 2, 1, 1, 2, 3 };

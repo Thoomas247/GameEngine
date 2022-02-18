@@ -1,12 +1,6 @@
 #pragma once
 #include "GraphicsAsset.h"
 
-#include <string>
-
-#include "glm/glm.hpp"
-
-#include "../../core/Log.h"
-
 class ShaderAsset : public GraphicsAsset
 {
 public:

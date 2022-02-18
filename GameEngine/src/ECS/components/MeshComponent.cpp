@@ -1,3 +1,4 @@
+#include "precompiled.h"
 #include "MeshComponent.h"
 
 MeshComponent::MeshComponent(Entity* entity, const VertexArrayAsset& vertexArray, const ShaderAsset& shader, const Material& material)
