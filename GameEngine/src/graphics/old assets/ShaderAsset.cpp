@@ -1,7 +1,7 @@
 #include "precompiled.h"
-#include "ShaderAsset.h"
 
-/* -- PUBLIC -- */
+/*
+
 
 void ShaderAsset::Activate()
 {
@@ -57,3 +57,4 @@ void ShaderAsset::SetMat4(const std::string& uniform, const glm::mat4& mat)
 {
 	glUniformMatrix4fv(glGetUniformLocation(m_GLID, uniform.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
+*/

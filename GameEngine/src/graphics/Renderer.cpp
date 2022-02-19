@@ -37,23 +37,16 @@ void Renderer::Draw()
 
 	for (auto& meshComponent : ECS::GetComponents<MeshComponent>())
 	{
-		// material
-		Material& material = meshComponent.GetMaterial();
-
-		glBindTextureUnit(0, material.BaseColorTexture.GetGLID());	// albedo tex
-
 		// shader
-		ShaderAsset& shader = meshComponent.GetShader();
+		MaterialShader& shader = meshComponent.GetMaterialShader();
 		shader.Activate();
 
-		shader.SetInt("albedo_tex", 0);	// albedo tex
-
-		shader.SetMat4("model_mat", meshComponent.GetEntity()->GetComponent<TransformComponent>().GetGlobalTransform());	// model
-		shader.SetMat4("view_mat", s_ViewMatrix);					// view
-		shader.SetMat4("projection_mat", s_ProjectionMatrix);		// projection
+		shader.SetModelMat4(meshComponent.GetEntity()->GetComponent<TransformComponent>().GetGlobalTransform());	// model
+		shader.SetViewMat4(s_ViewMatrix);					// view
+		shader.SetProjectionMat4(s_ProjectionMatrix);		// projection
 
 		// vertex array
-		VertexArrayAsset& vertexArray = meshComponent.GetVertexArray();
+		VertexArray& vertexArray = meshComponent.GetVertexArray();
 		vertexArray.Bind();
 		glDrawElements(GL_TRIANGLES, (GLsizei)vertexArray.GetNumIndices(), GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
 		vertexArray.Unbind();

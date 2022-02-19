@@ -1,5 +1,4 @@
 #pragma once
-#include "GraphicsAsset.h"
 
 struct Vertex
 {
@@ -22,20 +21,21 @@ struct Vertex
 	}
 };
 
-class VertexArrayAsset : public GraphicsAsset
+class VertexArray
 {
 private:
+	unsigned int m_GLID;
 	uint64_t m_NumIndices;
 
 public:
-	VertexArrayAsset()
-		: GraphicsAsset("Invalid", "Invalid", 0)
+	VertexArray()
 	{
+		m_GLID = -1;
 		m_NumIndices = 0;
 	}
-	VertexArrayAsset(const unsigned int& glID, const uint64_t& numIndices)
-		: GraphicsAsset("", "", glID)
+	VertexArray(const unsigned int& glID, const uint64_t& numIndices)
 	{
+		m_GLID = glID;
 		m_NumIndices = numIndices;
 	}
 

@@ -25,24 +25,24 @@ int Engine::Run()
 	//		[] save animations in new format
 	//		[] fix animation linear interpolation on import
 	// [x] fix scene loading to match new format
-	// [] add scene saving to file
+	// [] add scene saving
 	// [] add skeleton loading to scene loading
 	// [x] create asset manager to manage GPU assets:
 	//		[x] Textures
 	//		[x] Shaders
 	//		[x] VAOs
-	//		[] Make material a GPU asset (buffer) which can be set depending on an ID, instead of just being a part of the mesh component
-	// [] make shaders only require 1 file
+	//		[] Finish ShaderMaterial to replace shader and material
+	// [x] make shaders only require 1 file
 	// [] find shader uniform locations on load
 	// [] create animator
 	// [] (maybe) remove entity pointer in Component class and store a copy of the m_Components array in each component (higher mem usage, slower entity deletion/moving, faster access?)
 	//		since TransformComponents keep track of their parent the hierarchy will be maintained
 
+
 	//Importer::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
 	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
-	// testing: //
 	auto cameraOrbiter = SceneManager::CreateEntityAtRoot("Orbiter");
 	cameraOrbiter->AddComponent<TransformComponent>();
 	auto testCamera = cameraOrbiter->CreateChild("Camera");

@@ -79,7 +79,7 @@ void SceneManager::LoadScene(const std::string& absolutePath)
 			// vertex array asset
 			std::string vaoID = j["meshComponents"][meshID]["vertexArrayAsset"];
 
-			VertexArrayAsset vao;
+			VertexArray vao;
 			if (!j["vertexArrayAssets"][vaoID].is_null())
 			{
 				// vertices
@@ -116,15 +116,17 @@ void SceneManager::LoadScene(const std::string& absolutePath)
 			glm::vec3 esmissiveF = glm::vec3(jMat["emissiveFactor"][0], jMat["emissiveFactor"][1], jMat["emissiveFactor"][2]);
 			float metallicF = jMat["metallicFactor"];
 			float roughnessF = jMat["roughnessFactor"];
-			TextureAsset baseT = GraphicsAssetManager::LoadTexture(jMat["baseColorTexture"]);
-			TextureAsset emissiveT = GraphicsAssetManager::LoadTexture(jMat["emissiveTexture"]);
-			TextureAsset metallicRoughnessT = GraphicsAssetManager::LoadTexture(jMat["metallicRoughnessTexture"]);
-			TextureAsset normalT = GraphicsAssetManager::LoadTexture(jMat["normalTexture"]);
-			TextureAsset occlusionT = GraphicsAssetManager::LoadTexture(jMat["occlusionTexture"]);
+			std::string baseT = jMat["baseColorTexture"];
+			std::string emissiveT = jMat["emissiveTexture"];
+			std::string metallicRoughnessT = jMat["metallicRoughnessTexture"];
+			std::string normalT = jMat["normalTexture"];
+			std::string occlusionT = jMat["occlusionTexture"];
 
 			Material mat = Material(baseF, esmissiveF, metallicF, roughnessF, baseT, emissiveT, metallicRoughnessT, normalT, occlusionT);
 
-			entity->AddComponent<MeshComponent>(vao, GraphicsAssetManager::LoadShader(), mat);
+			MaterialShader shader = MaterialShader(mat);	// TODO: save name of shader in file
+
+			entity->AddComponent<MeshComponent>(vao, shader);
 		}
 	}
 }
@@ -187,7 +189,7 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const std::shar
 			// vertex array asset
 			std::string vaoID = j["meshComponents"][meshID]["vertexArrayAsset"];
 
-			VertexArrayAsset vao;
+			VertexArray vao;
 			if (!j["vertexArrayAssets"][vaoID].is_null())
 			{
 				// vertices
@@ -224,15 +226,17 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const std::shar
 			glm::vec3 esmissiveF = glm::vec3(jMat["emissiveFactor"][0], jMat["emissiveFactor"][1], jMat["emissiveFactor"][2]);
 			float metallicF = jMat["metallicFactor"];
 			float roughnessF = jMat["roughnessFactor"];
-			TextureAsset baseT = GraphicsAssetManager::LoadTexture(jMat["baseColorTexture"]);
-			TextureAsset emissiveT = GraphicsAssetManager::LoadTexture(jMat["emissiveTexture"]);
-			TextureAsset metallicRoughnessT = GraphicsAssetManager::LoadTexture(jMat["metallicRoughnessTexture"]);
-			TextureAsset normalT = GraphicsAssetManager::LoadTexture(jMat["normalTexture"]);
-			TextureAsset occlusionT = GraphicsAssetManager::LoadTexture(jMat["occlusionTexture"]);
+			std::string baseT = jMat["baseColorTexture"];
+			std::string emissiveT = jMat["emissiveTexture"];
+			std::string metallicRoughnessT = jMat["metallicRoughnessTexture"];
+			std::string normalT = jMat["normalTexture"];
+			std::string occlusionT = jMat["occlusionTexture"];
 
 			Material mat = Material(baseF, esmissiveF, metallicF, roughnessF, baseT, emissiveT, metallicRoughnessT, normalT, occlusionT);
 
-			entity->AddComponent<MeshComponent>(vao, GraphicsAssetManager::LoadShader(), mat);
+			MaterialShader shader = MaterialShader(mat);	// TODO: save name of shader in file
+
+			entity->AddComponent<MeshComponent>(vao, shader);
 		}
 	}
 }

@@ -1,19 +1,19 @@
 #include "precompiled.h"
-#include "VertexArrayAsset.h"
+#include "VertexArray.h"
 
 /* -- PUBLIC -- */
 
-void VertexArrayAsset::Delete()
+void VertexArray::Delete()
 {
 	glDeleteVertexArrays(1, &m_GLID);
 }
 
-void VertexArrayAsset::Bind()
+void VertexArray::Bind()
 {
 	glBindVertexArray(m_GLID);
 }
 
-void VertexArrayAsset::Unbind()
+void VertexArray::Unbind()
 {
 	glBindVertexArray(0);
 }

@@ -105,6 +105,12 @@
   <ItemGroup>
     <ClCompile Include="include\stb\stb_image.cpp" />
     <ClCompile Include="include\tinygltf\tiny_gltf.cpp" />
+    <ClCompile Include="src\graphics\MaterialShader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="src\importer\Importer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
@@ -141,7 +147,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\graphics assets\ShaderAsset.cpp">
+    <ClCompile Include="src\graphics\old assets\ShaderAsset.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -228,7 +234,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\graphics assets\VertexArrayAsset.cpp">
+    <ClCompile Include="src\graphics\VertexArray.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -242,11 +248,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\graphics\MaterialShader.h" />
     <ClInclude Include="src\importer\Importer.h" />
     <ClInclude Include="src\ECS\ComponentContainer.h" />
     <ClInclude Include="src\ECS\EntityModifier.h" />
     <ClInclude Include="src\importer\GLTFImporter.h" />
-    <ClInclude Include="src\graphics\graphics assets\GraphicsAsset.h" />
     <ClInclude Include="src\graphics\GraphicsAssetManager.h" />
     <ClInclude Include="src\precompiled.h" />
     <ClInclude Include="src\scene\SceneManager.h" />
@@ -266,13 +272,12 @@
     <ClInclude Include="src\core\Input.h" />
     <ClInclude Include="src\animator\Animation.h" />
     <ClInclude Include="src\animator\Joint.h" />
-    <ClInclude Include="src\graphics\graphics assets\ShaderAsset.h" />
     <ClInclude Include="src\graphics\Renderer.h" />
-    <ClInclude Include="src\graphics\graphics assets\VertexArrayAsset.h" />
-    <ClInclude Include="src\graphics\graphics assets\TextureAsset.h" />
+    <ClInclude Include="src\graphics\VertexArray.h" />
     <ClInclude Include="src\core\UUID.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\Default.shader" />
     <None Include="test game\assets\shaders\Base.frag" />
     <None Include="test game\assets\shaders\Base.vert" />
   </ItemGroup>
