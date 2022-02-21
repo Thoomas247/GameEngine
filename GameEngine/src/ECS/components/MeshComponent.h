@@ -2,7 +2,7 @@
 #include "Component.h"
 
 #include "../../graphics/VertexArray.h"
-#include "../../graphics/MaterialShader.h"
+#include "../../graphics/shaders/MaterialShader.h"
 
 class MeshComponent : public Component
 {

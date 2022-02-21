@@ -1,7 +1,5 @@
 #include "precompiled.h"
 #include "MaterialShader.h"
-#include <regex>
-
 
 /* -- PUBLIC -- */
 
@@ -15,28 +13,31 @@ void MaterialShader::Compile()
 
 	std::string shaderString = loadFileContents(m_FilePath);
 	
-	// split into vertex code
-	std::string vertString = splitShader(shaderString, "vertex");
+	// split shaders
+	std::string vertCode = splitShader(shaderString, "vertex");
+	std::string fragCode = splitShader(shaderString, "fragment");
 
-	// split into fragment code
-	std::string fragString = splitShader(shaderString, "fragment");
+	// compile shaders to spirv
+	std::vector<uint32_t> vertexResult = toSpirV(vertCode, shaderc_vertex_shader);
+	std::vector<uint32_t> fragmentResult = toSpirV(fragCode, shaderc_fragment_shader);
+	// TODO: Cache binary on disk
 
-	const char* vertexCode = vertString.c_str();
-	const char* fragmentCode = fragString.c_str();
+	// get uniforms
+	getUniforms(vertexResult);
+	getUniforms(fragmentResult);
 
-	// compile shaders
-	unsigned int vertex, fragment;
-
-	// vertex shader
+	// compile shaders to OpenGL
+	unsigned int vertex;
+	std::vector<char> vBuffer(vertexResult.begin(), vertexResult.end());
 	vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex, 1, &vertexCode, NULL);
-	glCompileShader(vertex);
+	glShaderBinary(1, &vertex, GL_SHADER_BINARY_FORMAT_SPIR_V, vBuffer.data(), vBuffer.size());
 	checkCompileErrors(vertex, "VERTEX");
 
 	// fragment Shader
-	fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment, 1, &fragmentCode, NULL);
-	glCompileShader(fragment);
+	unsigned int fragment;
+	std::vector<char> fBuffer(fragmentResult.begin(), fragmentResult.end());
+	fragment = glCreateShader(GL_VERTEX_SHADER);
+	glShaderBinary(1, &fragment, GL_SHADER_BINARY_FORMAT_SPIR_V, fBuffer.data(), fBuffer.size());
 	checkCompileErrors(fragment, "FRAGMENT");
 
 	// shader Program
@@ -46,28 +47,19 @@ void MaterialShader::Compile()
 	glLinkProgram(glID);
 	checkCompileErrors(glID, "PROGRAM");
 
-	// delete the shaders as they're linked into our program now and no longer necessary
+	// delete the individual shaders
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 
 	m_GLID = glID;
 
-	setUniformLocations();
-}
+	m_ModelMatLocation = glGetUniformLocation(m_GLID, MODEL_MAT_UNIFORM_NAME);
 
-void MaterialShader::SetModelMat4(const glm::mat4& model)
-{
-	glUniformMatrix4fv(m_ModelUniformLocation, 1, GL_FALSE, &model[0][0]);
-}
-
-void MaterialShader::SetViewMat4(const glm::mat4& view)
-{
-	glUniformMatrix4fv(m_ViewUniformLocation, 1, GL_FALSE, &view[0][0]);
-}
-
-void MaterialShader::SetProjectionMat4(const glm::mat4& projection)
-{
-	glUniformMatrix4fv(m_ProjectionUniformLocation, 1, GL_FALSE, &projection[0][0]);
+	if (m_ModelMatLocation == -1)
+	{
+		LOG_ERROR("SHADER::Shader's model matrix uniform cannot be found! It must be named " + std::string(MODEL_MAT_UNIFORM_NAME));
+	}
+	
 }
 
 void MaterialShader::Activate()
@@ -77,6 +69,11 @@ void MaterialShader::Activate()
 		LOG_ERROR("MATERIAL_SHADER::Shader hasn't been compiled!");
 	}
 	glUseProgram(m_GLID);
+
+	for (Uniform& uniform : m_Uniforms)
+	{
+		uniform.Set();
+	}
 }
 
 void MaterialShader::Unload()
@@ -119,6 +116,36 @@ std::string MaterialShader::splitShader(const std::string& shaderString, const s
 		return shaderString.substr(startPos, endPos - startPos).c_str();
 }
 
+std::vector<uint32_t> MaterialShader::toSpirV(const std::string& shaderString, const shaderc_shader_kind& type)
+{
+	shaderc::Compiler compiler = shaderc::Compiler();
+	shaderc::CompileOptions compileOptions;
+	compileOptions.SetTargetEnvironment(shaderc_target_env_opengl, 0);
+	compileOptions.SetAutoBindUniforms(true);
+	compileOptions.SetAutoMapLocations(true);
+	compileOptions.SetOptimizationLevel(shaderc_optimization_level_performance);
+
+	shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(shaderString, type, "Shader");
+	if (result.GetCompilationStatus() != shaderc_compilation_status_success)
+	{
+		LOG_ERROR("SHADER::Shader compilation failed! (" + result.GetErrorMessage() + ")");
+	}
+
+	return std::vector<uint32_t>(result.begin(), result.end());
+}
+
+void MaterialShader::getUniforms(const std::vector<uint32_t>& shaderWords)
+{
+	spirv_cross::Compiler compiler = spirv_cross::Compiler(shaderWords);
+	spirv_cross::ShaderResources resources = compiler.get_shader_resources();
+
+	for (const auto& resource : resources.uniform_buffers)
+	{
+		const auto& bufferType = compiler.get_type(resource.base_type_id);
+	}
+}
+
+
 std::string MaterialShader::loadFileContents(const std::string& absolutePath)
 {
 	std::string fileContents;
@@ -160,11 +187,4 @@ void MaterialShader::checkCompileErrors(const unsigned int& shader, const std::s
 			LOG_ERROR("SHADER::Shader linking failed!" + std::string(" - " + type + ": " + infoLog));
 		}
 	}
-}
-
-void MaterialShader::setUniformLocations()
-{
-	m_ModelUniformLocation = glGetUniformLocation(m_GLID, "model_mat");
-	m_ViewUniformLocation = glGetUniformLocation(m_GLID, "view_mat");
-	m_ProjectionUniformLocation = glGetUniformLocation(m_GLID, "projection_mat");
 }

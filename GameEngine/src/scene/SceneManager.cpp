@@ -122,9 +122,9 @@ void SceneManager::LoadScene(const std::string& absolutePath)
 			std::string normalT = jMat["normalTexture"];
 			std::string occlusionT = jMat["occlusionTexture"];
 
-			Material mat = Material(baseF, esmissiveF, metallicF, roughnessF, baseT, emissiveT, metallicRoughnessT, normalT, occlusionT);
+			//Material mat = Material(baseF, esmissiveF, metallicF, roughnessF, baseT, emissiveT, metallicRoughnessT, normalT, occlusionT);
 
-			MaterialShader shader = MaterialShader(mat);	// TODO: save name of shader in file
+			MaterialShader shader = MaterialShader();	// TODO: save name of shader in file
 
 			entity->AddComponent<MeshComponent>(vao, shader);
 		}
@@ -232,9 +232,9 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const std::shar
 			std::string normalT = jMat["normalTexture"];
 			std::string occlusionT = jMat["occlusionTexture"];
 
-			Material mat = Material(baseF, esmissiveF, metallicF, roughnessF, baseT, emissiveT, metallicRoughnessT, normalT, occlusionT);
+			//Material mat = Material(baseF, esmissiveF, metallicF, roughnessF, baseT, emissiveT, metallicRoughnessT, normalT, occlusionT);
 
-			MaterialShader shader = MaterialShader(mat);	// TODO: save name of shader in file
+			MaterialShader shader = MaterialShader();	// TODO: save name of shader in file
 
 			entity->AddComponent<MeshComponent>(vao, shader);
 		}

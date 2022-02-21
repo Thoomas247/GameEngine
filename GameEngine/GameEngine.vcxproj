@@ -70,8 +70,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -97,15 +97,27 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\spirv-cross\spirv_cfg.cpp" />
+    <ClCompile Include="include\spirv-cross\spirv_cross.cpp" />
+    <ClCompile Include="include\spirv-cross\spirv_cross_parsed_ir.cpp" />
+    <ClCompile Include="include\spirv-cross\spirv_glsl.cpp" />
+    <ClCompile Include="include\spirv-cross\spirv_parser.cpp" />
+    <ClCompile Include="include\spirv-cross\spirv_reflect.cpp" />
     <ClCompile Include="include\stb\stb_image.cpp" />
     <ClCompile Include="include\tinygltf\tiny_gltf.cpp" />
-    <ClCompile Include="src\graphics\MaterialShader.cpp">
+    <ClCompile Include="src\graphics\shaders\MaterialShader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="src\graphics\shaders\uniforms\Uniform.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -248,7 +260,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\graphics\MaterialShader.h" />
+    <ClInclude Include="include\spirv-cross\spirv_cross_util.hpp" />
+    <ClInclude Include="src\graphics\shaders\MaterialShader.h" />
+    <ClInclude Include="src\graphics\shaders\uniforms\Uniform.h" />
     <ClInclude Include="src\importer\Importer.h" />
     <ClInclude Include="src\ECS\ComponentContainer.h" />
     <ClInclude Include="src\ECS\EntityModifier.h" />
@@ -277,7 +291,8 @@
     <ClInclude Include="src\core\UUID.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\Default.shader" />
+    <None Include="assets\shaders\Default.glsl" />
+    <None Include="assets\shaders\PBRShader.glsl" />
     <None Include="test game\assets\shaders\Base.frag" />
     <None Include="test game\assets\shaders\Base.vert" />
   </ItemGroup>

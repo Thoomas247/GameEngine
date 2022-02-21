@@ -111,7 +111,28 @@
     <ClCompile Include="include\tinygltf\tiny_gltf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\MaterialShader.cpp">
+    <ClCompile Include="src\graphics\shaders\MaterialShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\shaders\uniforms\Uniform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_cross.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_cross_parsed_ir.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_reflect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_glsl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_cfg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -194,13 +215,20 @@
     <ClInclude Include="src\importer\Importer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\MaterialShader.h">
+    <ClInclude Include="src\graphics\shaders\MaterialShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\shaders\uniforms\Uniform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\spirv-cross\spirv_cross_util.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="test game\assets\shaders\Base.vert" />
     <None Include="test game\assets\shaders\Base.frag" />
-    <None Include="assets\shaders\Default.shader" />
+    <None Include="assets\shaders\Default.glsl" />
+    <None Include="assets\shaders\PBRShader.glsl" />
   </ItemGroup>
 </Project>

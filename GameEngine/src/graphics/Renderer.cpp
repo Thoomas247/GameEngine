@@ -41,9 +41,9 @@ void Renderer::Draw()
 		MaterialShader& shader = meshComponent.GetMaterialShader();
 		shader.Activate();
 
-		shader.SetModelMat4(meshComponent.GetEntity()->GetComponent<TransformComponent>().GetGlobalTransform());	// model
-		shader.SetViewMat4(s_ViewMatrix);					// view
-		shader.SetProjectionMat4(s_ProjectionMatrix);		// projection
+		//shader.SetModelMat4(meshComponent.GetEntity()->GetComponent<TransformComponent>().GetGlobalTransform());	// model
+		//shader.SetViewMat4(s_ViewMatrix);					// view
+		//shader.SetProjectionMat4(s_ProjectionMatrix);		// projection
 
 		// vertex array
 		VertexArray& vertexArray = meshComponent.GetVertexArray();

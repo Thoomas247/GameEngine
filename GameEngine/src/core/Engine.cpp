@@ -31,7 +31,7 @@ int Engine::Run()
 	//		[x] Textures
 	//		[x] Shaders
 	//		[x] VAOs
-	//		[] Finish ShaderMaterial to replace shader and material
+	//		[x] Finish ShaderMaterial to replace shader and material
 	// [x] make shaders only require 1 file
 	// [] find shader uniform locations on load
 	// [] create animator

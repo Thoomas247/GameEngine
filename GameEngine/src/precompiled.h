@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <string>
+#include <regex>
 
 #include <memory>
 
@@ -29,6 +30,9 @@
 #include "json/json.hpp"
 using json = nlohmann::json;
 
+#include "shaderc/shaderc.hpp"
+#include "spirv-cross/spirv_cross.hpp"
+
 /* game engine common includes */
 #include "core/UUID.h"
 #include "core/Log.h"
@@ -40,6 +44,7 @@ using json = nlohmann::json;
 
 #include "graphics/GraphicsAssetManager.h"
 #include "graphics/Renderer.h"
+#include "graphics/shaders/uniforms/Uniform.h"
 
 #include "scene/SceneManager.h"
 
