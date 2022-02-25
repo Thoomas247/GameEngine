@@ -1,29 +1,46 @@
 #pragma once
 
+struct CachedShader
+{
+	ShaderType Type;
+	std::string Path;
+
+	CachedShader(const ShaderType& type, const std::string& path)
+	{
+		Type = type;
+		Path = path;
+	}
+};
+
 class MaterialShader
 {
 private:
 	static const unsigned int NOT_COMPILED = (unsigned int)(-1);
-	static constexpr auto DEFAULT_PATH = "assets/shaders/Default.glsl";
+	static constexpr auto DEFAULT_PATH = "assets/shaders/PBRShader.glsl";
 	static constexpr auto MODEL_MAT_UNIFORM_NAME = "model_mat";
 
 	unsigned int m_GLID = NOT_COMPILED;
 
-	std::string m_FilePath;
-	int m_ModelMatLocation;
+	std::string m_GlslPath;
 	std::vector<Uniform> m_Uniforms;
 
 public:
-	MaterialShader(const std::string& path = DEFAULT_PATH)
+	MaterialShader(const std::string& glslPath = DEFAULT_PATH, const std::vector<Uniform>& savedUniforms = std::vector<Uniform>())
 	{
-		m_FilePath = path;
-		Compile();
+		m_GlslPath = glslPath;
+		Load(Compile(), savedUniforms);
 	}
 
 	/// <summary>
-	/// Compile the shader with the material constants set.
+	/// Compile the shader to spirv.
 	/// </summary>
-	void Compile();
+	/// <returns>A vector of filepaths where the cached spirv code can be found</returns>
+	std::vector<CachedShader> Compile();
+	/// <summary>
+	/// Loads spirv into opengl and sets the uniforms to the passed values.
+	/// </summary>
+	/// <param name="savedUniforms">Previously saved uniform values</param>
+	void Load(const std::vector<CachedShader>& spirvFiles, const std::vector<Uniform>& savedUniforms = std::vector<Uniform>());
 	/// <summary>
 	/// Activate this shader for rendering.
 	/// </summary>
@@ -36,7 +53,9 @@ public:
 private:
 	std::string splitShader(const std::string& shaderString, const std::string& shaderType);
 	std::vector<uint32_t> toSpirV(const std::string& shaderString, const shaderc_shader_kind& type);
-	void getUniforms(const std::vector<uint32_t>& shaderWords);
-	std::string loadFileContents(const std::string& absolutePath);
-	void checkCompileErrors(const unsigned int& shader, const std::string& type);
+	std::vector<uint32_t> loadSpirvFileContents(const std::string& absolutePath);
+	void addUniformsToVector(const std::vector<uint32_t>& shaderWords);
+	std::string loadGlslFileContents(const std::string& absolutePath);
+	unsigned int openglCompileShaderFromSpirV(const std::vector<uint32_t>& spirvSource, const int& shaderType);
+	void openglCheckCompileErrors(const unsigned int& shader, const std::string& type);
 };

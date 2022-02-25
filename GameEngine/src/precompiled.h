@@ -39,12 +39,14 @@ using json = nlohmann::json;
 #include "core/Input.h"
 #include "core/Window.h"
 #include "core/MatrixUtil.h"
+#include "core/Util.h"
 
 #include "importer/Importer.h"
 
 #include "graphics/GraphicsAssetManager.h"
 #include "graphics/Renderer.h"
-#include "graphics/shaders/uniforms/Uniform.h"
+#include "graphics/shaders/Uniform.h"
+#include "graphics/shaders/ShaderUtil.h"
 
 #include "scene/SceneManager.h"
 

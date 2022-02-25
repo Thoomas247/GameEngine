@@ -1,5 +1,5 @@
 #start vertex
-#version 460 core
+#version 450 core
 
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aNormal;
@@ -10,6 +10,11 @@ layout(std140, binding = 0) uniform Camera
 {
     mat4 view_mat;
     mat4 projection_mat;
+};
+
+layout(std140, binding = 0) uniform Model
+{
+    mat4 model_mat;
 };
 
 struct VertexOutput

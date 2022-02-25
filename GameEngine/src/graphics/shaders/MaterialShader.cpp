@@ -3,63 +3,95 @@
 
 /* -- PUBLIC -- */
 
-void MaterialShader::Compile()
+std::vector<CachedShader> MaterialShader::Compile()
 {
-	// delete previous shader, if any
-	if (m_GLID != 0)
+	// notes:
+	// [x] shader gets compiled from glsl to spirv
+	// [x] spirv is cached
+	// [] reflect on shader using spirv-cross to get uniforms
+	// [] on next load, check if glsl file has changed (eg using hash), if changed, re-compile into spirv
+	// [] on shader saved, save glsl path and uniform values
+	// [] on shader load, compile shader and set saved uniforms
+
+	std::string shaderString = loadGlslFileContents(m_GlslPath);
+
+	std::vector<CachedShader> spirvFiles;
+
+	// TODO: check here if shaders are cached
+	bool cached = false;
+	if (cached)
+	{
+	}
+	else
+	{
+		// split shaders and compile to spirv
+		std::string shaderName = Util::GetFileName(m_GlslPath);
+
+		for (int i = 0; i < (int)ShaderType::NUM_TYPES; i++)
+		{
+			ShaderType type = (ShaderType)i;
+
+			std::string shaderCode = splitShader(shaderString, ShaderUtil::GetTypeString(type));
+			if (!shaderCode.empty())
+			{
+				std::vector<uint32_t> shaderSpirv = toSpirV(shaderCode, ShaderUtil::GetShadercType(type));
+
+				// create the directory if it does not exist
+				std::string spirvPath = ProjectManager::GetCachePath() + "shaders/";
+				std::filesystem::create_directories(spirvPath);
+
+				spirvPath += shaderName + ShaderUtil::GetTypeExtension(type);
+
+				// save to file
+				std::ofstream out(spirvPath, std::ios::out | std::ios::binary);
+				out.write((char*)shaderSpirv.data(), shaderSpirv.size() * sizeof(uint32_t));
+				out.flush();
+				out.close();
+
+				spirvFiles.push_back(CachedShader(type, spirvPath));
+			}
+		}
+	}
+
+	return spirvFiles;
+}
+
+void MaterialShader::Load(const std::vector<CachedShader>& spirvFiles, const std::vector<Uniform>& savedUniforms)
+{
+	// unload previous shader from opengl, if any
+	if (m_GLID != NOT_COMPILED)
 	{
 		Unload();
 	}
 
-	std::string shaderString = loadFileContents(m_FilePath);
-	
-	// split shaders
-	std::string vertCode = splitShader(shaderString, "vertex");
-	std::string fragCode = splitShader(shaderString, "fragment");
+	m_GLID = glCreateProgram();
 
-	// compile shaders to spirv
-	std::vector<uint32_t> vertexResult = toSpirV(vertCode, shaderc_vertex_shader);
-	std::vector<uint32_t> fragmentResult = toSpirV(fragCode, shaderc_fragment_shader);
-	// TODO: Cache binary on disk
+	std::map<ShaderType, unsigned int> openglShaderIDs;
 
-	// get uniforms
-	getUniforms(vertexResult);
-	getUniforms(fragmentResult);
-
-	// compile shaders to OpenGL
-	unsigned int vertex;
-	std::vector<char> vBuffer(vertexResult.begin(), vertexResult.end());
-	vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderBinary(1, &vertex, GL_SHADER_BINARY_FORMAT_SPIR_V, vBuffer.data(), vBuffer.size());
-	checkCompileErrors(vertex, "VERTEX");
-
-	// fragment Shader
-	unsigned int fragment;
-	std::vector<char> fBuffer(fragmentResult.begin(), fragmentResult.end());
-	fragment = glCreateShader(GL_VERTEX_SHADER);
-	glShaderBinary(1, &fragment, GL_SHADER_BINARY_FORMAT_SPIR_V, fBuffer.data(), fBuffer.size());
-	checkCompileErrors(fragment, "FRAGMENT");
-
-	// shader Program
-	unsigned int glID = glCreateProgram();
-	glAttachShader(glID, vertex);
-	glAttachShader(glID, fragment);
-	glLinkProgram(glID);
-	checkCompileErrors(glID, "PROGRAM");
-
-	// delete the individual shaders
-	glDeleteShader(vertex);
-	glDeleteShader(fragment);
-
-	m_GLID = glID;
-
-	m_ModelMatLocation = glGetUniformLocation(m_GLID, MODEL_MAT_UNIFORM_NAME);
-
-	if (m_ModelMatLocation == -1)
+	// compile shaders to OpenGL and check for errors
+	for (const CachedShader& cachedShader : spirvFiles)
 	{
-		LOG_ERROR("SHADER::Shader's model matrix uniform cannot be found! It must be named " + std::string(MODEL_MAT_UNIFORM_NAME));
+		std::vector<uint32_t> spirv = loadSpirvFileContents(cachedShader.Path);
+
+		unsigned int id = openglCompileShaderFromSpirV(spirv, ShaderUtil::GetOpenglType(cachedShader.Type));
+		openglCheckCompileErrors(id, ShaderUtil::GetTypeString(cachedShader.Type));
+
+		openglShaderIDs[cachedShader.Type] = id;
+
+		// get available uniforms directly from the spirv code
+		addUniformsToVector(spirv);
 	}
-	
+
+	// link shaders and delete
+	for (const auto& [type, id] : openglShaderIDs)
+	{
+		glAttachShader(m_GLID, id);
+		glDeleteShader(id);
+	}
+	glLinkProgram(m_GLID);
+	openglCheckCompileErrors(m_GLID, "PROGRAM");
+
+	// TODO: set uniforms retrieved by addUniformsToVector(spirv) to values in savedUniforms
 }
 
 void MaterialShader::Activate()
@@ -101,7 +133,7 @@ std::string MaterialShader::splitShader(const std::string& shaderString, const s
 
 		if (match.size() == 0)
 		{
-			LOG_ERROR("SHADER::Shader start tag (" + startTag + ") not found!");
+			return std::string();
 		}
 
 		std::regex endRegex = std::regex("(" + endTag + ")");
@@ -131,22 +163,38 @@ std::vector<uint32_t> MaterialShader::toSpirV(const std::string& shaderString, c
 		LOG_ERROR("SHADER::Shader compilation failed! (" + result.GetErrorMessage() + ")");
 	}
 
-	return std::vector<uint32_t>(result.begin(), result.end());
+	return std::vector<uint32_t>(result.cbegin(), result.cend());
 }
 
-void MaterialShader::getUniforms(const std::vector<uint32_t>& shaderWords)
+std::vector<uint32_t> MaterialShader::loadSpirvFileContents(const std::string& absolutePath)
+{
+	std::ifstream fileStream;
+	std::vector<uint32_t> data;
+
+	fileStream.open(absolutePath);
+
+	size_t fileSize = std::filesystem::file_size(absolutePath);
+	data.resize(fileSize / sizeof(uint32_t));
+
+	fileStream.read((char*)data.data(), fileSize);
+	fileStream.close();
+
+	return data;
+}
+
+void MaterialShader::addUniformsToVector(const std::vector<uint32_t>& shaderWords)
 {
 	spirv_cross::Compiler compiler = spirv_cross::Compiler(shaderWords);
 	spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
 	for (const auto& resource : resources.uniform_buffers)
 	{
+		std::string name = resource.name;
 		const auto& bufferType = compiler.get_type(resource.base_type_id);
 	}
 }
 
-
-std::string MaterialShader::loadFileContents(const std::string& absolutePath)
+std::string MaterialShader::loadGlslFileContents(const std::string& absolutePath)
 {
 	std::string fileContents;
 	std::ifstream fileStream;
@@ -169,22 +217,30 @@ std::string MaterialShader::loadFileContents(const std::string& absolutePath)
 	return fileContents;
 }
 
-void MaterialShader::checkCompileErrors(const unsigned int& shader, const std::string& type)
+unsigned int MaterialShader::openglCompileShaderFromSpirV(const std::vector<uint32_t>& spirvSource, const int& shaderType)
 {
-	int success;
-	char infoLog[1024];
+	unsigned int shaderID = glCreateShader(shaderType);
+	glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, spirvSource.data(), spirvSource.size() * sizeof(uint32_t));
+	glSpecializeShader(shaderID, "main", 0, nullptr, nullptr);
+	return shaderID;
+}
+
+void MaterialShader::openglCheckCompileErrors(const unsigned int& shader, const std::string& type)
+{
+	int success = 0;
+	GLchar infoLog[1024];
 	if (type != "PROGRAM") {
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 		if (!success) {
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			LOG_ERROR("SHADER::Shader compilation failed!" + std::string(" - " + type + ": " + infoLog));
+			LOG_ERROR("SHADER::Compilation failed!" + std::string(" - " + type + ": " + infoLog));
 		}
 	}
 	else {
 		glGetProgramiv(shader, GL_LINK_STATUS, &success);
 		if (!success) {
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			LOG_ERROR("SHADER::Shader linking failed!" + std::string(" - " + type + ": " + infoLog));
+			LOG_ERROR("SHADER::Linking failed!" + std::string(" - " + type + ": " + infoLog));
 		}
 	}
 }

@@ -1,6 +1,7 @@
 #include "precompiled.h"
 #include "Project.h"
 
+
 /* -- PUBLIC -- */
 
 Project::Project(const std::string& name, const std::string& projectDir)

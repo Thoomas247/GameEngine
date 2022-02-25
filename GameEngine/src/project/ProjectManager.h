@@ -17,4 +17,5 @@ public:
 	static std::string GetScenesPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultScenesPath(); }
 	static std::string GetTexturesPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultTexturesPath(); }
 	static std::string GetShadersPath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultShadersPath(); }
+	static std::string GetCachePath() { return s_CurrentProject->GetProjectDir() + s_CurrentProject->GetDefaultCachePath(); }
 };
