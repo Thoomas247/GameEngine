@@ -9,24 +9,47 @@ std::vector<CachedShader> MaterialShader::Compile()
 	// [x] shader gets compiled from glsl to spirv
 	// [x] spirv is cached
 	// [] reflect on shader using spirv-cross to get uniforms
-	// [] on next load, check if glsl file has changed (eg using hash), if changed, re-compile into spirv
+	// [x] on next load, check if glsl file has changed (eg using hash), if changed, re-compile into spirv
 	// [] on shader saved, save glsl path and uniform values
 	// [] on shader load, compile shader and set saved uniforms
 
+	// load the glsl file
 	std::string shaderString = loadGlslFileContents(m_GlslPath);
+
+	// create the directory if it does not exist
+	std::string shaderPath = ProjectManager::GetCachePath() + "shaders/";
+	std::filesystem::create_directories(shaderPath);
+
+	// simple hashing to detect changes
+	std::hash<std::string> stringHash;
+	size_t hash = stringHash(shaderString);
 
 	std::vector<CachedShader> spirvFiles;
 
-	// TODO: check here if shaders are cached
-	bool cached = false;
-	if (cached)
+	// check if shader has been cached
+	std::string cacheFilePath = shaderPath + std::to_string(hash) + ".cache";
+	if (std::filesystem::exists(cacheFilePath))
 	{
+		std::ifstream in(cacheFilePath, std::ios::in | std::ios::binary);
+		json j;
+		in >> j;
+		in.close();
+		for (int type = 0; type < (int)ShaderType::NUM_TYPES; type++)
+		{
+			std::string typeString = ShaderUtil::GetTypeString((ShaderType)type);
+
+			if (!j[typeString].is_null())
+			{
+				spirvFiles.push_back(CachedShader((ShaderType)type, j[typeString]));
+			}
+		}
 	}
 	else
 	{
-		// split shaders and compile to spirv
-		std::string shaderName = Util::GetFileName(m_GlslPath);
+		shaderPath += Util::GetFileName(m_GlslPath);
+		json j;
 
+		// split shaders and compile to spirv
 		for (int i = 0; i < (int)ShaderType::NUM_TYPES; i++)
 		{
 			ShaderType type = (ShaderType)i;
@@ -36,21 +59,21 @@ std::vector<CachedShader> MaterialShader::Compile()
 			{
 				std::vector<uint32_t> shaderSpirv = toSpirV(shaderCode, ShaderUtil::GetShadercType(type));
 
-				// create the directory if it does not exist
-				std::string spirvPath = ProjectManager::GetCachePath() + "shaders/";
-				std::filesystem::create_directories(spirvPath);
-
-				spirvPath += shaderName + ShaderUtil::GetTypeExtension(type);
-
 				// save to file
-				std::ofstream out(spirvPath, std::ios::out | std::ios::binary);
-				out.write((char*)shaderSpirv.data(), shaderSpirv.size() * sizeof(uint32_t));
-				out.flush();
-				out.close();
+				std::string spirvPath = shaderPath + ShaderUtil::GetTypeExtension(type);
+
+				std::ofstream spirvOut(spirvPath, std::ios::out | std::ios::binary);
+				spirvOut.write((char*)shaderSpirv.data(), shaderSpirv.size() * sizeof(uint32_t));
+				spirvOut.flush();
+				spirvOut.close();
 
 				spirvFiles.push_back(CachedShader(type, spirvPath));
+				j[ShaderUtil::GetTypeString(type)] = spirvPath;
 			}
 		}
+		std::ofstream cacheFileOut(cacheFilePath, std::ios::out | std::ios::binary);
+		cacheFileOut << j;
+		cacheFileOut.close();
 	}
 
 	return spirvFiles;
@@ -168,10 +191,8 @@ std::vector<uint32_t> MaterialShader::toSpirV(const std::string& shaderString, c
 
 std::vector<uint32_t> MaterialShader::loadSpirvFileContents(const std::string& absolutePath)
 {
-	std::ifstream fileStream;
 	std::vector<uint32_t> data;
-
-	fileStream.open(absolutePath);
+	std::ifstream fileStream(absolutePath, std::ios::in | std::ios::binary);
 
 	size_t fileSize = std::filesystem::file_size(absolutePath);
 	data.resize(fileSize / sizeof(uint32_t));
