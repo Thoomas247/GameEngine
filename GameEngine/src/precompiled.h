@@ -31,7 +31,7 @@
 using json = nlohmann::json;
 
 #include "shaderc/shaderc.hpp"
-#include "spirv-cross/spirv_cross.hpp"
+#include "spirv-cross/spirv_reflect.hpp"
 
 /* game engine common includes */
 #include "core/UUID.h"
@@ -45,8 +45,8 @@ using json = nlohmann::json;
 
 #include "graphics/GraphicsAssetManager.h"
 #include "graphics/Renderer.h"
-#include "graphics/shaders/Uniform.h"
 #include "graphics/shaders/ShaderUtil.h"
+#include "graphics/shaders/UniformBuffer.h"
 
 #include "scene/SceneManager.h"
 

@@ -90,56 +90,6 @@ unsigned int GraphicsAssetManager::LoadTexture(const std::string& absolutePath)
 
 	return glID;
 }
-/*
-ShaderAsset GraphicsAssetManager::LoadShader(const std::string& vertexPath, const std::string& fragmentPath)
-{
-	std::string vertexString = shaderLoadFileContents(vertexPath).c_str();
-	std::string fragmentString = shaderLoadFileContents(fragmentPath).c_str();
-
-	const char* vertexCode = vertexString.c_str();
-	const char* fragmentCode = fragmentString.c_str();
-
-	// compile shaders
-	unsigned int vertex, fragment;
-
-	// vertex shader
-	vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex, 1, &vertexCode, NULL);
-	glCompileShader(vertex);
-	shaderCheckCompileErrors(vertex, "VERTEX");
-
-	// fragment Shader
-	fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment, 1, &fragmentCode, NULL);
-	glCompileShader(fragment);
-	shaderCheckCompileErrors(fragment, "FRAGMENT");
-
-	// shader Program
-	unsigned int glID = glCreateProgram();
-	glAttachShader(glID, vertex);
-	glAttachShader(glID, fragment);
-	glLinkProgram(glID);
-	shaderCheckCompileErrors(glID, "PROGRAM");
-
-	// delete the shaders as they're linked into our program now and no longer necessary
-	glDeleteShader(vertex);
-	glDeleteShader(fragment);
-
-	auto pos = vertexPath.find_last_of("/") + 1;
-
-	std::string name;
-	if (pos != vertexPath.npos)
-	{
-		name = vertexPath.substr(pos);
-	}
-	else
-	{
-		name = vertexPath;
-	}
-
-	return ShaderAsset(name, vertexPath, glID);
-}
-*/
 
 VertexArray GraphicsAssetManager::LoadVertexArray(const std::vector<Vertex> vertices, const std::vector<unsigned int>& indices)
 {

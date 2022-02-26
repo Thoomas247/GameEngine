@@ -79,7 +79,7 @@ std::vector<CachedShader> MaterialShader::Compile()
 	return spirvFiles;
 }
 
-void MaterialShader::Load(const std::vector<CachedShader>& spirvFiles, const std::vector<Uniform>& savedUniforms)
+void MaterialShader::Load(const std::vector<CachedShader>& spirvFiles, const std::vector<UniformBuffer>& savedBuffers)
 {
 	// unload previous shader from opengl, if any
 	if (m_GLID != NOT_COMPILED)
@@ -102,7 +102,7 @@ void MaterialShader::Load(const std::vector<CachedShader>& spirvFiles, const std
 		openglShaderIDs[cachedShader.Type] = id;
 
 		// get available uniforms directly from the spirv code
-		addUniformsToVector(spirv);
+		prepareBuffers(spirv);
 	}
 
 	// link shaders and delete
@@ -114,7 +114,7 @@ void MaterialShader::Load(const std::vector<CachedShader>& spirvFiles, const std
 	glLinkProgram(m_GLID);
 	openglCheckCompileErrors(m_GLID, "PROGRAM");
 
-	// TODO: set uniforms retrieved by addUniformsToVector(spirv) to values in savedUniforms
+	// TODO: set uniforms retrieved by addUniformsToVector(spirv) to values in savedBuffers
 }
 
 void MaterialShader::Activate()
@@ -125,9 +125,9 @@ void MaterialShader::Activate()
 	}
 	glUseProgram(m_GLID);
 
-	for (Uniform& uniform : m_Uniforms)
+	for (UniformBuffer& buffer : m_UniformBuffers)
 	{
-		uniform.Set();
+		buffer.Bind();
 	}
 }
 
@@ -150,6 +150,7 @@ std::string MaterialShader::splitShader(const std::string& shaderString, const s
 
 		std::smatch match;
 
+		// shader start
 		std::regex startRegex = std::regex("(" + startTag + ")");
 		std::regex_search(shaderString, match, startRegex);
 		size_t startPos = match.position(0) + startTag.size() + 1;
@@ -159,6 +160,7 @@ std::string MaterialShader::splitShader(const std::string& shaderString, const s
 			return std::string();
 		}
 
+		// shader end
 		std::regex endRegex = std::regex("(" + endTag + ")");
 		std::regex_search(shaderString, match, endRegex);
 		size_t endPos = match.position(0) - 1;
@@ -203,15 +205,26 @@ std::vector<uint32_t> MaterialShader::loadSpirvFileContents(const std::string& a
 	return data;
 }
 
-void MaterialShader::addUniformsToVector(const std::vector<uint32_t>& shaderWords)
+void MaterialShader::prepareBuffers(const std::vector<uint32_t>& shaderWords)
 {
 	spirv_cross::Compiler compiler = spirv_cross::Compiler(shaderWords);
 	spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
 	for (const auto& resource : resources.uniform_buffers)
 	{
-		std::string name = resource.name;
+		// get buffer name and type
+		std::string bufferName = resource.name;
 		const auto& bufferType = compiler.get_type(resource.base_type_id);
+
+		std::vector<Uniform> uniformData;
+
+		// loop through uniforms
+		const auto& uniforms = bufferType.member_types;
+		for (int i = 0; i < uniforms.size(); i++)
+		{
+			std::string uniformName = compiler.get_member_name(resource.base_type_id, i);
+			const auto& uniformType = compiler.get_type(bufferType.member_types[i]);
+		}
 	}
 }
 

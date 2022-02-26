@@ -19,7 +19,6 @@ public:
 	static void Init();
 
 	static unsigned int LoadTexture(const std::string& absolutePath = "Default");
-	//static ShaderAsset LoadShader(const std::string& vertexPath = DEFAULT_VERTEX_SHADER_PATH, const std::string& fragmentPath = DEFAULT_FRAGMENT_SHADER_PATH);
 	static VertexArray LoadVertexArray(const std::vector<Vertex> vertices = c_SquareVertices, const std::vector<unsigned int>& indices = c_SquareIndices);
 
 private:

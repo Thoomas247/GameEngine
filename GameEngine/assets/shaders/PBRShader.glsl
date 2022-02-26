@@ -12,12 +12,18 @@ layout(std140, binding = 0) uniform Camera
     mat4 projection_mat;
 };
 
-layout(std140, binding = 0) uniform Model
+layout(std140, binding = 1) uniform Lights
+{
+    mat4 light;
+    mat4 example;
+};
+
+layout(std140, binding = 2) uniform Model
 {
     mat4 model_mat;
 };
 
-struct VertexOutput
+layout(location = 0) out VertexOutput
 {
     vec3 FragPos;
     vec3 Normal;
@@ -25,25 +31,24 @@ struct VertexOutput
     vec4 Color;
 };
 
-layout(location = 0) out VertexOutput Output;
-
 void main()
 {
-    Output.FragPos = vec3(model_mat * vec4(aPos, 1.0));
-    Output.Normal = mat3(transpose(inverse(model_mat))) * aNormal;
-    Output.TexCoord = aTexCoord;
-    Output.Color = aColor;
+    FragPos = vec3(model_mat * vec4(aPos, 1.0));
+    Normal = mat3(transpose(inverse(model_mat))) * aNormal;
+    TexCoord = aTexCoord;
+    Color = aColor;
 
-    gl_Position = projection_mat * view_mat * vec4(Output.FragPos, 1.0);
+    gl_Position = projection_mat * view_mat * vec4(FragPos, 1.0);
 }
 
 #end vertex
 
 
 #start fragment
-#version 460 core
+#version 450 core
+#extension GL_ARB_bindless_texture : require
 
-struct VertexOutput
+layout(location = 0) in VertexOutput
 {
     vec3 FragPos;
     vec3 Normal;
@@ -51,19 +56,17 @@ struct VertexOutput
     vec4 Color;
 };
 
-layout(location = 0) in VertexOutput Input;
-
-layout(binding = 0) uniform sampler2D albedo_t;
-layout(binding = 1) uniform sampler2D emissive_t;
-layout(binding = 2) uniform sampler2D metallic_roughness_t;
-layout(binding = 3) uniform sampler2D normal_t;
-layout(binding = 4) uniform sampler2D occlusion_t;
+layout(std140, binding = 2) uniform RenderingInfo {
+    sampler2D  texAlbedo;
+    sampler2D  texNormal;
+    float      bumpIntensity;
+};
 
 layout(location = 0) out vec4 OutColor;
 
 void main()
 {
-    vec4 fragColor = texture(albedo_t, Input.TexCoord);
+    vec4 fragColor = texture(texAlbedo, Input.TexCoord);
 
     if (fragColor.a < 0.5)
         discard;

@@ -114,31 +114,37 @@
     <ClCompile Include="src\graphics\shaders\MaterialShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\shaders\Uniform.cpp">
+    <ClCompile Include="src\graphics\shaders\ShaderUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\spirv-cross\spirv_cross.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\spirv-cross\spirv_cross_parsed_ir.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\spirv-cross\spirv_parser.cpp">
+    <ClCompile Include="src\core\Util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\spirv-cross\spirv_reflect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\spirv-cross\spirv_glsl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="include\spirv-cross\spirv_cfg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\shaders\ShaderUtil.cpp">
+    <ClCompile Include="include\spirv-cross\spirv_cross.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Util.cpp">
+    <ClCompile Include="include\spirv-cross\spirv_cpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_cross_parsed_ir.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_cross_util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_glsl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\spirv-cross\spirv_parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\shaders\UniformBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,9 +230,6 @@
     <ClInclude Include="src\graphics\shaders\MaterialShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\shaders\Uniform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\spirv-cross\spirv_cross_util.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -234,6 +237,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\shaders\UniformBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

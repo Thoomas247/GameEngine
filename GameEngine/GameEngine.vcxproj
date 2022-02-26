@@ -106,8 +106,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\spirv-cross\spirv_cfg.cpp" />
+    <ClCompile Include="include\spirv-cross\spirv_cpp.cpp" />
     <ClCompile Include="include\spirv-cross\spirv_cross.cpp" />
     <ClCompile Include="include\spirv-cross\spirv_cross_parsed_ir.cpp" />
+    <ClCompile Include="include\spirv-cross\spirv_cross_util.cpp" />
     <ClCompile Include="include\spirv-cross\spirv_glsl.cpp" />
     <ClCompile Include="include\spirv-cross\spirv_parser.cpp" />
     <ClCompile Include="include\spirv-cross\spirv_reflect.cpp" />
@@ -120,12 +122,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\graphics\shaders\MaterialShader.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\graphics\shaders\Uniform.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -272,12 +268,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\graphics\shaders\UniformBuffer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\spirv-cross\spirv_cross_util.hpp" />
     <ClInclude Include="src\graphics\shaders\ShaderUtil.h" />
     <ClInclude Include="src\graphics\shaders\MaterialShader.h" />
-    <ClInclude Include="src\graphics\shaders\Uniform.h" />
     <ClInclude Include="src\importer\Importer.h" />
     <ClInclude Include="src\ECS\ComponentContainer.h" />
     <ClInclude Include="src\ECS\EntityModifier.h" />
@@ -305,6 +306,7 @@
     <ClInclude Include="src\graphics\VertexArray.h" />
     <ClInclude Include="src\core\UUID.h" />
     <ClInclude Include="src\core\Util.h" />
+    <ClInclude Include="src\graphics\shaders\UniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\Default.glsl" />
