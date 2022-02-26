@@ -4,11 +4,15 @@
 #include "../ECS/components/TransformComponent.h"
 #include "../ECS/components/MeshComponent.h"
 
+
+/*
 Scene* SceneManager::s_CurrentScene = nullptr;
 std::unordered_map<uint64_t, Scene> SceneManager::s_Scenes;
+*/
 
 /* -- PUBLIC -- */
 
+/*
 void SceneManager::Update(const float& deltaTime)
 {
 	s_CurrentScene->Update(deltaTime);
@@ -240,3 +244,5 @@ void SceneManager::LoadSubScene(const std::string& absolutePath, const std::shar
 		}
 	}
 }
+
+*/

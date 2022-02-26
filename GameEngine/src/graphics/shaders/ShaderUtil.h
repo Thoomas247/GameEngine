@@ -1,5 +1,7 @@
 #pragma once
 
+/*
+
 enum class ShaderType
 {
 	vertex, fragment,
@@ -12,8 +14,10 @@ class ShaderUtil
 {
 public:
 	static int GetOpenglType(const ShaderType& type);
-	static shaderc_shader_kind GetShadercType(const ShaderType& type);
+	//static shaderc_shader_kind GetShadercType(const ShaderType& type);
 	static std::string GetTypeString(const ShaderType& type);
 	static std::string GetTypeExtension(const ShaderType& type);
 };
+
+*/
 

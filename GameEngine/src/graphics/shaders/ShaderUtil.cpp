@@ -3,6 +3,8 @@
 
 /* -- PUBLIC -- */
 
+/*
+
 int ShaderUtil::GetOpenglType(const ShaderType& type)
 {
 	switch (type)
@@ -62,3 +64,5 @@ std::string ShaderUtil::GetTypeExtension(const ShaderType& type)
 		LOG_ERROR("SHADER_UTIL::Shader type is invalid!");
 	}
 }
+
+*/

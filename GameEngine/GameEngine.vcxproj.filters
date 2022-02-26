@@ -81,9 +81,6 @@
     <ClCompile Include="src\graphics\GraphicsAssetManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\old assets\ShaderAsset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\importer\GLTFImporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

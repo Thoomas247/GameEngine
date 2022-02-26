@@ -1,5 +1,7 @@
 #pragma once
 
+/*
+
 struct CachedShader
 {
 	ShaderType Type;
@@ -53,7 +55,7 @@ public:
 private:
 	std::string splitShader(const std::string& shaderString, const std::string& shaderType);
 
-	std::vector<uint32_t> toSpirV(const std::string& shaderString, const shaderc_shader_kind& type);
+	//std::vector<uint32_t> toSpirV(const std::string& shaderString, const shaderc_shader_kind& type);
 	std::vector<uint32_t> loadSpirvFileContents(const std::string& absolutePath);
 
 	void prepareBuffers(const std::vector<uint32_t>& shaderWords);
@@ -63,3 +65,5 @@ private:
 	unsigned int openglCompileShaderFromSpirV(const std::vector<uint32_t>& spirvSource, const int& shaderType);
 	void openglCheckCompileErrors(const unsigned int& shader, const std::string& type);
 };
+
+*/

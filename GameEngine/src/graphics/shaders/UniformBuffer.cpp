@@ -4,6 +4,7 @@
 
 /* -- PUBLIC -- */
 
+/*
 UniformBuffer::UniformBuffer(const std::string& name, const int& binding, const std::vector<Uniform>& uniforms)
 {
 	m_Name = name;
@@ -48,9 +49,12 @@ void UniformBuffer::Bind()
 	glBindBufferBase(GL_UNIFORM_BUFFER, m_Binding, m_GLID);
 }
 
+*/
+
 
 /* -- PRIVATE -- */
 
+/*
 void UniformBuffer::openglUpdateData()
 {
 	for (Uniform& uniform : m_Uniforms)
@@ -58,3 +62,4 @@ void UniformBuffer::openglUpdateData()
 		glNamedBufferSubData(m_GLID, uniform.Offset, uniform.Size, &uniform.Data[0]);
 	}
 }
+*/

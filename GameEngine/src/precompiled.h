@@ -21,8 +21,6 @@
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/matrix_decompose.hpp"
 
-#include "glad/gl.h"
-
 #include "stb/stb_image.h"
 
 #include "tinygltf/tiny_gltf.h"
@@ -30,8 +28,8 @@
 #include "json/json.hpp"
 using json = nlohmann::json;
 
-#include "shaderc/shaderc.hpp"
-#include "spirv-cross/spirv_reflect.hpp"
+//#include "shaderc/shaderc.hpp"
+//#include "spirv-cross/spirv_reflect.hpp"
 
 /* game engine common includes */
 #include "core/UUID.h"
@@ -43,10 +41,7 @@ using json = nlohmann::json;
 
 #include "importer/Importer.h"
 
-#include "graphics/GraphicsAssetManager.h"
 #include "graphics/Renderer.h"
-#include "graphics/shaders/ShaderUtil.h"
-#include "graphics/shaders/UniformBuffer.h"
 
 #include "scene/SceneManager.h"
 

@@ -1,5 +1,7 @@
 #pragma once
 
+/*
+
 struct Uniform
 {
 	std::string Name;
@@ -46,4 +48,6 @@ public:
 private:
 	void openglUpdateData();
 };
+
+*/
 

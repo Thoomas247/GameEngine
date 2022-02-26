@@ -9,11 +9,11 @@
 int Engine::Run()
 {
 	Window::InitWindow(3200, 1800);
-	GraphicsAssetManager::Init();
+	//GraphicsAssetManager::Init();
 	Renderer::Init();
 
 	ProjectManager::CreateProject("TestGame", "TestGame/");
-	SceneManager::CreateScene();
+	//SceneManager::CreateScene();
 
 	// TODO:
 	// [x] clean up header files and create cpp files where needed (especially entity class)
@@ -40,33 +40,8 @@ int Engine::Run()
 
 
 	//Importer::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
-	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
-	SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
-
-	auto cameraOrbiter = SceneManager::CreateEntityAtRoot("Orbiter");
-	cameraOrbiter->AddComponent<TransformComponent>();
-	auto testCamera = cameraOrbiter->CreateChild("Camera");
-	testCamera->AddComponent<TransformComponent>(glm::vec3(0.0f, 30.0f, 40.0f), glm::quat(glm::vec3(-0.5f, 0.0f, 0.0f)));
-	testCamera->AddComponent<CameraComponent>();
-	testCamera->GetComponent<CameraComponent>().SetActive(true);
-
-	float yaw = 0.0f;
-	/////////////
-
-
-	/*
-	for (int i = 0; i < 10; i++)
-	{
-		auto child = ent->CreateChild("test");
-		child->AddComponent<TransformComponent>();
-
-		for (int j = 0; j < 10; j++)
-		{
-			auto child2 = child->CreateChild("test");
-			child2->AddComponent<TransformComponent>();
-		}
-	}
-	*/
+	//SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
+	//SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -86,15 +61,10 @@ int Engine::Run()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		LOG_INFO(std::to_string(1 / deltaTime));
-
-		// for fun: //
-		yaw += deltaTime;
-		cameraOrbiter->GetComponent<TransformComponent>().SetLocalRotation(glm::quat(glm::vec3(0.0f, yaw, 0.0f)));
-		/////////////
+		//LOG_INFO(std::to_string(1 / deltaTime));
 
 		Input::Update();
-		SceneManager::Update(deltaTime);
+		//SceneManager::Update(deltaTime);
 
 		Renderer::Draw();
 

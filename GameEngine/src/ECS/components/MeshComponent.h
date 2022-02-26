@@ -4,6 +4,8 @@
 #include "../../graphics/VertexArray.h"
 #include "../../graphics/shaders/MaterialShader.h"
 
+/*
+
 class MeshComponent : public Component
 {
 private:
@@ -17,3 +19,4 @@ public:
 	VertexArray& GetVertexArray() { return m_VertexArray; }
 	MaterialShader& GetMaterialShader() { return m_MaterialShader; }
 };
+*/

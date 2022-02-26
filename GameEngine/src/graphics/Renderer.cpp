@@ -13,42 +13,13 @@ glm::mat4 Renderer::s_ProjectionMatrix = glm::perspective<float>(glm::radians(60
 
 void Renderer::Init()
 {
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
+	uint32_t extensionCount = 0;
+	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
-	glFrontFace(GL_CCW);
-	glCullFace(GL_BACK);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glClearColor(0.3f, 0.4f, 0.8f, 1.0f);
+	std::cout << extensionCount << " extensions supported\n";
 }
 
 void Renderer::Draw()
 {
-	/*
-	if (s_CurrentCamera == nullptr)
-	{
-		LOG_ERROR("RENDERER::No camera has been set!");
-	}
-	*/
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	for (auto& meshComponent : ECS::GetComponents<MeshComponent>())
-	{
-		// shader
-		MaterialShader& shader = meshComponent.GetMaterialShader();
-		shader.Activate();
-
-		//shader.SetModelMat4(meshComponent.GetEntity()->GetComponent<TransformComponent>().GetGlobalTransform());	// model
-		//shader.SetViewMat4(s_ViewMatrix);					// view
-		//shader.SetProjectionMat4(s_ProjectionMatrix);		// projection
-
-		// vertex array
-		VertexArray& vertexArray = meshComponent.GetVertexArray();
-		vertexArray.Bind();
-		glDrawElements(GL_TRIANGLES, (GLsizei)vertexArray.GetNumIndices(), GL_UNSIGNED_INT, 0);	// we set up the EBO, so no need to pass indices
-		vertexArray.Unbind();
-	}
+	
 }

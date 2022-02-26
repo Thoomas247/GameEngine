@@ -3,6 +3,7 @@
 
 /* -- PUBLIC -- */
 
+/*
 std::vector<CachedShader> MaterialShader::Compile()
 {
 	// notes:
@@ -140,9 +141,11 @@ void MaterialShader::Unload()
 	glDeleteProgram(m_GLID);
 }
 
+*/
 
 /* -- PRIVATE -- */
 
+/*
 std::string MaterialShader::splitShader(const std::string& shaderString, const std::string& shaderType)
 {
 		std::string startTag = "#start " + shaderType;
@@ -173,6 +176,7 @@ std::string MaterialShader::splitShader(const std::string& shaderString, const s
 		return shaderString.substr(startPos, endPos - startPos).c_str();
 }
 
+
 std::vector<uint32_t> MaterialShader::toSpirV(const std::string& shaderString, const shaderc_shader_kind& type)
 {
 	shaderc::Compiler compiler = shaderc::Compiler();
@@ -191,6 +195,7 @@ std::vector<uint32_t> MaterialShader::toSpirV(const std::string& shaderString, c
 	return std::vector<uint32_t>(result.cbegin(), result.cend());
 }
 
+
 std::vector<uint32_t> MaterialShader::loadSpirvFileContents(const std::string& absolutePath)
 {
 	std::vector<uint32_t> data;
@@ -204,6 +209,7 @@ std::vector<uint32_t> MaterialShader::loadSpirvFileContents(const std::string& a
 
 	return data;
 }
+
 
 void MaterialShader::prepareBuffers(const std::vector<uint32_t>& shaderWords)
 {
@@ -227,6 +233,7 @@ void MaterialShader::prepareBuffers(const std::vector<uint32_t>& shaderWords)
 		}
 	}
 }
+
 
 std::string MaterialShader::loadGlslFileContents(const std::string& absolutePath)
 {
@@ -278,3 +285,5 @@ void MaterialShader::openglCheckCompileErrors(const unsigned int& shader, const 
 		}
 	}
 }
+
+*/
