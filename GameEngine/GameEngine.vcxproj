@@ -230,7 +230,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="include\glad\gl.c" />
     <ClCompile Include="src\core\Input.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
@@ -303,8 +302,10 @@
     <ClInclude Include="src\graphics\shaders\UniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\compile.bat" />
     <None Include="assets\shaders\Default.glsl" />
     <None Include="assets\shaders\PBRShader.glsl" />
+    <None Include="assets\shaders\VkTest.frag" />
     <None Include="test game\assets\shaders\Base.frag" />
     <None Include="test game\assets\shaders\Base.vert" />
   </ItemGroup>

@@ -3,7 +3,10 @@
 /* standard includes */
 #include <map>
 #include <unordered_map>
+#include <set>
 #include <vector>
+
+#include <optional>
 
 #include <string>
 #include <regex>
@@ -17,6 +20,11 @@
 #include <filesystem>
 
 /* external includes */
+#define GLFW_INCLUDE_VULKAN
+#include "glfw/glfw3.h"
+
+#include "vulkan/vulkan.h"
+
 #include "glm/glm.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/matrix_decompose.hpp"

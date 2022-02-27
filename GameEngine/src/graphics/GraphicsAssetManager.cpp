@@ -15,113 +15,17 @@ std::map<std::string, unsigned int> GraphicsAssetManager::s_UploadedTextureIDs;
 /// </summary>
 void GraphicsAssetManager::Init()
 {
-	// create default 1x1 pixel full-white texture
-	unsigned int glID = 0;
-	int width = 1;
-	int height = 1;
-
-	glCreateTextures(GL_TEXTURE_2D, 1, &glID);
-	glTextureStorage2D(glID, 1, GL_RGB8, width, height);
-
-	GLubyte data[] = { 255, 255, 255, 255 };
-	glTextureSubImage2D(glID, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-
-	s_UploadedTextureIDs["Default"] = glID;
+	
 }
 
 unsigned int GraphicsAssetManager::LoadTexture(const std::string& absolutePath)
 {
-	if (absolutePath == "")
-	{
-		return s_UploadedTextureIDs["Default"];
-	}
-
-	auto it = s_UploadedTextureIDs.find(absolutePath);
-
-	if (it != s_UploadedTextureIDs.end())
-	{
-		return it->second;
-	}
-
-	unsigned int glID;
-	int width;
-	int height;
-	int channels;
-
-	// create opengl texture
-	glCreateTextures(GL_TEXTURE_2D, 1, &glID);
-
-	glTextureParameteri(glID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTextureParameteri(glID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTextureParameteri(glID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTextureParameteri(glID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// load image, create texture and generate mipmaps
-	unsigned char* data = stbi_load(absolutePath.c_str(), &width, &height, &channels, 0);
-
-	if (data)
-	{
-		GLenum format = GL_RED;
-		if (channels == 1)
-			format = GL_RED;
-		else if (channels == 3)
-			format = GL_RGB;
-		else if (channels == 4)
-			format = GL_RGBA;
-		else
-		{
-			LOG_ERROR("ASSET_MANAGER::Texture format not supported!");
-		}
-
-		glTextureStorage2D(glID, 1, GL_RGBA8, width, height);
-		glTextureSubImage2D(glID, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data);
-		glGenerateTextureMipmap(glID);
-	}
-	else
-	{
-		LOG_ERROR("ASSET_MANAGER::Failed to load texture at path " + absolutePath + "! If trying to load the default texture, make sure GraphicsAssetManager has been initialized.");
-	}
-
-	stbi_image_free(data);
-
-	// cache the ID
-	s_UploadedTextureIDs[absolutePath] = glID;
-
-	return glID;
+	return 0;
 }
 
 VertexArray GraphicsAssetManager::LoadVertexArray(const std::vector<Vertex> vertices, const std::vector<unsigned int>& indices)
 {
-	unsigned int VBO;
-	unsigned int EBO;
-	unsigned int glID;
-
-	glCreateVertexArrays(1, &glID);
-	glCreateBuffers(1, &VBO);
-	glCreateBuffers(1, &EBO);
-
-	glBindVertexArray(glID);
-
-	glNamedBufferData(VBO, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
-	glNamedBufferData(EBO, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
-	glEnableVertexArrayAttrib(glID, 0);	// vertex positions attrib
-	glVertexAttribBinding(0, 0);
-	glVertexArrayAttribFormat(glID, 0, 3, GL_FLOAT, GL_FALSE, 0);
-
-	glEnableVertexArrayAttrib(glID, 1);	// vertex normals attrib
-	glVertexAttribBinding(1, 0);
-	glVertexArrayAttribFormat(glID, 1, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, Normal));
-
-	glEnableVertexArrayAttrib(glID, 2);	// vertex texcoords attrib
-	glVertexAttribBinding(2, 0);
-	glVertexArrayAttribFormat(glID, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, TexCoord));
-
-	glVertexArrayVertexBuffer(glID, 0, VBO, 0, sizeof(Vertex));	// bind VBO to VAO
-	glVertexArrayElementBuffer(glID, EBO);	// bind EBO to VAO
-
-	return VertexArray(glID, indices.size());
+	return VertexArray();
 }
 
 
@@ -129,22 +33,7 @@ VertexArray GraphicsAssetManager::LoadVertexArray(const std::vector<Vertex> vert
 
 void GraphicsAssetManager::shaderCheckCompileErrors(const unsigned int& shader, const std::string& type)
 {
-	int success;
-	char infoLog[1024];
-	if (type != "PROGRAM") {
-		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-		if (!success) {
-			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			LOG_ERROR("SHADER::Shader compilation failed!" + std::string(" - " + type + ": " + infoLog));
-		}
-	}
-	else {
-		glGetProgramiv(shader, GL_LINK_STATUS, &success);
-		if (!success) {
-			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			LOG_ERROR("SHADER::Shader linking failed!" + std::string(" - " + type + ": " + infoLog));
-		}
-	}
+	
 }
 
 std::string GraphicsAssetManager::shaderLoadFileContents(const std::string& absolutePath)

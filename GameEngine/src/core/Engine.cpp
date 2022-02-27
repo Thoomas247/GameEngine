@@ -8,7 +8,7 @@
 
 int Engine::Run()
 {
-	Window::InitWindow(3200, 1800);
+	Window::InitWindow(800, 600);
 	//GraphicsAssetManager::Init();
 	Renderer::Init();
 
@@ -72,6 +72,7 @@ int Engine::Run()
 		Window::PollEvents();
 	}
 
+	Renderer::CleanUp();
 	Window::CleanUp();
 
 	return 0;

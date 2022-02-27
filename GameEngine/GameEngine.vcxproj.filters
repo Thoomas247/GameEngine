@@ -21,9 +21,6 @@
     <ClCompile Include="src\core\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\glad\gl.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -245,5 +242,9 @@
     <None Include="test game\assets\shaders\Base.frag" />
     <None Include="assets\shaders\Default.glsl" />
     <None Include="assets\shaders\PBRShader.glsl" />
+    <None Include="assets\shaders\VkTest.frag" />
+    <None Include="assets\shaders\compile.bat">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

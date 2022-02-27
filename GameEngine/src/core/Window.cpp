@@ -14,10 +14,8 @@ void Window::InitWindow(const int& width, const int& height)
 
 	// glfw: initialize and configure
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	// glfw: window creation
 	s_WindowPtr = glfwCreateWindow(s_Size.Width, s_Size.Height, "Game Engine", NULL, NULL);
@@ -32,16 +30,7 @@ void Window::InitWindow(const int& width, const int& height)
 	glfwSetInputMode(s_WindowPtr, GLFW_CURSOR, /*GLFW_CURSOR_DISABLED*/ GLFW_CURSOR_NORMAL);
 	//glfwSwapInterval(1);	// vsync
 
-	// glad: load all OpenGL function pointers
-	int version = gladLoadGL(glfwGetProcAddress);
-	if (version == 0)
-	{
-		LOG_ERROR("MAIN::Failed to initialize OpenGL context!");
-		return;
-	}
-
-	std::string ver = std::to_string(GLAD_VERSION_MAJOR(version)) + "." + std::to_string(GLAD_VERSION_MINOR(version));
-	LOG_INFO("MAIN::Loaded OpenGL " + ver);
+	LOG_INFO("MAIN::Loaded glfw ");
 }
 
 void Window::CloseWindow()
@@ -81,5 +70,4 @@ void Window::UnlockCursor()
 void Window::frameBufferSizeCallback(GLFWwindow*, int width, int height)
 {
 	s_Size = WindowSize(width, height);
-	glViewport(0, 0, s_Size.Width, s_Size.Height);
 }
