@@ -15,7 +15,7 @@ void Window::InitWindow(const int& width, const int& height)
 	// glfw: initialize and configure
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 	// glfw: window creation
 	s_WindowPtr = glfwCreateWindow(s_Size.Width, s_Size.Height, "Game Engine", NULL, NULL);
@@ -70,4 +70,5 @@ void Window::UnlockCursor()
 void Window::frameBufferSizeCallback(GLFWwindow*, int width, int height)
 {
 	s_Size = WindowSize(width, height);
+	Renderer::RequestResize();
 }

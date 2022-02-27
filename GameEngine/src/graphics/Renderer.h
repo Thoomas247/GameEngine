@@ -47,16 +47,19 @@ private:
 	static std::vector<VkFramebuffer> s_SwapChainFramebuffers;
 
 	static VkCommandPool s_CommandPool;
-	static VkCommandBuffer s_CommandBuffer;
+	static std::vector<VkCommandBuffer> s_CommandBuffers;
 
-	static VkSemaphore s_ImageAvailableSemaphore;
-	static VkSemaphore s_RenderFinishedSemaphore;
-	static VkFence s_InFlightFence;
+	static std::vector<VkSemaphore> s_ImageAvailableSemaphores;
+	static std::vector<VkSemaphore> s_RenderFinishedSemaphores;
+	static std::vector<VkFence> s_InFlightFences;
+
+	static bool s_FrameBufferResized;
 
 public:
 	static void Init();
 	static void Draw();
 	static void CleanUp();
+	static void RequestResize() { s_FrameBufferResized = true; }
 
 	static void SetViewMatrix(const glm::mat4& viewMatrix) { s_ViewMatrix = viewMatrix; }
 	static void SetProjectionMatrix(const glm::mat4& projectionMatrix) { s_ProjectionMatrix = projectionMatrix; }
@@ -81,7 +84,9 @@ private:
 	static VkShaderModule createShaderModule(const std::vector<char>& code);
 	static void createFramebuffers();
 	static void createCommandPool();
-	static void createCommandBuffer();
+	static void createCommandBuffers();
 	static void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	static void createSyncObjects();
+	static void cleanupSwapChain();
+	static void recreateSwapChain();
 };
