@@ -64,6 +64,11 @@ void Window::UnlockCursor()
 	glfwSetInputMode(s_WindowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
+VkResult Window::GetWindowSurfaceForVulkan(VkInstance instance, VkSurfaceKHR* surface)
+{
+	return glfwCreateWindowSurface(instance, s_WindowPtr, nullptr, surface);
+}
+
 
 /* -- PRIVATE -- */
 

@@ -267,11 +267,30 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\graphics\vulkan\VulkanDevice.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="src\graphics\vulkan\VulkanInstance.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="src\graphics\vulkan\VulkanSwapChain.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\spirv-cross\spirv_cross_util.hpp" />
     <ClInclude Include="src\graphics\shaders\ShaderUtil.h" />
     <ClInclude Include="src\graphics\shaders\MaterialShader.h" />
+    <ClInclude Include="src\graphics\vulkan\StructsAndConstants.h" />
     <ClInclude Include="src\importer\Importer.h" />
     <ClInclude Include="src\ECS\ComponentContainer.h" />
     <ClInclude Include="src\ECS\EntityModifier.h" />
@@ -300,6 +319,9 @@
     <ClInclude Include="src\core\UUID.h" />
     <ClInclude Include="src\core\Util.h" />
     <ClInclude Include="src\graphics\shaders\UniformBuffer.h" />
+    <ClInclude Include="src\graphics\vulkan\VulkanDevice.h" />
+    <ClInclude Include="src\graphics\vulkan\VulkanInstance.h" />
+    <ClInclude Include="src\graphics\vulkan\VulkanSwapChain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\compile.bat" />

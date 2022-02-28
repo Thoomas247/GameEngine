@@ -30,6 +30,8 @@ public:
 
 	static WindowSize GetSize() { return s_Size; }
 
+	static VkResult GetWindowSurfaceForVulkan(VkInstance instance, VkSurfaceKHR* surface);
+
 	static void LockCursor();
 	static void UnlockCursor();
 
