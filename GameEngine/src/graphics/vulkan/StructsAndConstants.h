@@ -21,6 +21,7 @@ struct SwapChainBuffer
 };
 
 constexpr auto PREFERRED_COLOR_FORMAT = VK_FORMAT_B8G8R8A8_UNORM;
+constexpr auto MAX_FRAMES_IN_FLIGHT = 2;
 
 const std::vector<const char*> VULKAN_VALIDATION_LAYERS = {
 		"VK_LAYER_KHRONOS_validation"

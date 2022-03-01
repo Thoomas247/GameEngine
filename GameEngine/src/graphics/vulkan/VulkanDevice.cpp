@@ -4,14 +4,12 @@
 
 /* -- PUBLIC -- */
 
-VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
+VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char*> enabledExtensions)
 {
 	if (physicalDevice == nullptr)
 	{
 		LOG_ERROR("VULKAN_DEVICE::Physical device cannot be null!");
 	}
-
-	PhysicalDevice = physicalDevice;
 
 	// store properties, features, limits and properties of the physical device for later use
 	vkGetPhysicalDeviceProperties(physicalDevice, &Properties);
@@ -44,6 +42,16 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
 			}
 		}
 	}
+
+	PhysicalDevice = physicalDevice;
+	EnabledFeatures = enabledFeatures;
+
+	createLogicalDevice(VULKAN_DEVICE_EXTENSIONS, nullptr);
+	createCommandPool(QueueFamilyIndices.graphics);
+
+	vkGetDeviceQueue(LogicalDevice, QueueFamilyIndices.graphics, 0, &GraphicsQueue);
+	vkGetDeviceQueue(LogicalDevice, QueueFamilyIndices.compute, 0, &ComputeQueue);
+	vkGetDeviceQueue(LogicalDevice, QueueFamilyIndices.transfer, 0, &TransferQueue);
 }
 
 VulkanDevice::~VulkanDevice()
@@ -136,125 +144,6 @@ uint32_t VulkanDevice::GetQueueFamilyIndex(VkQueueFlagBits queueFlags)
 	LOG_ERROR("VULKAN_DEVICE::Could not find a suitable queue family index!");
 }
 
-VkResult VulkanDevice::CreateLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char*> enabledExtensions, void* pNextChain, bool useSwapChain, VkQueueFlags requestedQueueTypes)
-{
-	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
-
-	const float defaultQueuePriority = 0.0f;
-
-	// graphics queue
-	if (requestedQueueTypes & VK_QUEUE_GRAPHICS_BIT)
-	{
-		QueueFamilyIndices.graphics = GetQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
-		VkDeviceQueueCreateInfo queueInfo{};
-		queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueInfo.queueFamilyIndex = QueueFamilyIndices.graphics;
-		queueInfo.queueCount = 1;
-		queueInfo.pQueuePriorities = &defaultQueuePriority;
-		queueCreateInfos.push_back(queueInfo);
-	}
-	else
-	{
-		QueueFamilyIndices.graphics = 0;
-	}
-
-	// compute queue
-	if (requestedQueueTypes & VK_QUEUE_COMPUTE_BIT)
-	{
-		QueueFamilyIndices.compute = GetQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT);
-		if (QueueFamilyIndices.compute != QueueFamilyIndices.graphics)
-		{
-			VkDeviceQueueCreateInfo queueInfo{};
-			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			queueInfo.queueFamilyIndex = QueueFamilyIndices.compute;
-			queueInfo.queueCount = 1;
-			queueInfo.pQueuePriorities = &defaultQueuePriority;
-			queueCreateInfos.push_back(queueInfo);
-		}
-	}
-	else
-	{
-		QueueFamilyIndices.compute = QueueFamilyIndices.graphics;
-	}
-
-	// transfer queue
-	if (requestedQueueTypes & VK_QUEUE_TRANSFER_BIT)
-	{
-		QueueFamilyIndices.transfer = GetQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
-		if ((QueueFamilyIndices.transfer != QueueFamilyIndices.graphics) && (QueueFamilyIndices.transfer != QueueFamilyIndices.compute))
-		{
-			VkDeviceQueueCreateInfo queueInfo{};
-			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			queueInfo.queueFamilyIndex = QueueFamilyIndices.transfer;
-			queueInfo.queueCount = 1;
-			queueInfo.pQueuePriorities = &defaultQueuePriority;
-			queueCreateInfos.push_back(queueInfo);
-		}
-	}
-	else
-	{
-		QueueFamilyIndices.transfer = QueueFamilyIndices.graphics;
-	}
-
-	// create logical device
-	std::vector<const char*> deviceExtensions = std::vector<const char*>(enabledExtensions);
-	if (useSwapChain)
-	{
-		// if the device will be used to present to a display we need to request the swapchain extension
-		deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-	}
-
-	VkDeviceCreateInfo deviceCreateInfo{};
-	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-	deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-	deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
-
-	VkPhysicalDeviceFeatures2 physicalDeviceFeatures2{};
-	if (pNextChain)
-	{
-		physicalDeviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-		physicalDeviceFeatures2.features = enabledFeatures;
-		physicalDeviceFeatures2.pNext = pNextChain;
-		deviceCreateInfo.pEnabledFeatures = nullptr;
-		deviceCreateInfo.pNext = &physicalDeviceFeatures2;
-	}
-
-	if (ExtensionSupported(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
-	{
-		deviceExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
-		m_EnableDebugMarkers = true;
-	}
-
-	if (deviceExtensions.size() > 0)
-	{
-		for (const char* enabledExtension : deviceExtensions)
-		{
-			if (!ExtensionSupported(enabledExtension))
-			{
-				LOG_ERROR("VULKAN_DEVICE::Enabled device extension \"" + std::string(enabledExtension) + "\" is not present at device level!");
-			}
-		}
-
-		deviceCreateInfo.enabledExtensionCount = (uint32_t)deviceExtensions.size();
-		deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
-	}
-
-	EnabledFeatures = enabledFeatures;
-
-	VkResult result = vkCreateDevice(PhysicalDevice, &deviceCreateInfo, nullptr, &LogicalDevice);
-
-	if (result != VK_SUCCESS)
-	{
-		return result;
-	}
-
-	// create a default command pool for graphics command buffers
-	CommandPool = CreateCommandPool(QueueFamilyIndices.graphics);
-
-	return result;
-}
-
 VkResult VulkanDevice::CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, VkBuffer* buffer, VkDeviceMemory* memory, void* data)
 {
 	// create buffer handle
@@ -328,22 +217,6 @@ VkResult VulkanDevice::CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPrope
 	return VK_SUCCESS;
 }
 
-VkCommandPool VulkanDevice::CreateCommandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags createFlags)
-{
-	VkCommandPoolCreateInfo poolCreateInfo{};
-	poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	poolCreateInfo.queueFamilyIndex = queueFamilyIndex;
-	poolCreateInfo.flags = createFlags;
-
-	VkCommandPool pool;
-	if (vkCreateCommandPool(LogicalDevice, &poolCreateInfo, nullptr, &pool) != VK_SUCCESS)
-	{
-		LOG_ERROR("VULKAN_DEVICE::Could not create command pool!");
-	}
-
-	return pool;
-}
-
 VkCommandBuffer VulkanDevice::CreateCommandBuffer(VkCommandBufferLevel level, VkCommandPool pool, bool begin)
 {
 	VkCommandBufferAllocateInfo commandBufferAllocateInfo{};
@@ -380,63 +253,6 @@ VkCommandBuffer VulkanDevice::CreateCommandBuffer(VkCommandBufferLevel level, bo
 	return CreateCommandBuffer(level, CommandPool, begin);
 }
 
-void VulkanDevice::FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, VkCommandPool pool, bool free)
-{
-	if (commandBuffer == VK_NULL_HANDLE)
-	{
-		return;
-	}
-
-	VkResult result = vkEndCommandBuffer(commandBuffer);
-	if (result != VK_SUCCESS)
-	{
-		LOG_ERROR("VULKAN_DEVICE::Failed to end command buffer recording!");
-	}
-
-	VkSubmitInfo submitInfo{};
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffer;
-
-	VkFenceCreateInfo fenceCreateInfo{};
-	fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-
-	// create fence to ensure command buffer is done
-	VkFence fence;
-	result = vkCreateFence(LogicalDevice, &fenceCreateInfo, nullptr, &fence);
-	if (result != VK_SUCCESS)
-	{
-		LOG_ERROR("VULKAN_DEVICE::Failed to create command buffer fence!");
-	}
-
-	// submit to the queue
-	result = vkQueueSubmit(queue, 1, &submitInfo, fence);
-	if (result != VK_SUCCESS)
-	{
-		LOG_ERROR("VULKAN_DEVICE::Failed to submit to queue!");
-	}
-
-	// wait for the fence to be signalled
-	result = vkWaitForFences(LogicalDevice, 1, &fence, VK_TRUE, UINT64_MAX);	// disable timeout
-	if (result != VK_SUCCESS)
-	{
-		LOG_ERROR("VULKAN_DEVICE::Failed to wait for fences!");
-	}
-
-	vkDestroyFence(LogicalDevice, fence, nullptr);
-
-	if (free)
-	{
-		vkFreeCommandBuffers(LogicalDevice, pool, 1, &commandBuffer);
-	}
-
-}
-
-void VulkanDevice::FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free)
-{
-	FlushCommandBuffer(commandBuffer, queue, CommandPool, free);
-}
-
 bool VulkanDevice::ExtensionSupported(const std::string& extension)
 {
 	return (std::find(SupportedExtensions.begin(), SupportedExtensions.end(), extension) != SupportedExtensions.end());
@@ -466,4 +282,133 @@ VkFormat VulkanDevice::GetSupportedDepthFormat(bool checkSamplingSupport)
 	}
 
 	LOG_ERROR("VULKAN_DEVICE::Could not find a matching depth format!");
+}
+
+
+/* -- PRIVATE -- */
+
+void VulkanDevice::createLogicalDevice(std::vector<const char*> enabledExtensions, void* pNextChain, bool useSwapChain, VkQueueFlags requestedQueueTypes)
+{
+	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
+
+	const float defaultQueuePriority = 0.0f;
+
+	// graphics queue
+	if (requestedQueueTypes & VK_QUEUE_GRAPHICS_BIT)
+	{
+		QueueFamilyIndices.graphics = GetQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+		VkDeviceQueueCreateInfo queueInfo{};
+		queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueInfo.queueFamilyIndex = QueueFamilyIndices.graphics;
+		queueInfo.queueCount = 1;
+		queueInfo.pQueuePriorities = &defaultQueuePriority;
+		queueCreateInfos.push_back(queueInfo);
+	}
+	else
+	{
+		QueueFamilyIndices.graphics = 0;
+	}
+
+	// compute queue
+	if (requestedQueueTypes & VK_QUEUE_COMPUTE_BIT)
+	{
+		QueueFamilyIndices.compute = GetQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT);
+		if (QueueFamilyIndices.compute != QueueFamilyIndices.graphics)
+		{
+			VkDeviceQueueCreateInfo queueInfo{};
+			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueInfo.queueFamilyIndex = QueueFamilyIndices.compute;
+			queueInfo.queueCount = 1;
+			queueInfo.pQueuePriorities = &defaultQueuePriority;
+			queueCreateInfos.push_back(queueInfo);
+		}
+	}
+	else
+	{
+		QueueFamilyIndices.compute = QueueFamilyIndices.graphics;
+	}
+
+	// transfer queue
+	if (requestedQueueTypes & VK_QUEUE_TRANSFER_BIT)
+	{
+		QueueFamilyIndices.transfer = GetQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
+		if ((QueueFamilyIndices.transfer != QueueFamilyIndices.graphics) && (QueueFamilyIndices.transfer != QueueFamilyIndices.compute))
+		{
+			VkDeviceQueueCreateInfo queueInfo{};
+			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueInfo.queueFamilyIndex = QueueFamilyIndices.transfer;
+			queueInfo.queueCount = 1;
+			queueInfo.pQueuePriorities = &defaultQueuePriority;
+			queueCreateInfos.push_back(queueInfo);
+		}
+	}
+	else
+	{
+		QueueFamilyIndices.transfer = QueueFamilyIndices.graphics;
+	}
+
+	// create logical device
+	std::vector<const char*> deviceExtensions = std::vector<const char*>(enabledExtensions);
+	if (useSwapChain)
+	{
+		// if the device will be used to present to a display we need to request the swapchain extension
+		deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+	}
+
+	VkDeviceCreateInfo deviceCreateInfo{};
+	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+	deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+	deviceCreateInfo.pEnabledFeatures = &EnabledFeatures;
+
+	VkPhysicalDeviceFeatures2 physicalDeviceFeatures2{};
+	if (pNextChain)
+	{
+		physicalDeviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		physicalDeviceFeatures2.features = EnabledFeatures;
+		physicalDeviceFeatures2.pNext = pNextChain;
+		deviceCreateInfo.pEnabledFeatures = nullptr;
+		deviceCreateInfo.pNext = &physicalDeviceFeatures2;
+	}
+
+	if (ExtensionSupported(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+	{
+		deviceExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
+		m_EnableDebugMarkers = true;
+	}
+
+	if (deviceExtensions.size() > 0)
+	{
+		for (const char* enabledExtension : deviceExtensions)
+		{
+			if (!ExtensionSupported(enabledExtension))
+			{
+				LOG_ERROR("VULKAN_DEVICE::Enabled device extension \"" + std::string(enabledExtension) + "\" is not present at device level!");
+			}
+		}
+
+		deviceCreateInfo.enabledExtensionCount = (uint32_t)deviceExtensions.size();
+		deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
+	}
+
+	VkResult result = vkCreateDevice(PhysicalDevice, &deviceCreateInfo, nullptr, &LogicalDevice);
+
+	if (result != VK_SUCCESS)
+	{
+		LOG_ERROR("VULKAN_DEVICE::Failed to create logical device!");
+	}
+}
+
+void VulkanDevice::createCommandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags createFlags)
+{
+	VkCommandPoolCreateInfo poolCreateInfo{};
+	poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	poolCreateInfo.queueFamilyIndex = queueFamilyIndex;
+	poolCreateInfo.flags = createFlags;
+
+	if (vkCreateCommandPool(LogicalDevice, &poolCreateInfo, nullptr, &CommandPool) != VK_SUCCESS)
+	{
+		LOG_ERROR("VULKAN_DEVICE::Could not create command pool!");
+	}
+
 }

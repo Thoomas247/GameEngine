@@ -1,7 +1,9 @@
 #pragma once
 
 /*
-* Implementation based on: https://vulkan-tutorial.com/Introduction
+* Implementation based on: 
+*	https://vulkan-tutorial.com/Introduction
+*	https://github.com/SaschaWillems/Vulkan/tree/master/base
 */
 
 #include "graphics/vulkan/StructsAndConstants.h"
@@ -24,6 +26,20 @@ private:
 
 	static bool s_ResizeRequested;
 
+	static uint32_t s_CurrentBufferIndex;
+	static uint32_t s_CurrentImageIndex;
+
+	static std::vector<VkCommandBuffer> s_CommandBuffers;
+	static std::vector<VkSemaphore> s_RenderCompleteSemaphores;
+	static std::vector<VkSemaphore> s_PresentCompleteSemaphores;
+	static std::vector<VkFence> s_Fences;
+
+	static VkViewport s_Viewport;
+
+	static VkRenderPass s_RenderPass;
+
+	static VkClearValue s_ClearValue;
+
 public:
 	static void Init();
 	static void Draw();
@@ -33,4 +49,20 @@ public:
 
 	static void SetViewMatrix(const glm::mat4& viewMatrix) { s_ViewMatrix = viewMatrix; }
 	static void SetProjectionMatrix(const glm::mat4& projectionMatrix) { s_ProjectionMatrix = projectionMatrix; }
+
+private:
+	static void initRenderPass();
+	static void initViewport();
+	static void initCommandBuffers();
+	static void initSemaphoresAndFences();
+	static void setClearValue(float r, float g, float b, float a, float depth);
+
+	static void prepareFrame();
+	static void prepareCommandBuffer();
+	static void prepareRenderPass();
+	static void renderScene();
+	static void endRenderPass();
+	static void submitCommandBuffer();
+	static void submitFrame();
+	
 };

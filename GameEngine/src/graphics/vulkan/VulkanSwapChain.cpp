@@ -11,11 +11,11 @@ VulkanSwapChain::VulkanSwapChain(const std::shared_ptr<VulkanInstance>& instance
 	vkGetPhysicalDeviceQueueFamilyProperties(device->PhysicalDevice, &queueCount, NULL);
 	assert(queueCount >= 1);
 
-	std::vector<VkQueueFamilyProperties> queueProps(queueCount);
+	std::vector<VkQueueFamilyProperties> queueProps = std::vector<VkQueueFamilyProperties>(queueCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(device->PhysicalDevice, &queueCount, queueProps.data());
 
 	// find a queue with present support
-	std::vector<VkBool32> supportsPresent(queueCount);
+	std::vector<VkBool32> supportsPresent = std::vector<VkBool32>(queueCount);
 	for (uint32_t i = 0; i < queueCount; i++)
 	{
 		vkGetPhysicalDeviceSurfaceSupportKHR(device->PhysicalDevice, i, instance->Surface, &supportsPresent[i]);
@@ -63,9 +63,6 @@ VulkanSwapChain::VulkanSwapChain(const std::shared_ptr<VulkanInstance>& instance
 	{
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Could not find a suitable present queue!");
 	}
-
-	GraphicsQueueNodeIndex = graphicsQueueNodeIndex;
-	PresentQueueNodeIndex = presentQueueNodeIndex;
 
 	// get list of supported surface formats
 	uint32_t formatCount;
@@ -116,6 +113,9 @@ VulkanSwapChain::VulkanSwapChain(const std::shared_ptr<VulkanInstance>& instance
 
 	m_Instance = instance;
 	m_Device = device;
+
+	GraphicsQueueNodeIndex = graphicsQueueNodeIndex;
+	PresentQueueNodeIndex = presentQueueNodeIndex;
 }
 
 VulkanSwapChain::~VulkanSwapChain()
@@ -123,7 +123,7 @@ VulkanSwapChain::~VulkanSwapChain()
 	Cleanup();
 }
 
-void VulkanSwapChain::Create(uint32_t* width, uint32_t* height, bool vsync)
+void VulkanSwapChain::Create(VkRenderPass renderPass, uint32_t* width, uint32_t* height, bool vsync)
 {
 	// if window is minimized, wait before recreating swap chain
 	while (*width == 0 || *height == 0) {
@@ -160,17 +160,16 @@ void VulkanSwapChain::Create(uint32_t* width, uint32_t* height, bool vsync)
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to get device surface present modes!");
 	}
 
-	VkExtent2D swapchainExtent = {};
 	if (surfaceCapabilities.currentExtent.width == (uint32_t)-1)
 	{
 		// if the surface size is undefined, the size is set to the passed size
-		swapchainExtent.width = *width;
-		swapchainExtent.height = *height;
+		Extent.width = *width;
+		Extent.height = *height;
 	}
 	else
 	{
 		// if the surface size is defined, the swap chain size must match
-		swapchainExtent = surfaceCapabilities.currentExtent;
+		Extent = surfaceCapabilities.currentExtent;
 		*width = surfaceCapabilities.currentExtent.width;
 		*height = surfaceCapabilities.currentExtent.height;
 	}
@@ -237,7 +236,7 @@ void VulkanSwapChain::Create(uint32_t* width, uint32_t* height, bool vsync)
 	swapchainCreateInfo.minImageCount = desiredNumberOfSwapchainImages;
 	swapchainCreateInfo.imageFormat = ColorFormat;
 	swapchainCreateInfo.imageColorSpace = ColorSpace;
-	swapchainCreateInfo.imageExtent = { swapchainExtent.width, swapchainExtent.height };
+	swapchainCreateInfo.imageExtent = { Extent.width, Extent.height };
 	swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 	swapchainCreateInfo.preTransform = (VkSurfaceTransformFlagBitsKHR)preTransform;
 	swapchainCreateInfo.imageArrayLayers = 1;
@@ -258,7 +257,7 @@ void VulkanSwapChain::Create(uint32_t* width, uint32_t* height, bool vsync)
 		swapchainCreateInfo.imageUsage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 	}
 
-	// re-create swap chain
+	// create swap chain
 	result = vkCreateSwapchainKHR(m_Device->LogicalDevice, &swapchainCreateInfo, nullptr, &SwapChain);
 	if (result != VK_SUCCESS)
 	{
@@ -319,10 +318,36 @@ void VulkanSwapChain::Create(uint32_t* width, uint32_t* height, bool vsync)
 			LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to create image views!");
 		}
 	}
+
+	// create framebuffers
+	FrameBuffers.resize(ImageCount);
+	for (size_t i = 0; i < ImageCount; i++) {
+		VkImageView attachments[] = {
+			Buffers[i].view
+		};
+
+		VkFramebufferCreateInfo framebufferInfo{};
+		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		framebufferInfo.renderPass = renderPass;
+		framebufferInfo.attachmentCount = 1;
+		framebufferInfo.pAttachments = attachments;
+		framebufferInfo.width = Extent.width;
+		framebufferInfo.height = Extent.height;
+		framebufferInfo.layers = 1;
+
+		if (vkCreateFramebuffer(m_Device->LogicalDevice, &framebufferInfo, nullptr, &FrameBuffers[i]) != VK_SUCCESS)
+		{
+			LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to create framebuffers!");
+		}
+	}
 }
 
 void VulkanSwapChain::Cleanup()
 {
+	for (int i = 0; i < FrameBuffers.size(); i++)
+	{
+		vkDestroyFramebuffer(m_Device->LogicalDevice, FrameBuffers[i], nullptr);
+	}
 	if (SwapChain != VK_NULL_HANDLE)
 	{
 		for (uint32_t i = 0; i < ImageCount; i++)
@@ -335,6 +360,7 @@ void VulkanSwapChain::Cleanup()
 		vkDestroySwapchainKHR(m_Device->LogicalDevice, SwapChain, nullptr);
 		vkDestroySurfaceKHR(m_Instance->Instance, m_Instance->Surface, nullptr);
 	}
+	FrameBuffers.clear();
 	m_Instance->Surface = VK_NULL_HANDLE;
 	SwapChain = VK_NULL_HANDLE;
 }
