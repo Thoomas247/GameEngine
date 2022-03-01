@@ -285,6 +285,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\graphics\vulkan\VulkanRenderer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\spirv-cross\spirv_cross_util.hpp" />
@@ -322,6 +328,7 @@
     <ClInclude Include="src\graphics\vulkan\VulkanDevice.h" />
     <ClInclude Include="src\graphics\vulkan\VulkanInstance.h" />
     <ClInclude Include="src\graphics\vulkan\VulkanSwapChain.h" />
+    <ClInclude Include="src\graphics\vulkan\VulkanRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\compile.bat" />

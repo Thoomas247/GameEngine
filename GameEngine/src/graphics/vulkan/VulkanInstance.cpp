@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include "StructsAndConstants.h"
 #include "VulkanInstance.h"
 
 

@@ -1,4 +1,7 @@
 #include "precompiled.h"
+#include "StructsAndConstants.h"
+#include "VulkanInstance.h"
+#include "VulkanDevice.h"
 #include "VulkanSwapChain.h"
 
 
@@ -261,6 +264,7 @@ void VulkanSwapChain::Create(VkRenderPass renderPass, uint32_t* width, uint32_t*
 		for (uint32_t i = 0; i < ImageCount; i++)
 		{
 			vkDestroyImageView(m_Device->LogicalDevice, Buffers[i].view, nullptr);
+			vkDestroyFramebuffer(m_Device->LogicalDevice, FrameBuffers[i], nullptr);
 		}
 		vkDestroySwapchainKHR(m_Device->LogicalDevice, oldSwapchain, nullptr);
 	}
