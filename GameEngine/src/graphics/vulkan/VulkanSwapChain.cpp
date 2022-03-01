@@ -125,14 +125,6 @@ VulkanSwapChain::~VulkanSwapChain()
 
 void VulkanSwapChain::Create(VkRenderPass renderPass, uint32_t* width, uint32_t* height, bool vsync)
 {
-	// if window is minimized, wait before recreating swap chain
-	while (*width == 0 || *height == 0) {
-		WindowSize size = Window::GetSize();
-		*width = size.Width;
-		*height = size.Height;
-		glfwWaitEvents();
-	}
-
 	// store the current swap chain handle so we can use it later
 	VkSwapchainKHR oldSwapchain = SwapChain;
 
@@ -292,25 +284,20 @@ void VulkanSwapChain::Create(VkRenderPass renderPass, uint32_t* width, uint32_t*
 	{
 		VkImageViewCreateInfo colorAttachmentView = {};
 		colorAttachmentView.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		colorAttachmentView.pNext = nullptr;
+		colorAttachmentView.image = Images[i];
+		colorAttachmentView.viewType = VK_IMAGE_VIEW_TYPE_2D;
 		colorAttachmentView.format = ColorFormat;
-		colorAttachmentView.components = {
-			VK_COMPONENT_SWIZZLE_R,
-			VK_COMPONENT_SWIZZLE_G,
-			VK_COMPONENT_SWIZZLE_B,
-			VK_COMPONENT_SWIZZLE_A
-		};
+		colorAttachmentView.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+		colorAttachmentView.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+		colorAttachmentView.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+		colorAttachmentView.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
 		colorAttachmentView.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		colorAttachmentView.subresourceRange.baseMipLevel = 0;
 		colorAttachmentView.subresourceRange.levelCount = 1;
 		colorAttachmentView.subresourceRange.baseArrayLayer = 0;
 		colorAttachmentView.subresourceRange.layerCount = 1;
-		colorAttachmentView.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		colorAttachmentView.flags = 0;
 
 		Buffers[i].image = Images[i];
-
-		colorAttachmentView.image = Buffers[i].image;
 
 		result = vkCreateImageView(m_Device->LogicalDevice, &colorAttachmentView, nullptr, &Buffers[i].view);
 		if (result != VK_SUCCESS)
@@ -363,28 +350,4 @@ void VulkanSwapChain::Cleanup()
 	FrameBuffers.clear();
 	m_Instance->Surface = VK_NULL_HANDLE;
 	SwapChain = VK_NULL_HANDLE;
-}
-
-VkResult VulkanSwapChain::AcquireNextImage(VkSemaphore presentCompleteSemaphore, uint32_t* imageIndex)
-{
-	// by setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
-	return vkAcquireNextImageKHR(m_Device->LogicalDevice, SwapChain, UINT64_MAX, presentCompleteSemaphore, (VkFence)nullptr, imageIndex);
-}
-
-VkResult VulkanSwapChain::QueuePresent(VkQueue queue, uint32_t imageIndex, VkSemaphore waitSemaphore)
-{
-	VkPresentInfoKHR presentInfo{};
-	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-	presentInfo.pNext = NULL;
-	presentInfo.swapchainCount = 1;
-	presentInfo.pSwapchains = &SwapChain;
-	presentInfo.pImageIndices = &imageIndex;
-
-	if (waitSemaphore != VK_NULL_HANDLE)
-	{
-		presentInfo.pWaitSemaphores = &waitSemaphore;
-		presentInfo.waitSemaphoreCount = 1;
-	}
-
-	return vkQueuePresentKHR(queue, &presentInfo);
 }

@@ -26,13 +26,13 @@ private:
 
 	static bool s_ResizeRequested;
 
-	static uint32_t s_CurrentBufferIndex;
-	static uint32_t s_CurrentImageIndex;
+	static uint32_t s_CurrentFrameIndex;
+	static uint32_t s_CurrentSwapChainImageIndex;
 
 	static std::vector<VkCommandBuffer> s_CommandBuffers;
 	static std::vector<VkSemaphore> s_RenderCompleteSemaphores;
 	static std::vector<VkSemaphore> s_PresentCompleteSemaphores;
-	static std::vector<VkFence> s_Fences;
+	static std::vector<VkFence> s_RenderFences;
 
 	static VkViewport s_Viewport;
 
@@ -56,13 +56,14 @@ private:
 	static void initCommandBuffers();
 	static void initSemaphoresAndFences();
 	static void setClearValue(float r, float g, float b, float a, float depth);
+	static void recreateSwapChain();
 
 	static void prepareFrame();
-	static void prepareCommandBuffer();
-	static void prepareRenderPass();
+	static void beginCommandBuffer();
+	static void beginRenderPass();
 	static void renderScene();
 	static void endRenderPass();
-	static void submitCommandBuffer();
-	static void submitFrame();
-	
+	static void endCommandBuffer();
+	static void queueSubmit();
+	static void queuePresent();
 };

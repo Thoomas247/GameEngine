@@ -24,8 +24,4 @@ public:
 
 	void Create(VkRenderPass renderPass, uint32_t* width, uint32_t* height, bool vsync = false);
 	void Cleanup();
-
-	VkResult AcquireNextImage(VkSemaphore presentCompleteSemaphore, uint32_t* imageIndex);
-	VkResult QueuePresent(VkQueue queue, uint32_t imageIndex, VkSemaphore waitSemaphore = VK_NULL_HANDLE);
 };
-

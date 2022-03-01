@@ -12,15 +12,15 @@ std::shared_ptr<VulkanSwapChain> Renderer::s_SwapChain;
 uint32_t Renderer::s_SwapChainWidth;
 uint32_t Renderer::s_SwapChainHeight;
 
-bool Renderer::s_ResizeRequested;
+bool Renderer::s_ResizeRequested = false;
 
-uint32_t Renderer::s_CurrentBufferIndex = 0;
-uint32_t Renderer::s_CurrentImageIndex = 0;
+uint32_t Renderer::s_CurrentFrameIndex = 0;
+uint32_t Renderer::s_CurrentSwapChainImageIndex = 0;
 
 std::vector<VkCommandBuffer> Renderer::s_CommandBuffers;
 std::vector<VkSemaphore> Renderer::s_RenderCompleteSemaphores;
 std::vector<VkSemaphore> Renderer::s_PresentCompleteSemaphores;
-std::vector<VkFence> Renderer::s_Fences;
+std::vector<VkFence> Renderer::s_RenderFences;
 
 VkViewport Renderer::s_Viewport;
 
@@ -52,27 +52,28 @@ void Renderer::Init()
 void Renderer::Draw()
 {
     prepareFrame();
-    prepareCommandBuffer();
-    prepareRenderPass();
+    beginCommandBuffer();
+    beginRenderPass();
 
     renderScene();
 
     endRenderPass();
-    submitCommandBuffer();
-    submitFrame();
-    
-    s_CurrentBufferIndex = (s_CurrentBufferIndex + 1) % MAX_FRAMES_IN_FLIGHT;
+    endCommandBuffer();
+    queueSubmit();
+    queuePresent();
+    s_CurrentFrameIndex = (s_CurrentFrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
+
 }
 
 void Renderer::CleanUp()
 {
-    vkQueueWaitIdle(s_Device->GraphicsQueue);
+    vkDeviceWaitIdle(s_Device->LogicalDevice);
 
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
         vkDestroySemaphore(s_Device->LogicalDevice, s_RenderCompleteSemaphores[i], nullptr);
         vkDestroySemaphore(s_Device->LogicalDevice, s_PresentCompleteSemaphores[i], nullptr);
-        vkDestroyFence(s_Device->LogicalDevice, s_Fences[i], nullptr);
+        vkDestroyFence(s_Device->LogicalDevice, s_RenderFences[i], nullptr);
     }
     vkDestroyRenderPass(s_Device->LogicalDevice, s_RenderPass, nullptr);
 
@@ -112,8 +113,6 @@ void Renderer::initRenderPass()
     dependency.srcAccessMask = 0;
     dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
     VkRenderPassCreateInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -145,8 +144,9 @@ void Renderer::initViewport()
 
 void Renderer::initCommandBuffers()
 {
-    s_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-    for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+    // we need 1 comman buffer per image, even though only MAX_FRAMES_IN_FLIGHT will be used at a time
+    s_CommandBuffers.resize(s_SwapChain->ImageCount);
+    for (int i = 0; i < s_SwapChain->ImageCount; i++)
     {
         s_CommandBuffers[i] = s_Device->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
     }
@@ -163,127 +163,148 @@ void Renderer::initSemaphoresAndFences()
 
     s_RenderCompleteSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     s_PresentCompleteSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-    s_Fences.resize(MAX_FRAMES_IN_FLIGHT);
+    s_RenderFences.resize(MAX_FRAMES_IN_FLIGHT);
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
         vkCreateSemaphore(s_Device->LogicalDevice, &semaphoreCreateInfo, nullptr, &s_RenderCompleteSemaphores[i]);
         vkCreateSemaphore(s_Device->LogicalDevice, &semaphoreCreateInfo, nullptr, &s_PresentCompleteSemaphores[i]);
-        vkCreateFence(s_Device->LogicalDevice, &fenceCreateInfo, nullptr, &s_Fences[i]);
+        vkCreateFence(s_Device->LogicalDevice, &fenceCreateInfo, nullptr, &s_RenderFences[i]);
     }
 }
 
 void Renderer::setClearValue(float r, float g, float b, float a, float depth)
 {
-    s_ClearValue.color = { r, g, b, a };
-    s_ClearValue.depthStencil = { depth, 0 };
+    s_ClearValue = { r, g, b, a};
+}
+
+void Renderer::recreateSwapChain()
+{
+    // if window is minimized, wait before recreating swap chain
+    WindowSize size = Window::GetSize();
+    while (size.Width == 0 || size.Height == 0) 
+    {
+        size = Window::GetSize();
+        glfwWaitEvents();
+    }
+    vkDeviceWaitIdle(s_Device->LogicalDevice);
+    s_SwapChainWidth = size.Width;
+    s_SwapChainHeight = size.Height;
+    s_SwapChain->Create(s_RenderPass, &s_SwapChainWidth, &s_SwapChainHeight);
+    initViewport();
+    s_ResizeRequested = false;
 }
 
 
 void Renderer::prepareFrame()
 {
-    vkWaitForFences(s_Device->LogicalDevice, 1, &s_Fences[s_CurrentBufferIndex], VK_TRUE, UINT64_MAX);
+    vkWaitForFences(s_Device->LogicalDevice, 1, &s_RenderFences[s_CurrentFrameIndex], VK_TRUE, UINT64_MAX);
 
-    // resize buffer if the window has changed size
-    if (s_ResizeRequested)
+    VkResult result = vkAcquireNextImageKHR(s_Device->LogicalDevice, s_SwapChain->SwapChain, UINT64_MAX, s_PresentCompleteSemaphores[s_CurrentFrameIndex], VK_NULL_HANDLE, &s_CurrentSwapChainImageIndex);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+        recreateSwapChain();
+        return;
+    }
+    else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
     {
-        WindowSize size = Window::GetSize();
-        s_SwapChainWidth = size.Width;
-        s_SwapChainHeight = size.Height;
-        s_SwapChain->Create(s_RenderPass, &s_SwapChainWidth, &s_SwapChainHeight);
-        initViewport();
-        s_ResizeRequested = false;
+        LOG_ERROR("RENDERER::Failed to acquire swap chain image!");
     }
 
-    vkResetFences(s_Device->LogicalDevice, 1, &s_Fences[s_CurrentBufferIndex]);
-
-    // acquire the next image from the swap chain
-    VkResult result = s_SwapChain->AcquireNextImage(s_PresentCompleteSemaphores[s_CurrentBufferIndex], &s_CurrentImageIndex);
-
-    if ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR))
-    {
-        s_ResizeRequested = true;
-    }
-    else if (result != VK_SUCCESS)
-    {
-        LOG_ERROR("RENDERER::Could not prepare frame!");
-    }
+    vkResetFences(s_Device->LogicalDevice, 1, &s_RenderFences[s_CurrentFrameIndex]);
 }
 
-void Renderer::prepareCommandBuffer()
+void Renderer::beginCommandBuffer()
 {
+    vkResetCommandBuffer(s_CommandBuffers[s_CurrentFrameIndex], /*VkCommandBufferResetFlagBits*/ 0);
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    
-    vkBeginCommandBuffer(s_CommandBuffers[s_CurrentBufferIndex], &beginInfo);
+
+    if (vkBeginCommandBuffer(s_CommandBuffers[s_CurrentFrameIndex], &beginInfo) != VK_SUCCESS) {
+        LOG_ERROR("RENDERER::Failed to begin recording command buffer!");
+    }
 }
 
-void Renderer::prepareRenderPass()
+void Renderer::beginRenderPass()
 {
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassInfo.renderPass = s_RenderPass;
-    renderPassInfo.framebuffer = s_SwapChain->FrameBuffers[s_CurrentBufferIndex];
+    renderPassInfo.framebuffer = s_SwapChain->FrameBuffers[s_CurrentSwapChainImageIndex];
     renderPassInfo.renderArea.offset = { 0, 0 };
     renderPassInfo.renderArea.extent = s_SwapChain->Extent;
 
     renderPassInfo.clearValueCount = 1;
     renderPassInfo.pClearValues = &s_ClearValue;
 
-    vkCmdBeginRenderPass(s_CommandBuffers[s_CurrentBufferIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(s_CommandBuffers[s_CurrentFrameIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
 
 void Renderer::renderScene()
 {
     // TODO: loop through meshes and draw them
+    //vkCmdBindPipeline(s_CommandBuffers[s_CurrentFrameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+
+    //vkCmdDraw(s_CommandBuffers[s_CurrentFrameIndex], 3, 1, 0, 0);
 }
 
 void Renderer::endRenderPass()
 {
-    vkCmdEndRenderPass(s_CommandBuffers[s_CurrentBufferIndex]);
+    vkCmdEndRenderPass(s_CommandBuffers[s_CurrentFrameIndex]);
 }
 
-void Renderer::submitCommandBuffer()
+void Renderer::endCommandBuffer()
 {
-    // stop recording commands
-    VkResult result = vkEndCommandBuffer(s_CommandBuffers[s_CurrentBufferIndex]);
-    if (result != VK_SUCCESS)
+    if (vkEndCommandBuffer(s_CommandBuffers[s_CurrentFrameIndex]) != VK_SUCCESS)
     {
-        LOG_ERROR("VULKAN_DEVICE::Failed to end command buffer recording!");
+        LOG_ERROR("RENDERER::Failed to record command buffer!");
     }
+}
 
+void Renderer::queueSubmit()
+{
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &s_CommandBuffers[s_CurrentBufferIndex];
+
     submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = &s_PresentCompleteSemaphores[s_CurrentBufferIndex];
+    submitInfo.pWaitSemaphores = &s_PresentCompleteSemaphores[s_CurrentFrameIndex];
 
     VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     submitInfo.pWaitDstStageMask = waitStages;
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = &s_RenderCompleteSemaphores[s_CurrentBufferIndex];
 
-    // submit to the queue
-    result = vkQueueSubmit(s_Device->GraphicsQueue, 1, &submitInfo, s_Fences[s_CurrentBufferIndex]);
-    if (result != VK_SUCCESS)
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &s_CommandBuffers[s_CurrentFrameIndex];
+
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = &s_RenderCompleteSemaphores[s_CurrentFrameIndex];
+
+    if (vkQueueSubmit(s_Device->GraphicsQueue, 1, &submitInfo, s_RenderFences[s_CurrentFrameIndex]) != VK_SUCCESS) 
     {
-        LOG_ERROR("VULKAN_DEVICE::Failed to submit to queue!");
+        LOG_ERROR("RENDERER::Failed to submit draw command buffer!");
     }
 }
 
-void Renderer::submitFrame()
+void Renderer::queuePresent()
 {
-    VkResult result = s_SwapChain->QueuePresent(s_Device->GraphicsQueue, s_CurrentImageIndex, s_RenderCompleteSemaphores[s_CurrentBufferIndex]);
+    VkPresentInfoKHR presentInfo{};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
-    if (result == VK_SUBOPTIMAL_KHR || result == VK_ERROR_OUT_OF_DATE_KHR)
+    presentInfo.waitSemaphoreCount = 1;
+    presentInfo.pWaitSemaphores = &s_RenderCompleteSemaphores[s_CurrentFrameIndex];
+
+    presentInfo.swapchainCount = 1;
+    presentInfo.pSwapchains = &s_SwapChain->SwapChain;
+
+    presentInfo.pImageIndices = &s_CurrentSwapChainImageIndex;
+
+    VkResult result = vkQueuePresentKHR(s_Device->GraphicsQueue, &presentInfo);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || s_ResizeRequested)
     {
-        s_ResizeRequested = true;
+        s_ResizeRequested = false;
+        recreateSwapChain();
     }
-
     else if (result != VK_SUCCESS)
     {
-        LOG_ERROR("RENDERER::Queue present failed!");
+        LOG_ERROR("RENDERER::Failed to present swap chain image!");
     }
 }
-
-
