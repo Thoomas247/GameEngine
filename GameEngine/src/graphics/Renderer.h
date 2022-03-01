@@ -12,8 +12,6 @@ private:
 	static glm::mat4 s_ViewMatrix;
 	static glm::mat4 s_ProjectionMatrix;
 
-	
-
 public:
 	static void Init();
 	static void Draw();
