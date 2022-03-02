@@ -1,19 +1,18 @@
 #include "precompiled.h"
 #include "ShaderUtil.h"
 
+
 /* -- PUBLIC -- */
 
-/*
-
-int ShaderUtil::GetOpenglType(const ShaderType& type)
+VkShaderStageFlagBits ShaderUtil::GetVulkanType(const ShaderType& type)
 {
 	switch (type)
 	{
 	case ShaderType::vertex:
-		return GL_VERTEX_SHADER;
+		return VK_SHADER_STAGE_VERTEX_BIT;
 
 	case ShaderType::fragment:
-		return GL_FRAGMENT_SHADER;
+		return VK_SHADER_STAGE_FRAGMENT_BIT;
 
 	default:
 		LOG_ERROR("SHADER_UTIL::Shader type is invalid!");
@@ -64,5 +63,3 @@ std::string ShaderUtil::GetTypeExtension(const ShaderType& type)
 		LOG_ERROR("SHADER_UTIL::Shader type is invalid!");
 	}
 }
-
-*/

@@ -26,6 +26,7 @@ private:
 	static std::vector<VkFence> s_RenderFences;
 
 	static VkViewport s_Viewport;
+	static VkRect2D s_Scissor;
 
 	static VkRenderPass s_RenderPass;
 
@@ -39,9 +40,15 @@ public:
 	static void Cleanup();
 	static void RequestResize();
 
+	// TODO: move these to a different class
+	static VkDevice GetDevice() { return s_Device->LogicalDevice; }
+	static VkViewport* GetViewport() { return &s_Viewport; }
+	static VkRect2D* GetScissor() { return &s_Scissor; }
+	static VkRenderPass GetRenderPass() { return s_RenderPass; }
+
 private:
 	static void initRenderPass();
-	static void initViewport();
+	static void initViewportAndScissor();
 	static void initCommandBuffers();
 	static void initSemaphoresAndFences();
 	static void setClearValue(float r, float g, float b, float a, float depth);

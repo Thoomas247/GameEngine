@@ -21,27 +21,13 @@ struct Vertex
 	}
 };
 
-class VertexArray
+class MeshInfo
 {
-private:
-	unsigned int m_GLID;
-	uint64_t m_NumIndices;
+public:
+	VkPipelineVertexInputStateCreateInfo VertexInputCreateInfo;
+	VkPipelineInputAssemblyStateCreateInfo InputAssemblyInfo;
+	VkPipelineRasterizationStateCreateInfo RasterizationCreateInfo;
 
 public:
-	VertexArray()
-	{
-		m_GLID = -1;
-		m_NumIndices = 0;
-	}
-	VertexArray(const unsigned int& glID, const uint64_t& numIndices)
-	{
-		m_GLID = glID;
-		m_NumIndices = numIndices;
-	}
-
-	uint64_t GetNumIndices() const { return m_NumIndices; }
-
-	void Delete();
-	void Bind();
-	void Unbind();
+	MeshInfo();
 };

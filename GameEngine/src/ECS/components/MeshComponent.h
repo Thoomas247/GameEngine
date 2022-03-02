@@ -1,22 +1,22 @@
 #pragma once
 #include "Component.h"
 
-#include "../../graphics/VertexArray.h"
+#include "../../graphics/RenderPipeline.h"
 #include "../../graphics/shaders/MaterialShader.h"
 
-/*
 
 class MeshComponent : public Component
 {
+public:
+	RenderPipeline Pipeline;
+
 private:
-	VertexArray m_VertexArray;
+	MeshInfo m_MeshInfo;
 	MaterialShader m_MaterialShader;
 
 public:
+	MeshComponent(Entity* entity, const MeshInfo& meshInfo = MeshInfo(), const MaterialShader& shader = MaterialShader());
 
-	MeshComponent(Entity* entity, const VertexArray& vertexArray = VertexArray(), const MaterialShader& shader = MaterialShader());
-
-	VertexArray& GetVertexArray() { return m_VertexArray; }
+	MeshInfo& GetMeshInfo() { return m_MeshInfo; }
 	MaterialShader& GetMaterialShader() { return m_MaterialShader; }
 };
-*/

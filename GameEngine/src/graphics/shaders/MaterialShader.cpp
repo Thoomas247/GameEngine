@@ -1,9 +1,9 @@
 #include "precompiled.h"
 #include "MaterialShader.h"
 
+
 /* -- PUBLIC -- */
 
-/*
 std::vector<CachedShader> MaterialShader::Compile()
 {
 	// notes:
@@ -82,40 +82,42 @@ std::vector<CachedShader> MaterialShader::Compile()
 
 void MaterialShader::Load(const std::vector<CachedShader>& spirvFiles, const std::vector<UniformBuffer>& savedBuffers)
 {
-	// unload previous shader from opengl, if any
-	if (m_GLID != NOT_COMPILED)
+	ShaderStageCreateInfo.resize(spirvFiles.size());
+	for (int i = 0; i < spirvFiles.size(); i++)
 	{
-		Unload();
+		const CachedShader& spirvShader = spirvFiles.at(i);
+		std::vector<uint32_t> spirv = loadSpirvFileContents(spirvShader.Path);
+
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.pNext = nullptr;
+
+		createInfo.codeSize = spirv.size() * sizeof(uint32_t);
+		createInfo.pCode = spirv.data();
+
+		VkShaderModule shaderModule;
+		if (vkCreateShaderModule(Renderer::GetDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+		{
+			LOG_ERROR("MATERIAL_SHADER::Failed to create shader module!");
+		}
+
+		VkPipelineShaderStageCreateInfo& shaderCreateInfo = ShaderStageCreateInfo[i];
+		shaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		shaderCreateInfo.pNext = nullptr;
+		shaderCreateInfo.stage = ShaderUtil::GetVulkanType(spirvShader.Type);
+		shaderCreateInfo.module = shaderModule;
+		shaderCreateInfo.pName = "main";
 	}
 
-	m_GLID = glCreateProgram();
+	// the shaders determine the number of inputs, outputs and push constants so this goes here
+	VkPipelineLayoutCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	createInfo.pNext = nullptr;
 
-	std::map<ShaderType, unsigned int> openglShaderIDs;
-
-	// compile shaders to OpenGL and check for errors
-	for (const CachedShader& cachedShader : spirvFiles)
+	if (vkCreatePipelineLayout(Renderer::GetDevice(), &createInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
 	{
-		std::vector<uint32_t> spirv = loadSpirvFileContents(cachedShader.Path);
-
-		unsigned int id = openglCompileShaderFromSpirV(spirv, ShaderUtil::GetOpenglType(cachedShader.Type));
-		openglCheckCompileErrors(id, ShaderUtil::GetTypeString(cachedShader.Type));
-
-		openglShaderIDs[cachedShader.Type] = id;
-
-		// get available uniforms directly from the spirv code
-		prepareBuffers(spirv);
+		LOG_ERROR("MATERIAL_SHADER::Failed to create pipeline layout!");
 	}
-
-	// link shaders and delete
-	for (const auto& [type, id] : openglShaderIDs)
-	{
-		glAttachShader(m_GLID, id);
-		glDeleteShader(id);
-	}
-	glLinkProgram(m_GLID);
-	openglCheckCompileErrors(m_GLID, "PROGRAM");
-
-	// TODO: set uniforms retrieved by addUniformsToVector(spirv) to values in savedBuffers
 }
 
 void MaterialShader::Activate()
@@ -141,11 +143,9 @@ void MaterialShader::Unload()
 	glDeleteProgram(m_GLID);
 }
 
-*/
 
 /* -- PRIVATE -- */
 
-/*
 std::string MaterialShader::splitShader(const std::string& shaderString, const std::string& shaderType)
 {
 		std::string startTag = "#start " + shaderType;
@@ -176,12 +176,11 @@ std::string MaterialShader::splitShader(const std::string& shaderString, const s
 		return shaderString.substr(startPos, endPos - startPos).c_str();
 }
 
-
 std::vector<uint32_t> MaterialShader::toSpirV(const std::string& shaderString, const shaderc_shader_kind& type)
 {
 	shaderc::Compiler compiler = shaderc::Compiler();
 	shaderc::CompileOptions compileOptions;
-	compileOptions.SetTargetEnvironment(shaderc_target_env_opengl, 0);
+	compileOptions.SetTargetEnvironment(shaderc_target_env_vulkan, 0);
 	compileOptions.SetAutoBindUniforms(true);
 	compileOptions.SetAutoMapLocations(true);
 	compileOptions.SetOptimizationLevel(shaderc_optimization_level_performance);
@@ -195,11 +194,15 @@ std::vector<uint32_t> MaterialShader::toSpirV(const std::string& shaderString, c
 	return std::vector<uint32_t>(result.cbegin(), result.cend());
 }
 
-
 std::vector<uint32_t> MaterialShader::loadSpirvFileContents(const std::string& absolutePath)
 {
 	std::vector<uint32_t> data;
 	std::ifstream fileStream(absolutePath, std::ios::in | std::ios::binary);
+	
+	if (!fileStream.is_open())
+	{
+		LOG_ERROR("MATERIAL_SHADER::Failed to open spirv file!");
+	}
 
 	size_t fileSize = std::filesystem::file_size(absolutePath);
 	data.resize(fileSize / sizeof(uint32_t));
@@ -209,7 +212,6 @@ std::vector<uint32_t> MaterialShader::loadSpirvFileContents(const std::string& a
 
 	return data;
 }
-
 
 void MaterialShader::prepareBuffers(const std::vector<uint32_t>& shaderWords)
 {
@@ -234,7 +236,6 @@ void MaterialShader::prepareBuffers(const std::vector<uint32_t>& shaderWords)
 	}
 }
 
-
 std::string MaterialShader::loadGlslFileContents(const std::string& absolutePath)
 {
 	std::string fileContents;
@@ -257,33 +258,3 @@ std::string MaterialShader::loadGlslFileContents(const std::string& absolutePath
 
 	return fileContents;
 }
-
-unsigned int MaterialShader::openglCompileShaderFromSpirV(const std::vector<uint32_t>& spirvSource, const int& shaderType)
-{
-	unsigned int shaderID = glCreateShader(shaderType);
-	glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, spirvSource.data(), spirvSource.size() * sizeof(uint32_t));
-	glSpecializeShader(shaderID, "main", 0, nullptr, nullptr);
-	return shaderID;
-}
-
-void MaterialShader::openglCheckCompileErrors(const unsigned int& shader, const std::string& type)
-{
-	int success = 0;
-	GLchar infoLog[1024];
-	if (type != "PROGRAM") {
-		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-		if (!success) {
-			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			LOG_ERROR("SHADER::Compilation failed!" + std::string(" - " + type + ": " + infoLog));
-		}
-	}
-	else {
-		glGetProgramiv(shader, GL_LINK_STATUS, &success);
-		if (!success) {
-			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			LOG_ERROR("SHADER::Linking failed!" + std::string(" - " + type + ": " + infoLog));
-		}
-	}
-}
-
-*/

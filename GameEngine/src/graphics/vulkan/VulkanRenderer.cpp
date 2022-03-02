@@ -38,7 +38,7 @@ void VulkanRenderer::Init()
     initRenderPass();
     s_SwapChain->Create(s_RenderPass, &s_SwapChainWidth, &s_SwapChainHeight);
 
-    initViewport();
+    initViewportAndScissor();
     initCommandBuffers();
     initSemaphoresAndFences();
 
@@ -130,11 +130,11 @@ void VulkanRenderer::initRenderPass()
 
     if (vkCreateRenderPass(s_Device->LogicalDevice, &renderPassInfo, nullptr, &s_RenderPass) != VK_SUCCESS)
     {
-        LOG_ERROR("VulkanRenderer::failed to create render pass!");
+        LOG_ERROR("VULKAN_RENDERER::Failed to create render pass!");
     }
 }
 
-void VulkanRenderer::initViewport()
+void VulkanRenderer::initViewportAndScissor()
 {
     const float viewportWidth{ static_cast<float>(s_SwapChain->Extent.width) };
     const float viewportHeight{ static_cast<float>(s_SwapChain->Extent.height) };
@@ -145,6 +145,9 @@ void VulkanRenderer::initViewport()
     s_Viewport.y = 0;
     s_Viewport.maxDepth = 1.0f;
     s_Viewport.minDepth = 0.0f;
+
+    s_Scissor.extent = s_SwapChain->Extent;
+    s_Scissor.offset = { 0, 0 };
 }
 
 void VulkanRenderer::initCommandBuffers()
@@ -202,7 +205,7 @@ void VulkanRenderer::recreateSwapChain()
     s_SwapChainWidth = size.Width;
     s_SwapChainHeight = size.Height;
     s_SwapChain->Create(s_RenderPass, &s_SwapChainWidth, &s_SwapChainHeight);
-    initViewport();
+    initViewportAndScissor();
     s_ResizeRequested = false;
 }
 
@@ -218,7 +221,7 @@ void VulkanRenderer::prepareFrame()
     }
     else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
     {
-        LOG_ERROR("VulkanRenderer::Failed to acquire swap chain image!");
+        LOG_ERROR("VULKAN_RENDERER::Failed to acquire swap chain image!");
     }
 
     vkResetFences(s_Device->LogicalDevice, 1, &s_RenderFences[s_CurrentFrameIndex]);
@@ -231,7 +234,7 @@ void VulkanRenderer::beginCommandBuffer()
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
     if (vkBeginCommandBuffer(s_CommandBuffers[s_CurrentFrameIndex], &beginInfo) != VK_SUCCESS) {
-        LOG_ERROR("VulkanRenderer::Failed to begin recording command buffer!");
+        LOG_ERROR("VULKAN_RENDERER::Failed to begin recording command buffer!");
     }
 }
 
@@ -259,7 +262,7 @@ void VulkanRenderer::endCommandBuffer()
 {
     if (vkEndCommandBuffer(s_CommandBuffers[s_CurrentFrameIndex]) != VK_SUCCESS)
     {
-        LOG_ERROR("VulkanRenderer::Failed to record command buffer!");
+        LOG_ERROR("VULKAN_RENDERER::Failed to record command buffer!");
     }
 }
 
@@ -282,7 +285,7 @@ void VulkanRenderer::queueSubmit()
 
     if (vkQueueSubmit(s_Device->GraphicsQueue, 1, &submitInfo, s_RenderFences[s_CurrentFrameIndex]) != VK_SUCCESS)
     {
-        LOG_ERROR("VulkanRenderer::Failed to submit draw command buffer!");
+        LOG_ERROR("VULKAN_RENDERER::Failed to submit draw command buffer!");
     }
 }
 
@@ -308,6 +311,6 @@ void VulkanRenderer::queuePresent()
     }
     else if (result != VK_SUCCESS)
     {
-        LOG_ERROR("VulkanRenderer::Failed to present swap chain image!");
+        LOG_ERROR("VULKAN_RENDERER::Failed to present swap chain image!");
     }
 }

@@ -34,3 +34,28 @@ void Renderer::RequestResize()
 {
     VulkanRenderer::RequestResize();
 }
+
+VkDevice Renderer::GetDevice()
+{
+    return VulkanRenderer::GetDevice();
+}
+
+VkViewport* Renderer::GetViewport()
+{
+    return VulkanRenderer::GetViewport();
+}
+
+VkRect2D* Renderer::GetScissor()
+{
+    return VulkanRenderer::GetScissor();
+}
+
+VkRenderPass Renderer::GetRenderPass()
+{
+    return VulkanRenderer::GetRenderPass();
+}
+
+VkPipelineLayout Renderer::GetPipelineLayout()
+{
+    return VulkanRenderer::GetPipelineLayout();
+}
