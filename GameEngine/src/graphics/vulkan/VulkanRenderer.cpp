@@ -1,12 +1,6 @@
 #include "precompiled.h"
 #include "VulkanRenderer.h"
 
-std::shared_ptr<VulkanInstance> VulkanRenderer::s_Instance;
-std::shared_ptr<VulkanDevice> VulkanRenderer::s_Device;
-std::shared_ptr<VulkanSwapChain> VulkanRenderer::s_SwapChain;
-
-uint32_t VulkanRenderer::s_SwapChainWidth;
-uint32_t VulkanRenderer::s_SwapChainHeight;
 
 bool VulkanRenderer::s_ResizeRequested = false;
 
@@ -18,10 +12,6 @@ std::vector<VkSemaphore> VulkanRenderer::s_RenderCompleteSemaphores;
 std::vector<VkSemaphore> VulkanRenderer::s_PresentCompleteSemaphores;
 std::vector<VkFence> VulkanRenderer::s_RenderFences;
 
-VkViewport VulkanRenderer::s_Viewport;
-
-VkRenderPass VulkanRenderer::s_RenderPass;
-
 VkClearValue VulkanRenderer::s_ClearValue[2];
 
 
@@ -29,16 +19,10 @@ VkClearValue VulkanRenderer::s_ClearValue[2];
 
 void VulkanRenderer::Init()
 {
-    s_Instance = std::make_shared<VulkanInstance>();
-    VkPhysicalDevice physicalDevice = s_Instance->PickPhysicalDevice();
+    VulkanState::Init();
 
-    s_Device = std::make_shared<VulkanDevice>(physicalDevice, VkPhysicalDeviceFeatures(), VULKAN_DEVICE_EXTENSIONS);
+    VulkanState::SwapChain->Create(800, 600); // pass fallback window dimensions of 800 by 600
 
-    s_SwapChain = std::make_shared<VulkanSwapChain>(s_Instance, s_Device);
-    initRenderPass();
-    s_SwapChain->Create(s_RenderPass, &s_SwapChainWidth, &s_SwapChainHeight);
-
-    initViewportAndScissor();
     initCommandBuffers();
     initSemaphoresAndFences();
 
@@ -52,9 +36,12 @@ void VulkanRenderer::StartRendering()
 	beginRenderPass();
 }
 
-void VulkanRenderer::Submit()
+void VulkanRenderer::Submit(const VkPipeline& pipeline, const VkBuffer& vertexBuffer, const VkBuffer& indexBuffer, const uint32_t& indexCount)
 {
-
+    vkCmdBindPipeline(s_CommandBuffers[s_CurrentFrameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    vkCmdBindVertexBuffers(s_CommandBuffers[s_CurrentFrameIndex], 0, 1, &vertexBuffer, 0);
+    vkCmdBindIndexBuffer(s_CommandBuffers[s_CurrentFrameIndex], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdDrawIndexed(s_CommandBuffers[s_CurrentFrameIndex], indexCount, 1, 0, 0, 0);
 }
 
 void VulkanRenderer::FinishRendering()
@@ -67,19 +54,16 @@ void VulkanRenderer::FinishRendering()
 
 void VulkanRenderer::Cleanup()
 {
-    vkDeviceWaitIdle(s_Device->LogicalDevice);
+    vkDeviceWaitIdle(VulkanState::Device->LogicalDevice);
 
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
-        vkDestroySemaphore(s_Device->LogicalDevice, s_RenderCompleteSemaphores[i], nullptr);
-        vkDestroySemaphore(s_Device->LogicalDevice, s_PresentCompleteSemaphores[i], nullptr);
-        vkDestroyFence(s_Device->LogicalDevice, s_RenderFences[i], nullptr);
+        vkDestroySemaphore(VulkanState::Device->LogicalDevice, s_RenderCompleteSemaphores[i], nullptr);
+        vkDestroySemaphore(VulkanState::Device->LogicalDevice, s_PresentCompleteSemaphores[i], nullptr);
+        vkDestroyFence(VulkanState::Device->LogicalDevice, s_RenderFences[i], nullptr);
     }
-    vkDestroyRenderPass(s_Device->LogicalDevice, s_RenderPass, nullptr);
 
-    s_SwapChain->Cleanup();
-    s_Device->Cleanup();
-    s_Instance->Cleanup();
+    VulkanState::Cleanup();
 }
 
 void VulkanRenderer::RequestResize()
@@ -90,73 +74,13 @@ void VulkanRenderer::RequestResize()
 
 /* -- PRIVATE -- */
 
-void VulkanRenderer::initRenderPass()
-{
-    VkAttachmentDescription colorAttachment{};
-    colorAttachment.format = s_SwapChain->ColorFormat;
-    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-    colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-    VkAttachmentReference colorAttachmentRef{};
-    colorAttachmentRef.attachment = 0;
-    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-    VkSubpassDescription subpass{};
-    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    subpass.colorAttachmentCount = 1;
-    subpass.pColorAttachments = &colorAttachmentRef;
-
-    VkSubpassDependency dependency{};
-    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-    dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.srcAccessMask = 0;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-    VkRenderPassCreateInfo renderPassInfo{};
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    renderPassInfo.attachmentCount = 1;
-    renderPassInfo.pAttachments = &colorAttachment;
-    renderPassInfo.subpassCount = 1;
-    renderPassInfo.pSubpasses = &subpass;
-    renderPassInfo.dependencyCount = 1;
-    renderPassInfo.pDependencies = &dependency;
-
-    if (vkCreateRenderPass(s_Device->LogicalDevice, &renderPassInfo, nullptr, &s_RenderPass) != VK_SUCCESS)
-    {
-        LOG_ERROR("VULKAN_RENDERER::Failed to create render pass!");
-    }
-}
-
-void VulkanRenderer::initViewportAndScissor()
-{
-    const float viewportWidth{ static_cast<float>(s_SwapChain->Extent.width) };
-    const float viewportHeight{ static_cast<float>(s_SwapChain->Extent.height) };
-
-    s_Viewport.width = viewportWidth;
-    s_Viewport.height = viewportHeight;
-    s_Viewport.x = 0;
-    s_Viewport.y = 0;
-    s_Viewport.maxDepth = 1.0f;
-    s_Viewport.minDepth = 0.0f;
-
-    s_Scissor.extent = s_SwapChain->Extent;
-    s_Scissor.offset = { 0, 0 };
-}
-
 void VulkanRenderer::initCommandBuffers()
 {
-    // we need 1 comman buffer per image, even though only MAX_FRAMES_IN_FLIGHT will be used at a time
-    s_CommandBuffers.resize(s_SwapChain->ImageCount);
-    for (int i = 0; i < s_SwapChain->ImageCount; i++)
+    // we need 1 command buffer per image, even though only MAX_FRAMES_IN_FLIGHT will be used at a time
+    s_CommandBuffers.resize(VulkanState::SwapChain->ImageCount);
+    for (int i = 0; i < VulkanState::SwapChain->ImageCount; i++)
     {
-        s_CommandBuffers[i] = s_Device->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+        s_CommandBuffers[i] = VulkanState::Device->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
     }
 }
 
@@ -174,9 +98,9 @@ void VulkanRenderer::initSemaphoresAndFences()
     s_RenderFences.resize(MAX_FRAMES_IN_FLIGHT);
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
-        vkCreateSemaphore(s_Device->LogicalDevice, &semaphoreCreateInfo, nullptr, &s_RenderCompleteSemaphores[i]);
-        vkCreateSemaphore(s_Device->LogicalDevice, &semaphoreCreateInfo, nullptr, &s_PresentCompleteSemaphores[i]);
-        vkCreateFence(s_Device->LogicalDevice, &fenceCreateInfo, nullptr, &s_RenderFences[i]);
+        vkCreateSemaphore(VulkanState::Device->LogicalDevice, &semaphoreCreateInfo, nullptr, &s_RenderCompleteSemaphores[i]);
+        vkCreateSemaphore(VulkanState::Device->LogicalDevice, &semaphoreCreateInfo, nullptr, &s_PresentCompleteSemaphores[i]);
+        vkCreateFence(VulkanState::Device->LogicalDevice, &fenceCreateInfo, nullptr, &s_RenderFences[i]);
     }
 }
 
@@ -201,19 +125,17 @@ void VulkanRenderer::recreateSwapChain()
         size = Window::GetSize();
         glfwWaitEvents();
     }
-    vkDeviceWaitIdle(s_Device->LogicalDevice);
-    s_SwapChainWidth = size.Width;
-    s_SwapChainHeight = size.Height;
-    s_SwapChain->Create(s_RenderPass, &s_SwapChainWidth, &s_SwapChainHeight);
-    initViewportAndScissor();
+
+    vkDeviceWaitIdle(VulkanState::Device->LogicalDevice);
+    VulkanState::SwapChain->Create(size.Width, size.Height);
     s_ResizeRequested = false;
 }
 
 void VulkanRenderer::prepareFrame()
 {
-    vkWaitForFences(s_Device->LogicalDevice, 1, &s_RenderFences[s_CurrentFrameIndex], VK_TRUE, UINT64_MAX);
+    vkWaitForFences(VulkanState::Device->LogicalDevice, 1, &s_RenderFences[s_CurrentFrameIndex], VK_TRUE, UINT64_MAX);
 
-    VkResult result = vkAcquireNextImageKHR(s_Device->LogicalDevice, s_SwapChain->SwapChain, UINT64_MAX, s_PresentCompleteSemaphores[s_CurrentFrameIndex], VK_NULL_HANDLE, &s_CurrentSwapChainImageIndex);
+    VkResult result = vkAcquireNextImageKHR(VulkanState::Device->LogicalDevice, VulkanState::SwapChain->SwapChain, UINT64_MAX, s_PresentCompleteSemaphores[s_CurrentFrameIndex], VK_NULL_HANDLE, &s_CurrentSwapChainImageIndex);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
         recreateSwapChain();
@@ -224,7 +146,7 @@ void VulkanRenderer::prepareFrame()
         LOG_ERROR("VULKAN_RENDERER::Failed to acquire swap chain image!");
     }
 
-    vkResetFences(s_Device->LogicalDevice, 1, &s_RenderFences[s_CurrentFrameIndex]);
+    vkResetFences(VulkanState::Device->LogicalDevice, 1, &s_RenderFences[s_CurrentFrameIndex]);
 }
 
 void VulkanRenderer::beginCommandBuffer()
@@ -242,10 +164,10 @@ void VulkanRenderer::beginRenderPass()
 {
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = s_RenderPass;
-    renderPassInfo.framebuffer = s_SwapChain->FrameBuffers[s_CurrentSwapChainImageIndex];
+    renderPassInfo.renderPass = VulkanState::RenderPass->RenderPass;
+    renderPassInfo.framebuffer = VulkanState::SwapChain->FrameBuffers[s_CurrentSwapChainImageIndex];
     renderPassInfo.renderArea.offset = { 0, 0 };
-    renderPassInfo.renderArea.extent = s_SwapChain->Extent;
+    renderPassInfo.renderArea.extent = VulkanState::SwapChain->Extent;
 
     renderPassInfo.clearValueCount = 2;
     renderPassInfo.pClearValues = s_ClearValue;
@@ -283,7 +205,7 @@ void VulkanRenderer::queueSubmit()
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = &s_RenderCompleteSemaphores[s_CurrentFrameIndex];
 
-    if (vkQueueSubmit(s_Device->GraphicsQueue, 1, &submitInfo, s_RenderFences[s_CurrentFrameIndex]) != VK_SUCCESS)
+    if (vkQueueSubmit(VulkanState::Device->GraphicsQueue, 1, &submitInfo, s_RenderFences[s_CurrentFrameIndex]) != VK_SUCCESS)
     {
         LOG_ERROR("VULKAN_RENDERER::Failed to submit draw command buffer!");
     }
@@ -298,11 +220,11 @@ void VulkanRenderer::queuePresent()
     presentInfo.pWaitSemaphores = &s_RenderCompleteSemaphores[s_CurrentFrameIndex];
 
     presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = &s_SwapChain->SwapChain;
+    presentInfo.pSwapchains = &VulkanState::SwapChain->SwapChain;
 
     presentInfo.pImageIndices = &s_CurrentSwapChainImageIndex;
 
-    VkResult result = vkQueuePresentKHR(s_Device->GraphicsQueue, &presentInfo);
+    VkResult result = vkQueuePresentKHR(VulkanState::Device->GraphicsQueue, &presentInfo);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || s_ResizeRequested)
     {

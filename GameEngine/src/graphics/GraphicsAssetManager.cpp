@@ -23,11 +23,6 @@ unsigned int GraphicsAssetManager::LoadTexture(const std::string& absolutePath)
 	return 0;
 }
 
-VertexArray GraphicsAssetManager::LoadVertexArray(const std::vector<Vertex> vertices, const std::vector<unsigned int>& indices)
-{
-	return VertexArray();
-}
-
 
 /* -- PRIVATE -- */
 

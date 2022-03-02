@@ -1,0 +1,27 @@
+#include "precompiled.h"
+#include "VulkanState.h"
+
+
+std::unique_ptr<VulkanInstance> VulkanState::Instance = nullptr;
+std::unique_ptr<VulkanDevice> VulkanState::Device = nullptr;
+std::unique_ptr<VulkanSwapChain> VulkanState::SwapChain = nullptr;
+std::unique_ptr<VulkanRenderPass> VulkanState::RenderPass = nullptr;
+
+
+/* -- PUBLIC -- */
+
+void VulkanState::Init()
+{
+    Instance = std::make_unique<VulkanInstance>();
+    Device = std::make_unique<VulkanDevice>(Instance->PickPhysicalDevice(), VkPhysicalDeviceFeatures(), VULKAN_DEVICE_EXTENSIONS);
+    SwapChain = std::make_unique<VulkanSwapChain>();
+    RenderPass = std::make_unique<VulkanRenderPass>();
+}
+
+void VulkanState::Cleanup()
+{
+    RenderPass->Cleanup();
+    SwapChain->Cleanup();
+    Device->Cleanup();
+    Instance->Cleanup();
+}

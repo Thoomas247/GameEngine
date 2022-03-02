@@ -96,7 +96,7 @@ void MaterialShader::Load(const std::vector<CachedShader>& spirvFiles, const std
 		createInfo.pCode = spirv.data();
 
 		VkShaderModule shaderModule;
-		if (vkCreateShaderModule(Renderer::GetDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+		if (vkCreateShaderModule(VulkanState::Device->LogicalDevice, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
 		{
 			LOG_ERROR("MATERIAL_SHADER::Failed to create shader module!");
 		}
@@ -114,33 +114,10 @@ void MaterialShader::Load(const std::vector<CachedShader>& spirvFiles, const std
 	createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	createInfo.pNext = nullptr;
 
-	if (vkCreatePipelineLayout(Renderer::GetDevice(), &createInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
+	if (vkCreatePipelineLayout(VulkanState::Device->LogicalDevice, &createInfo, nullptr, &PipelineLayout) != VK_SUCCESS)
 	{
 		LOG_ERROR("MATERIAL_SHADER::Failed to create pipeline layout!");
 	}
-}
-
-void MaterialShader::Activate()
-{
-	if (m_GLID == NOT_COMPILED)
-	{
-		LOG_ERROR("MATERIAL_SHADER::Shader hasn't been compiled!");
-	}
-	glUseProgram(m_GLID);
-
-	for (UniformBuffer& buffer : m_UniformBuffers)
-	{
-		buffer.Bind();
-	}
-}
-
-void MaterialShader::Unload()
-{
-	if (m_GLID == 0)
-	{
-		LOG_ERROR("MATERIAL_SHADER::Trying to unload shader which hasn't been compiled!");
-	}
-	glDeleteProgram(m_GLID);
 }
 
 

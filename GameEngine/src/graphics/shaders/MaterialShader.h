@@ -42,14 +42,6 @@ public:
 	/// </summary>
 	/// <param name="savedUniforms">Previously saved uniform values</param>
 	void Load(const std::vector<CachedShader>& spirvFiles, const std::vector<UniformBuffer>& savedBuffers = std::vector<UniformBuffer>());
-	/// <summary>
-	/// Activate this shader for rendering.
-	/// </summary>
-	void Activate();
-	/// <summary>
-	/// Unload this shader from the GPU.
-	/// </summary>
-	void Unload();
 
 private:
 	std::string splitShader(const std::string& shaderString, const std::string& shaderType);

@@ -156,7 +156,10 @@
     <ClCompile Include="src\graphics\RenderPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanRenderPipeline.cpp">
+    <ClCompile Include="src\graphics\vulkan\VulkanState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\vulkan\VulkanRenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -272,7 +275,10 @@
     <ClInclude Include="src\graphics\RenderPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VulkanRenderPipeline.h">
+    <ClInclude Include="src\graphics\vulkan\VulkanState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\vulkan\VulkanRenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,10 +2,15 @@
 #include "MeshComponent.h"
 
 
-MeshComponent::MeshComponent(Entity* entity, const MeshInfo& meshInfo = MeshInfo(), const MaterialShader& shader = MaterialShader())
+MeshComponent::MeshComponent(Entity* entity, const MeshInfo& meshInfo, const MaterialShader& shader)
 	: Component(entity), Pipeline(shader, meshInfo)
 {
 	// keep track of these to change their settings
-	m_MeshInfo = meshInfo;
-	m_MaterialShader = shader;
+	MeshData = meshInfo;
+	Shader = shader;
+}
+
+MeshComponent::~MeshComponent()
+{
+	MeshData.Cleanup();
 }

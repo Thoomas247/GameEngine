@@ -49,6 +49,7 @@ using json = nlohmann::json;
 
 #include "importer/Importer.h"
 
+#include "graphics/vulkan/VulkanState.h"
 #include "graphics/Renderer.h"
 #include "graphics/MeshInfo.h"
 #include "graphics/shaders/ShaderUtil.h"

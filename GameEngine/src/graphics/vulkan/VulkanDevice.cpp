@@ -12,6 +12,11 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeat
 		LOG_ERROR("VULKAN_DEVICE::Physical device cannot be null!");
 	}
 
+	if (VulkanState::Instance == nullptr)
+	{
+		LOG_ERROR("VULKAN_DEVICE::Instance must be created before creating the device!");
+	}
+
 	// store properties, features, limits and properties of the physical device for later use
 	vkGetPhysicalDeviceProperties(physicalDevice, &Properties);
 	vkGetPhysicalDeviceFeatures(physicalDevice, &Features);

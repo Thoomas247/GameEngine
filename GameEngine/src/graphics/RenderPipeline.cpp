@@ -20,9 +20,9 @@ RenderPipeline::RenderPipeline(const MaterialShader& shader, const MeshInfo& mes
 	viewportCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	viewportCreateInfo.pNext = nullptr;
 	viewportCreateInfo.viewportCount = 1;
-	viewportCreateInfo.pViewports = Renderer::GetViewport();
+	viewportCreateInfo.pViewports = &VulkanState::SwapChain->Viewport;
 	viewportCreateInfo.scissorCount = 1;
-	viewportCreateInfo.pScissors = Renderer::GetScissor();
+	viewportCreateInfo.pScissors = &VulkanState::SwapChain->Scissor;
 
 	// TODO: set proper blend settings here
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
@@ -51,11 +51,11 @@ RenderPipeline::RenderPipeline(const MaterialShader& shader, const MeshInfo& mes
 	pipelineCreateInfo.pMultisampleState = &multisampleCreateInfo;
 	pipelineCreateInfo.pColorBlendState = &colorBlendCreateInfo;
 	pipelineCreateInfo.layout = shader.PipelineLayout;
-	pipelineCreateInfo.renderPass = Renderer::GetRenderPass();
+	pipelineCreateInfo.renderPass = VulkanState::RenderPass->RenderPass;
 	pipelineCreateInfo.subpass = 0;
 	pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-	if (vkCreateGraphicsPipelines(Renderer::GetDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &Pipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(VulkanState::Device->LogicalDevice, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &Pipeline) != VK_SUCCESS)
 	{
 		LOG_ERROR("RENDER_PIPELINE::Failed to create graphics pipeline!");
 	}
