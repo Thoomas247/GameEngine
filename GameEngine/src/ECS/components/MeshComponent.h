@@ -8,10 +8,10 @@ class MeshComponent : public Component
 {
 public:
 	RenderPipeline Pipeline;
-	MeshInfo MeshData;
+	MeshBuffers MeshData;
 	MaterialShader Shader;
 
 public:
-	MeshComponent(Entity* entity, const MeshInfo& meshInfo = MeshInfo(), const MaterialShader& shader = MaterialShader());
+	MeshComponent(Entity* entity, const MeshBuffers& meshInfo = MeshBuffers(), const MaterialShader& shader = MaterialShader());
 	~MeshComponent();
 };

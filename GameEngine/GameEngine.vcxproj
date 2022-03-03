@@ -243,7 +243,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\MeshInfo.cpp">
+    <ClCompile Include="src\graphics\MeshBuffers.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -339,7 +339,7 @@
     <ClInclude Include="src\animator\Animation.h" />
     <ClInclude Include="src\animator\Joint.h" />
     <ClInclude Include="src\graphics\Renderer.h" />
-    <ClInclude Include="src\graphics\MeshInfo.h" />
+    <ClInclude Include="src\graphics\MeshBuffers.h" />
     <ClInclude Include="src\core\UUID.h" />
     <ClInclude Include="src\core\Util.h" />
     <ClInclude Include="src\graphics\shaders\UniformBuffer.h" />

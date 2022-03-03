@@ -6,6 +6,8 @@ public:
 	VkPipeline Pipeline;
 
 public:
-	RenderPipeline(const MaterialShader& shader, const MeshInfo& meshInfo);
+	RenderPipeline();
+
+	void Create(const MaterialShader& shader, const MeshBuffers& meshInfo);
 };
 

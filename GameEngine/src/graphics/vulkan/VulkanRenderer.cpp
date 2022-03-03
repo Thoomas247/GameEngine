@@ -36,11 +36,15 @@ void VulkanRenderer::StartRendering()
 	beginRenderPass();
 }
 
-void VulkanRenderer::Submit(const VkPipeline& pipeline, const VkBuffer& vertexBuffer, const VkBuffer& indexBuffer, const uint32_t& indexCount)
+void VulkanRenderer::Submit(VkPipeline pipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, const uint32_t& indexCount)
 {
     vkCmdBindPipeline(s_CommandBuffers[s_CurrentFrameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-    vkCmdBindVertexBuffers(s_CommandBuffers[s_CurrentFrameIndex], 0, 1, &vertexBuffer, 0);
-    vkCmdBindIndexBuffer(s_CommandBuffers[s_CurrentFrameIndex], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+    VkBuffer vertexBuffers[] = { vertexBuffer };
+    VkDeviceSize offsets[] = { 0 };
+    vkCmdBindVertexBuffers(s_CommandBuffers[s_CurrentFrameIndex], 0, 1, vertexBuffers, offsets);
+    vkCmdBindIndexBuffer(s_CommandBuffers[s_CurrentFrameIndex], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
     vkCmdDrawIndexed(s_CommandBuffers[s_CurrentFrameIndex], indexCount, 1, 0, 0, 0);
 }
 

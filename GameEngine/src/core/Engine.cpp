@@ -43,6 +43,8 @@ int Engine::Run()
 	//SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 	//SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
+	ECS::CreateComponent<MeshComponent>(nullptr);
+
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 	float currentFrame = 0.0f;

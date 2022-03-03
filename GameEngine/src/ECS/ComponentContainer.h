@@ -12,9 +12,10 @@ private:
 	static std::vector<T> s_Components;
 
 public:
-	static int AddComponent(const T& component)
+	template <typename... P>
+	static int AddComponent(P... params)
 	{
-		s_Components.push_back(component);
+		s_Components.emplace_back(params...);
 		return (int)s_Components.size() - 1;
 	}
 

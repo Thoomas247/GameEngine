@@ -34,6 +34,7 @@ public:
 	uint32_t GetQueueFamilyIndex(VkQueueFlagBits queueFlags);
 
 	VkResult CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, VkBuffer* buffer, VkDeviceMemory* memory, void* data = nullptr);
+	void  CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 	
 	VkCommandBuffer CreateCommandBuffer(VkCommandBufferLevel level, VkCommandPool pool, bool begin = false);
 	VkCommandBuffer CreateCommandBuffer(VkCommandBufferLevel level, bool begin = false);

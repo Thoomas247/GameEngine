@@ -4,8 +4,55 @@
 
 /* -- PUBLIC -- */
 
-RenderPipeline::RenderPipeline(const MaterialShader& shader, const MeshInfo& meshInfo)
+RenderPipeline::RenderPipeline()
 {
+	Pipeline = VK_NULL_HANDLE;
+}
+
+void RenderPipeline::Create(const MaterialShader& shader, const MeshBuffers& meshInfo)
+{
+	auto bindingDescription = Vertex::GetBindingDescription();
+	auto attributeDescriptions = Vertex::GetAttributeDescriptions();
+
+	// TODO: set all of these settings (eg cull mode and polygon mode) based on variables in meshInfo
+
+	// vertex input create info
+	VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
+	vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vertexInputCreateInfo.pNext = nullptr;
+	vertexInputCreateInfo.flags = 0;
+	vertexInputCreateInfo.vertexBindingDescriptionCount = 1;
+	vertexInputCreateInfo.vertexAttributeDescriptionCount = (uint32_t)attributeDescriptions.size();//Vertex::NUM_VERTEX_ATTRIBS;
+	vertexInputCreateInfo.pVertexBindingDescriptions = &bindingDescription;
+	vertexInputCreateInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
+	// input assembly
+	VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
+	inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssemblyInfo.pNext = nullptr;
+	inputAssemblyInfo.flags = 0;
+	inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+	// rasterizer
+	VkPipelineRasterizationStateCreateInfo rasterizationCreateInfo{};
+	rasterizationCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rasterizationCreateInfo.pNext = nullptr;
+	rasterizationCreateInfo.depthClampEnable = VK_FALSE;
+	rasterizationCreateInfo.rasterizerDiscardEnable = VK_FALSE;
+	rasterizationCreateInfo.flags = 0;
+
+	rasterizationCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;	// points, lines, or filled
+	rasterizationCreateInfo.lineWidth = 1.0f;
+
+	rasterizationCreateInfo.cullMode = VK_CULL_MODE_NONE;
+	rasterizationCreateInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+
+	rasterizationCreateInfo.depthBiasEnable = VK_FALSE;
+	rasterizationCreateInfo.depthBiasConstantFactor = 0.0f;
+	rasterizationCreateInfo.depthBiasClamp = 0.0f;
+	rasterizationCreateInfo.depthBiasSlopeFactor = 0.0f;
+
 	// TODO: set proper sampling settings here
 	VkPipelineMultisampleStateCreateInfo multisampleCreateInfo{};
 	multisampleCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -41,13 +88,14 @@ RenderPipeline::RenderPipeline(const MaterialShader& shader, const MeshInfo& mes
 	VkGraphicsPipelineCreateInfo pipelineCreateInfo{};
 	pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineCreateInfo.pNext = nullptr;
+	pipelineCreateInfo.flags = 0;
 
 	pipelineCreateInfo.stageCount = shader.ShaderStageCreateInfo.size();
 	pipelineCreateInfo.pStages = shader.ShaderStageCreateInfo.data();
-	pipelineCreateInfo.pVertexInputState = &meshInfo.VertexInputCreateInfo;
-	pipelineCreateInfo.pInputAssemblyState = &meshInfo.InputAssemblyInfo;
+	pipelineCreateInfo.pVertexInputState = &vertexInputCreateInfo;
+	pipelineCreateInfo.pInputAssemblyState = &inputAssemblyInfo;
 	pipelineCreateInfo.pViewportState = &viewportCreateInfo;
-	pipelineCreateInfo.pRasterizationState = &meshInfo.RasterizationCreateInfo;
+	pipelineCreateInfo.pRasterizationState = &rasterizationCreateInfo;
 	pipelineCreateInfo.pMultisampleState = &multisampleCreateInfo;
 	pipelineCreateInfo.pColorBlendState = &colorBlendCreateInfo;
 	pipelineCreateInfo.layout = shader.PipelineLayout;
@@ -60,4 +108,3 @@ RenderPipeline::RenderPipeline(const MaterialShader& shader, const MeshInfo& mes
 		LOG_ERROR("RENDER_PIPELINE::Failed to create graphics pipeline!");
 	}
 }
-

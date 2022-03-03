@@ -19,7 +19,7 @@ private:
 public:
 	static void Init();
 	static void StartRendering();
-	static void Submit(const VkPipeline& pipeline, const VkBuffer& vertexBuffer, const VkBuffer& indexBuffer, const uint32_t& indexCount);
+	static void Submit(VkPipeline pipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, const uint32_t& indexCount);
 	static void FinishRendering();
 	static void Cleanup();
 	static void RequestResize();

@@ -18,7 +18,7 @@ public:
 	template <class T, typename... P>
 	static int CreateComponent(P... params)
 	{
-		return ComponentContainer<T>::AddComponent(T(params...));
+		return ComponentContainer<T>::AddComponent(params...);
 	}
 
 	/// <summary>
