@@ -7,6 +7,9 @@ std::unique_ptr<VulkanDevice> VulkanState::Device = nullptr;
 std::unique_ptr<VulkanSwapChain> VulkanState::SwapChain = nullptr;
 std::unique_ptr<VulkanRenderPass> VulkanState::RenderPass = nullptr;
 
+std::vector<VulkanPipeline*> VulkanState::Pipelines;
+std::vector<VulkanBuffer*> VulkanState::Buffers;
+
 
 /* -- PUBLIC -- */
 
@@ -20,6 +23,14 @@ void VulkanState::Init()
 
 void VulkanState::Cleanup()
 {
+    for (int i = 0; i < Pipelines.size(); i++)
+    {
+        Pipelines[i]->Cleanup();
+    }
+    for (int i = 0; i < Buffers.size(); i++)
+    {
+        Buffers[i]->Cleanup();
+    }
     RenderPass->Cleanup();
     SwapChain->Cleanup();
     Device->Cleanup();

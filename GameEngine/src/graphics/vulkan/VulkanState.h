@@ -5,6 +5,8 @@
 #include "graphics/vulkan/VulkanDevice.h"
 #include "graphics/vulkan/VulkanSwapChain.h"
 #include "graphics/vulkan/VulkanRenderPass.h"
+#include "graphics/vulkan/VulkanPipeline.h"
+#include "graphics/vulkan/VulkanBuffer.h"
 
 class VulkanState
 {
@@ -13,6 +15,9 @@ public:
 	static std::unique_ptr<VulkanDevice> Device;
 	static std::unique_ptr<VulkanSwapChain> SwapChain;
 	static std::unique_ptr<VulkanRenderPass> RenderPass;
+
+	static std::vector<VulkanPipeline*> Pipelines;
+	static std::vector<VulkanBuffer*> Buffers;
 
 public:
 	static void Init();

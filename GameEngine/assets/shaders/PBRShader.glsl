@@ -26,8 +26,7 @@ layout(location = 0) in vec4 fragColor;
 
 void main() 
 {
-    //outColor = fragColor;
-    outColor = vec4(0.4, 0.3, 0.5, 1.0);
+    outColor = fragColor;
 }
 
 #end fragment

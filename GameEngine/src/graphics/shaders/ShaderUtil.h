@@ -1,13 +1,5 @@
 #pragma once
 
-enum class ShaderType
-{
-	vertex, fragment,
-
-	// keep this at the end
-	NUM_TYPES
-};
-
 class ShaderUtil
 {
 public:

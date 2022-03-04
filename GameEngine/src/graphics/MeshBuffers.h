@@ -18,6 +18,9 @@ struct Vertex
 
 	static const int NUM_VERTEX_ATTRIBS = 4;
 
+
+	// TODO: move these to a VulkanVertexInfo class
+
 	static VkVertexInputBindingDescription GetBindingDescription()
 	{
 		VkVertexInputBindingDescription bindingDescription{};
@@ -66,31 +69,15 @@ struct Vertex
 	}
 };
 
-
-const std::vector<Vertex> DEFAULT_VERTICES = { Vertex(glm::vec3(-0.5f, 0.0f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),	glm::vec2(0.0f, 0.0f), glm::vec4(0.4f, 0.0f, 0.0f, 1.0f)),
-												Vertex(glm::vec3(0.0f, 0.5f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),	glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.4f, 0.0f, 1.0f)),
-												Vertex(glm::vec3(0.5f, 0.0f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),	glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.4f, 1.0f)),
-												Vertex(glm::vec3(0.0f, -0.5f, 0.0f),	glm::vec3(0.0f, 0.0f, 1.0f),	glm::vec2(0.0f, 0.0f), glm::vec4(0.4f, 0.4f, 0.4f, 1.0f)) };
-
-const std::vector<uint32_t> DEFAULT_INDICES = { 0, 1, 2, 2, 3, 0 };
-
-
 class MeshBuffers
 {
 public:
 	uint32_t NumIndices;
 
-	VkBuffer VertexBuffer;
-	VkDeviceMemory VertexBufferMemory;
-	VkBuffer IndexBuffer;
-	VkDeviceMemory IndexBufferMemory;
+	VulkanBuffer VertexBuffer;
+	VulkanBuffer IndexBuffer;
 
 public:
-	MeshBuffers(const std::vector<Vertex>& vertices = DEFAULT_VERTICES, const std::vector<uint32_t>& indices = DEFAULT_INDICES);
+	MeshBuffers(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 
-	void Cleanup();
-
-private:
-	void createVertexBuffer(const std::vector<Vertex>& vertices);
-	void createIndexBuffer(const std::vector<uint32_t>& indices);
 };

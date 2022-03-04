@@ -2,16 +2,8 @@
 #include "MeshComponent.h"
 
 
-MeshComponent::MeshComponent(Entity* entity, const MeshBuffers& meshInfo, const MaterialShader& shader)
-	: Component(entity)
+MeshComponent::MeshComponent(Entity* entity, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const std::string& glslPath)
+	: Component(entity), Buffers(vertices, indices), Shader(glslPath)
 {
-	// keep track of these to change their settings
-	MeshData = meshInfo;
-	Shader = shader;
-	Pipeline.Create(Shader, MeshData);
-}
 
-MeshComponent::~MeshComponent()
-{
-	MeshData.Cleanup();
 }
