@@ -10,29 +10,19 @@ glm::mat4 Renderer::s_ProjectionMatrix = glm::perspective<float>(glm::radians(60
 
 /* -- PUBLIC -- */
 
-void Renderer::Init()
-{
-    VulkanRenderer::Init();
-}
-
 void Renderer::Draw()
 {
-    VulkanRenderer::StartRendering();
+    VulkanState::Renderer->StartRendering();
     
     for (auto& mesh : ECS::GetComponents<MeshComponent>())
     {
-        VulkanRenderer::Submit(mesh.Shader.Pipeline.Pipeline, mesh.Buffers.VertexBuffer.Buffer, mesh.Buffers.IndexBuffer.Buffer, mesh.Buffers.NumIndices);
+        VulkanState::Renderer->Submit(mesh.Shader.Pipeline.Pipeline, mesh.Buffers.VertexBuffer.Buffer, mesh.Buffers.IndexBuffer.Buffer, mesh.Buffers.NumIndices);
     }
 
-    VulkanRenderer::FinishRendering();
-}
-
-void Renderer::CleanUp()
-{
-    VulkanRenderer::Cleanup();
+    VulkanState::Renderer->FinishRendering();
 }
 
 void Renderer::RequestResize()
 {
-    VulkanRenderer::RequestResize();
+    VulkanState::Renderer->RequestResize();
 }

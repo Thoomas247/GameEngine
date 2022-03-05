@@ -2,42 +2,47 @@
 
 class VulkanRenderer
 {
+public:
+	std::unique_ptr<VulkanSwapChain> SwapChain;
+	std::unique_ptr<VulkanRenderPass> RenderPass;	// renderpass must be initialized after swapchain
+
 private:
+	bool m_ResizeRequested;
 
-	static bool s_ResizeRequested;
+	uint32_t m_CurrentFrameIndex;
+	uint32_t m_CurrentSwapChainImageIndex;
 
-	static uint32_t s_CurrentFrameIndex;
-	static uint32_t s_CurrentSwapChainImageIndex;
+	std::vector<VkCommandBuffer> m_CommandBuffers;
+	std::vector<VkSemaphore> m_RenderCompleteSemaphores;
+	std::vector<VkSemaphore> m_PresentCompleteSemaphores;
+	std::vector<VkFence> m_RenderFences;
 
-	static std::vector<VkCommandBuffer> s_CommandBuffers;
-	static std::vector<VkSemaphore> s_RenderCompleteSemaphores;
-	static std::vector<VkSemaphore> s_PresentCompleteSemaphores;
-	static std::vector<VkFence> s_RenderFences;
-
-	static VkClearValue s_ClearValue[2];
+	VkClearValue m_ClearValue[2];
 
 public:
-	static void Init();
-	static void StartRendering();
-	static void Submit(VkPipeline pipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, const uint32_t& indexCount);
-	static void FinishRendering();
-	static void Cleanup();
-	static void RequestResize();
+	VulkanRenderer();
+	void Cleanup();
+
+	void StartRendering();
+	void Submit(VkPipeline pipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, const uint32_t& indexCount);
+	void FinishRendering();
+
+	void RequestResize();
 
 private:
-	static void initCommandBuffers();
-	static void initSemaphoresAndFences();
-	static void setClearValue(float r, float g, float b, float a, float depth);
+	void initCommandBuffers();
+	void initSemaphoresAndFences();
+	void setClearValue(float r, float g, float b, float a, float depth);
 
-	static void recreateSwapChain();
+	void recreateSwapChain();
 
-	static void prepareFrame();
-	static void beginCommandBuffer();
-	static void beginRenderPass();
+	void prepareFrame();
+	void beginCommandBuffer();
+	void beginRenderPass();
 
-	static void endRenderPass();
-	static void endCommandBuffer();
-	static void queueSubmit();
-	static void queuePresent();
+	void endRenderPass();
+	void endCommandBuffer();
+	void queueSubmit();
+	void queuePresent();
 };
 

@@ -4,11 +4,9 @@
 
 std::unique_ptr<VulkanInstance> VulkanState::Instance = nullptr;
 std::unique_ptr<VulkanDevice> VulkanState::Device = nullptr;
-std::unique_ptr<VulkanSwapChain> VulkanState::SwapChain = nullptr;
-std::unique_ptr<VulkanRenderPass> VulkanState::RenderPass = nullptr;
+std::unique_ptr<VulkanRenderer> VulkanState::Renderer = nullptr;
 
-// TODO: store vulkan's pointers directly instead of objects
-//       this way the objects can be deleted but the vk pointers will remain accessible
+// TODO: find a better way to Cleanup() these at the end
 std::vector<VulkanPipeline*> VulkanState::Pipelines;
 std::vector<VulkanBuffer*> VulkanState::Buffers;
 
@@ -19,12 +17,13 @@ void VulkanState::Init()
 {
     Instance = std::make_unique<VulkanInstance>();
     Device = std::make_unique<VulkanDevice>(Instance->PickPhysicalDevice(), VkPhysicalDeviceFeatures(), VULKAN_DEVICE_EXTENSIONS);
-    SwapChain = std::make_unique<VulkanSwapChain>();
-    RenderPass = std::make_unique<VulkanRenderPass>();
+    Renderer = std::make_unique<VulkanRenderer>();
 }
 
 void VulkanState::Cleanup()
 {
+    vkDeviceWaitIdle(Device->LogicalDevice);
+
     for (int i = 0; i < Pipelines.size(); i++)
     {
         Pipelines[i]->Cleanup();
@@ -33,8 +32,7 @@ void VulkanState::Cleanup()
     {
         Buffers[i]->Cleanup();
     }
-    RenderPass->Cleanup();
-    SwapChain->Cleanup();
+    Renderer->Cleanup();
     Device->Cleanup();
     Instance->Cleanup();
 }

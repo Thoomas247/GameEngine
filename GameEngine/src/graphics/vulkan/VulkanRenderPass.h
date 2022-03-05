@@ -6,8 +6,7 @@ public:
 	VkRenderPass RenderPass;
 
 public:
-	VulkanRenderPass();
-	~VulkanRenderPass();
+	VulkanRenderPass(VkFormat colorFormat);
 
 	void Cleanup();
 };

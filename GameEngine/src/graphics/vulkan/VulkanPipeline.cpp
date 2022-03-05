@@ -311,9 +311,9 @@ void VulkanPipeline::createPipeline()
 	viewportCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	viewportCreateInfo.pNext = nullptr;
 	viewportCreateInfo.viewportCount = 1;
-	viewportCreateInfo.pViewports = &VulkanState::SwapChain->Viewport;
+	viewportCreateInfo.pViewports = &VulkanState::Renderer->SwapChain->Viewport;
 	viewportCreateInfo.scissorCount = 1;
-	viewportCreateInfo.pScissors = &VulkanState::SwapChain->Scissor;
+	viewportCreateInfo.pScissors = &VulkanState::Renderer->SwapChain->Scissor;
 
 	// TODO: set proper blend settings here
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
@@ -349,7 +349,7 @@ void VulkanPipeline::createPipeline()
 	pipelineCreateInfo.pMultisampleState = &multisampleCreateInfo;
 	pipelineCreateInfo.pColorBlendState = &colorBlendCreateInfo;
 	pipelineCreateInfo.layout = m_PipelineLayout;
-	pipelineCreateInfo.renderPass = VulkanState::RenderPass->RenderPass;
+	pipelineCreateInfo.renderPass = VulkanState::Renderer->RenderPass->RenderPass;
 	pipelineCreateInfo.subpass = 0;
 	pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
 

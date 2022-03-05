@@ -14,6 +14,49 @@ VulkanSwapChain::VulkanSwapChain()
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Device and instance must be created before creating the swap chain!");
 	}
 
+	setQueues();
+	setColorFormat();
+}
+
+void VulkanSwapChain::Cleanup()
+{
+	for (int i = 0; i < FrameBuffers.size(); i++)
+	{
+		vkDestroyFramebuffer(VulkanState::Device->LogicalDevice, FrameBuffers[i], nullptr);
+	}
+	if (SwapChain != VK_NULL_HANDLE)
+	{
+		for (uint32_t i = 0; i < ImageCount; i++)
+		{
+			vkDestroyImageView(VulkanState::Device->LogicalDevice, Buffers[i].view, nullptr);
+		}
+	}
+	if (VulkanState::Instance->Surface != VK_NULL_HANDLE)
+	{
+		vkDestroySwapchainKHR(VulkanState::Device->LogicalDevice, SwapChain, nullptr);
+		vkDestroySurfaceKHR(VulkanState::Instance->Instance, VulkanState::Instance->Surface, nullptr);
+	}
+	FrameBuffers.clear();
+	VulkanState::Instance->Surface = VK_NULL_HANDLE;
+	SwapChain = VK_NULL_HANDLE;
+}
+
+void VulkanSwapChain::Create(VkRenderPass renderPass, uint32_t fallbackWidth, uint32_t fallbackHeight, bool vsync)
+{
+	m_RenderPass = renderPass;
+	createSwapChain(fallbackWidth, fallbackHeight, vsync);
+}
+
+void VulkanSwapChain::Recreate(uint32_t fallbackWidth, uint32_t fallbackHeight, bool vsync)
+{
+	createSwapChain(fallbackWidth, fallbackHeight, vsync);
+}
+
+
+/* -- PRIVATE -- */
+
+void VulkanSwapChain::setQueues()
+{
 	// get available queue family properties
 	uint32_t queueCount;
 	vkGetPhysicalDeviceQueueFamilyProperties(VulkanState::Device->PhysicalDevice, &queueCount, NULL);
@@ -72,6 +115,12 @@ VulkanSwapChain::VulkanSwapChain()
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Could not find a suitable present queue!");
 	}
 
+	GraphicsQueueNodeIndex = graphicsQueueNodeIndex;
+	PresentQueueNodeIndex = presentQueueNodeIndex;
+}
+
+void VulkanSwapChain::setColorFormat()
+{
 	// get list of supported surface formats
 	uint32_t formatCount;
 
@@ -118,17 +167,9 @@ VulkanSwapChain::VulkanSwapChain()
 			ColorSpace = surfaceFormats[0].colorSpace;
 		}
 	}
-
-	GraphicsQueueNodeIndex = graphicsQueueNodeIndex;
-	PresentQueueNodeIndex = presentQueueNodeIndex;
 }
 
-VulkanSwapChain::~VulkanSwapChain()
-{
-	Cleanup();
-}
-
-void VulkanSwapChain::Create(uint32_t fallbackWidth, uint32_t fallbackHeight, bool vsync)
+void VulkanSwapChain::createSwapChain(uint32_t fallbackWidth, uint32_t fallbackHeight, bool vsync)
 {
 	// store the current swap chain handle so we can use it later
 	VkSwapchainKHR oldSwapchain = SwapChain;
@@ -216,9 +257,9 @@ void VulkanSwapChain::Create(uint32_t fallbackWidth, uint32_t fallbackHeight, bo
 		VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
 		VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
 	};
-	for (auto& compositeAlphaFlag : compositeAlphaFlags) 
+	for (auto& compositeAlphaFlag : compositeAlphaFlags)
 	{
-		if (surfaceCapabilities.supportedCompositeAlpha & compositeAlphaFlag) 
+		if (surfaceCapabilities.supportedCompositeAlpha & compositeAlphaFlag)
 		{
 			compositeAlpha = compositeAlphaFlag;
 			break;
@@ -319,7 +360,7 @@ void VulkanSwapChain::Create(uint32_t fallbackWidth, uint32_t fallbackHeight, bo
 
 		VkFramebufferCreateInfo framebufferInfo{};
 		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass = VulkanState::RenderPass->RenderPass;
+		framebufferInfo.renderPass = m_RenderPass;
 		framebufferInfo.attachmentCount = 1;
 		framebufferInfo.pAttachments = attachments;
 		framebufferInfo.width = Extent.width;
@@ -342,27 +383,4 @@ void VulkanSwapChain::Create(uint32_t fallbackWidth, uint32_t fallbackHeight, bo
 
 	Scissor.extent = Extent;
 	Scissor.offset = { 0, 0 };
-}
-
-void VulkanSwapChain::Cleanup()
-{
-	for (int i = 0; i < FrameBuffers.size(); i++)
-	{
-		vkDestroyFramebuffer(VulkanState::Device->LogicalDevice, FrameBuffers[i], nullptr);
-	}
-	if (SwapChain != VK_NULL_HANDLE)
-	{
-		for (uint32_t i = 0; i < ImageCount; i++)
-		{
-			vkDestroyImageView(VulkanState::Device->LogicalDevice, Buffers[i].view, nullptr);
-		}
-	}
-	if (VulkanState::Instance->Surface != VK_NULL_HANDLE)
-	{
-		vkDestroySwapchainKHR(VulkanState::Device->LogicalDevice, SwapChain, nullptr);
-		vkDestroySurfaceKHR(VulkanState::Instance->Instance, VulkanState::Instance->Surface, nullptr);
-	}
-	FrameBuffers.clear();
-	VulkanState::Instance->Surface = VK_NULL_HANDLE;
-	SwapChain = VK_NULL_HANDLE;
 }

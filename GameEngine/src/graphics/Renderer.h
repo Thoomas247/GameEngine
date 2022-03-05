@@ -13,9 +13,7 @@ private:
 	static glm::mat4 s_ProjectionMatrix;
 
 public:
-	static void Init();
 	static void Draw();
-	static void CleanUp();
 
 	static void RequestResize();
 

@@ -9,8 +9,8 @@
 int Engine::Run()
 {
 	Window::InitWindow(800, 600);
+	VulkanState::Init();
 	//GraphicsAssetManager::Init();
-	Renderer::Init();
 
 	ProjectManager::CreateProject("TestGame", "TestGame/");
 	//SceneManager::CreateScene();
@@ -72,7 +72,7 @@ int Engine::Run()
 		Window::PollEvents();
 	}
 
-	Renderer::CleanUp();
+	VulkanState::Cleanup();
 	Window::CleanUp();
 
 	return 0;

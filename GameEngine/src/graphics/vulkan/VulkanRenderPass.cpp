@@ -4,15 +4,15 @@
 
 /* -- PUBLIC -- */
 
-VulkanRenderPass::VulkanRenderPass()
+VulkanRenderPass::VulkanRenderPass(VkFormat colorFormat)
 {
     if (VulkanState::Device == nullptr)
     {
-        LOG_ERROR("VULKAN_RENDER_PASS::Device and instance must be created before creating the render pass!");
+        LOG_ERROR("VULKAN_RENDER_PASS::Device and swapchain must be created before creating the render pass!");
     }
 
     VkAttachmentDescription colorAttachment{};
-    colorAttachment.format = VulkanState::SwapChain->ColorFormat;
+    colorAttachment.format = colorFormat;
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
     colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -50,14 +50,6 @@ VulkanRenderPass::VulkanRenderPass()
     if (vkCreateRenderPass(VulkanState::Device->LogicalDevice, &renderPassInfo, nullptr, &RenderPass) != VK_SUCCESS)
     {
         LOG_ERROR("VULKAN_RENDER_PASS::Failed to create render pass!");
-    }
-}
-
-VulkanRenderPass::~VulkanRenderPass()
-{
-    if (RenderPass != VK_NULL_HANDLE)
-    {
-        Cleanup();
     }
 }
 
