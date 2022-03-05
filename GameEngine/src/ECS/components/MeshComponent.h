@@ -12,7 +12,8 @@ const std::vector<Vertex> DEFAULT_VERTICES = { Vertex(glm::vec3(-0.5f, 0.0f, 0.0
 
 const std::vector<uint32_t> DEFAULT_INDICES = { 0, 1, 2, 2, 3, 0 };
 
-constexpr auto DEFAULT_SHADER_PATH = "assets/shaders/PBRShader.glsl";
+//constexpr auto DEFAULT_SHADER_PATH = "assets/shaders/PBRShader.glsl";
+constexpr auto DEFAULT_SHADER_PATH = "C:/Users/TM1/source/repos/GameEngine/GameEngine/assets/shaders/PBRShader.glsl";
 
 
 class MeshComponent : public Component

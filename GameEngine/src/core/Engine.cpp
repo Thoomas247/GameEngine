@@ -35,8 +35,6 @@ int Engine::Run()
 	// [x] make shaders only require 1 file
 	// [] find shader uniform locations on load
 	// [] create animator
-	// [] (maybe) remove entity pointer in Component class and store a copy of the m_Components array in each component (higher mem usage, slower entity deletion/moving, faster access?)
-	//		since TransformComponents keep track of their parent the hierarchy will be maintained
 
 
 	//Importer::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");

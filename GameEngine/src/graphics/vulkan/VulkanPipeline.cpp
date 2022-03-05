@@ -13,6 +13,7 @@ VulkanPipeline::VulkanPipeline(const std::string& glslPath)
 	createPipeline();
 
 	// add to VukanState so it can be cleaned up
+	// TODO: add vulkan's pointers directly and remove cleanup from here
 	VulkanState::Pipelines.push_back(this);
 }
 
@@ -84,7 +85,7 @@ void VulkanPipeline::getSpirvFiles(const std::string& glslPath, std::vector<Cach
 				std::vector<uint32_t> shaderSpirv = compileToSpirv(shaderCode, ShaderUtil::GetShadercType(type));
 
 				// save to file
-				std::string spirvPath = shaderPath + ShaderUtil::GetTypeExtension(type);
+				std::string spirvPath = shaderPath + ".spv" + ShaderUtil::GetTypeExtension(type);
 
 				std::ofstream spirvOut(spirvPath, std::ios::out | std::ios::binary);
 				spirvOut.write((char*)shaderSpirv.data(), shaderSpirv.size() * sizeof(uint32_t));
@@ -104,12 +105,10 @@ void VulkanPipeline::getSpirvFiles(const std::string& glslPath, std::vector<Cach
 std::string VulkanPipeline::loadGlslFileContents(const std::string& absolutePath)
 {
 	std::string fileContents;
-	std::ifstream fileStream;
+	std::ifstream fileStream(absolutePath);
 
-	fileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try {
-		fileStream.open(absolutePath);
-
+	if (fileStream.is_open())
+	{
 		std::stringstream stringStream;
 		stringStream << fileStream.rdbuf();
 
@@ -117,7 +116,8 @@ std::string VulkanPipeline::loadGlslFileContents(const std::string& absolutePath
 
 		fileContents = stringStream.str();
 	}
-	catch (std::ifstream::failure&) {
+	else
+	{
 		LOG_ERROR("SHADER::File at path " + absolutePath + " not successfully read.");
 	}
 
@@ -319,6 +319,12 @@ void VulkanPipeline::createPipeline()
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_TRUE;
+	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+	colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+	colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
 	VkPipelineColorBlendStateCreateInfo colorBlendCreateInfo{};
 	colorBlendCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;

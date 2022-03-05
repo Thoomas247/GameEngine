@@ -359,10 +359,8 @@
     <ClInclude Include="src\graphics\vulkan\VulkanBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\compile.bat" />
-    <None Include="assets\shaders\Default.glsl" />
     <None Include="assets\shaders\PBRShader.glsl" />
-    <None Include="assets\shaders\VkTest.frag" />
+    <None Include="bin\Debug\PBRShader.glsl" />
     <None Include="test game\assets\shaders\Base.frag" />
     <None Include="test game\assets\shaders\Base.vert" />
   </ItemGroup>

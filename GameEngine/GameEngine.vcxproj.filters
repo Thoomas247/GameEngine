@@ -291,11 +291,7 @@
   <ItemGroup>
     <None Include="test game\assets\shaders\Base.vert" />
     <None Include="test game\assets\shaders\Base.frag" />
-    <None Include="assets\shaders\Default.glsl" />
     <None Include="assets\shaders\PBRShader.glsl" />
-    <None Include="assets\shaders\VkTest.frag" />
-    <None Include="assets\shaders\compile.bat">
-      <Filter>Source Files</Filter>
-    </None>
+    <None Include="bin\Debug\PBRShader.glsl" />
   </ItemGroup>
 </Project>

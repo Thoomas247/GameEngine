@@ -7,6 +7,8 @@ std::unique_ptr<VulkanDevice> VulkanState::Device = nullptr;
 std::unique_ptr<VulkanSwapChain> VulkanState::SwapChain = nullptr;
 std::unique_ptr<VulkanRenderPass> VulkanState::RenderPass = nullptr;
 
+// TODO: store vulkan's pointers directly instead of objects
+//       this way the objects can be deleted but the vk pointers will remain accessible
 std::vector<VulkanPipeline*> VulkanState::Pipelines;
 std::vector<VulkanBuffer*> VulkanState::Buffers;
 
