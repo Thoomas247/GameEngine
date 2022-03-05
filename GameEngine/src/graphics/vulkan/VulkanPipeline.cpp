@@ -247,8 +247,8 @@ void VulkanPipeline::reflect(const std::vector<uint32_t>& shaderWords)
 		const auto& uniforms = bufferType.member_types;
 		for (int i = 0; i < uniforms.size(); i++)
 		{
-			std::string uniformName = compiler.get_member_name(resource.base_type_id, i);
-			const auto& uniformType = compiler.get_type(bufferType.member_types[i]);
+			//std::string uniformName = compiler.get_member_name(resource.base_type_id, i);
+			//const auto& uniformType = compiler.get_type(bufferType.member_types[i]);
 		}
 	}
 }
@@ -340,7 +340,7 @@ void VulkanPipeline::createPipeline()
 	pipelineCreateInfo.pNext = nullptr;
 	pipelineCreateInfo.flags = 0;
 
-	pipelineCreateInfo.stageCount = m_ShaderStageCreateInfo.size();
+	pipelineCreateInfo.stageCount = (uint32_t)m_ShaderStageCreateInfo.size();
 	pipelineCreateInfo.pStages = m_ShaderStageCreateInfo.data();
 	pipelineCreateInfo.pVertexInputState = &vertexInputCreateInfo;
 	pipelineCreateInfo.pInputAssemblyState = &inputAssemblyInfo;

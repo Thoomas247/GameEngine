@@ -20,7 +20,7 @@ struct Uniform
 	{
 		Name = name;
 		Offset = offset;
-		Size = data.size();
+		Size = (int)data.size();
 		Data = data;
 	}
 };
@@ -42,8 +42,5 @@ public:
 
 	void Delete();
 	void Bind();
-
-private:
-	void openglUpdateData();
 };
 

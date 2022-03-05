@@ -9,12 +9,10 @@ UniformBuffer::UniformBuffer(const std::string& name, const int& binding, const 
 	m_Name = name;
 	m_Binding = binding;
 	m_Uniforms = uniforms;
-	m_Size = uniforms.size();
+	m_Size = (int)uniforms.size();
 
 	//glCreateBuffers(1, &m_GLID);
 	//glNamedBufferData(m_GLID, m_Size, NULL, GL_STATIC_DRAW);
-
-	openglUpdateData();
 }
 
 void UniformBuffer::SetData(const std::string& uniformName, const std::vector<char>& data)
@@ -34,8 +32,6 @@ void UniformBuffer::SetData(const std::string& uniformName, const std::vector<ch
 			}
 		}
 	}
-
-	openglUpdateData();
 }
 
 void UniformBuffer::Delete()
@@ -50,11 +46,3 @@ void UniformBuffer::Bind()
 
 
 /* -- PRIVATE -- */
-
-void UniformBuffer::openglUpdateData()
-{
-	for (Uniform& uniform : m_Uniforms)
-	{
-		//glNamedBufferSubData(m_GLID, uniform.Offset, uniform.Size, &uniform.Data[0]);
-	}
-}

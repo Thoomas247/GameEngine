@@ -17,39 +17,3 @@ void GraphicsAssetManager::Init()
 {
 	
 }
-
-unsigned int GraphicsAssetManager::LoadTexture(const std::string& absolutePath)
-{
-	return 0;
-}
-
-
-/* -- PRIVATE -- */
-
-void GraphicsAssetManager::shaderCheckCompileErrors(const unsigned int& shader, const std::string& type)
-{
-	
-}
-
-std::string GraphicsAssetManager::shaderLoadFileContents(const std::string& absolutePath)
-{
-	std::string fileContents;
-	std::ifstream fileStream;
-
-	fileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try {
-		fileStream.open(absolutePath);
-
-		std::stringstream stringStream;
-		stringStream << fileStream.rdbuf();
-
-		fileStream.close();
-
-		fileContents = stringStream.str();
-	}
-	catch (std::ifstream::failure&) {
-		LOG_ERROR("SHADER::File at path " + absolutePath + " not successfully read. If trying to load the default texture, make sure GraphicsAssetManager has been initialized.");
-	}
-
-	return fileContents;
-}

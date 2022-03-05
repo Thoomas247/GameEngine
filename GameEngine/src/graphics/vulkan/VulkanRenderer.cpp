@@ -73,7 +73,7 @@ void VulkanRenderer::initCommandBuffers()
 {
     // we need 1 command buffer per image, even though only MAX_FRAMES_IN_FLIGHT will be used at a time
     m_CommandBuffers.resize(SwapChain->ImageCount);
-    for (int i = 0; i < SwapChain->ImageCount; i++)
+    for (uint32_t i = 0; i < SwapChain->ImageCount; i++)
     {
         m_CommandBuffers[i] = VulkanState::Device->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
     }
@@ -105,7 +105,7 @@ void VulkanRenderer::setClearValue(float r, float g, float b, float a, float dep
     colorValue.color = { r, g, b, a };
 
     VkClearValue depthValue{};
-    depthValue.depthStencil = { 0.0f, 0 };
+    depthValue.depthStencil = { depth, 0 };
 
     m_ClearValue[0] = colorValue;
     m_ClearValue[1] = depthValue;
