@@ -39,6 +39,9 @@ void VulkanRenderer::StartRendering()
 	prepareFrame();
 	beginCommandBuffer();
 	beginRenderPass();
+
+    vkCmdSetViewport(m_CommandBuffers[m_CurrentFrameIndex], 0, 1, &SwapChain->Viewport);
+    vkCmdSetScissor(m_CommandBuffers[m_CurrentFrameIndex], 0, 1, &SwapChain->Scissor);
 }
 
 void VulkanRenderer::Submit(VkPipeline pipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, const uint32_t& indexCount)

@@ -20,6 +20,7 @@ private:
 	static GLFWwindow* s_WindowPtr;
 	static bool s_ShouldClose;
 	static WindowSize s_Size;
+	static WindowSize s_LastValidSize;
 
 public:
 	static void InitWindow(const int& width, const int& height);
@@ -29,6 +30,7 @@ public:
 	static void CleanUp();
 
 	static WindowSize GetSize() { return s_Size; }
+	static WindowSize GetLastValidSize() { return s_LastValidSize; }
 
 	static VkResult GetWindowSurfaceForVulkan(VkInstance instance, VkSurfaceKHR* surface);
 

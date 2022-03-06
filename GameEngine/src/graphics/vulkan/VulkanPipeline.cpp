@@ -307,13 +307,25 @@ void VulkanPipeline::createPipeline()
 	multisampleCreateInfo.alphaToCoverageEnable = VK_FALSE;
 	multisampleCreateInfo.alphaToOneEnable = VK_FALSE;
 
+
+	VkDynamicState dynamicStates[] = {
+		VK_DYNAMIC_STATE_VIEWPORT,
+		VK_DYNAMIC_STATE_SCISSOR
+		//VK_DYNAMIC_STATE_LINE_WIDTH
+	};
+
+	VkPipelineDynamicStateCreateInfo dynamicState{};
+	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamicState.dynamicStateCount = 2;
+	dynamicState.pDynamicStates = dynamicStates;
+
 	VkPipelineViewportStateCreateInfo viewportCreateInfo{};
 	viewportCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	viewportCreateInfo.pNext = nullptr;
 	viewportCreateInfo.viewportCount = 1;
-	viewportCreateInfo.pViewports = &VulkanState::Renderer->SwapChain->Viewport;
+	viewportCreateInfo.pViewports = nullptr;
 	viewportCreateInfo.scissorCount = 1;
-	viewportCreateInfo.pScissors = &VulkanState::Renderer->SwapChain->Scissor;
+	viewportCreateInfo.pScissors = nullptr;
 
 	// TODO: set proper blend settings here
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
@@ -348,6 +360,7 @@ void VulkanPipeline::createPipeline()
 	pipelineCreateInfo.pRasterizationState = &rasterizationCreateInfo;
 	pipelineCreateInfo.pMultisampleState = &multisampleCreateInfo;
 	pipelineCreateInfo.pColorBlendState = &colorBlendCreateInfo;
+	pipelineCreateInfo.pDynamicState = &dynamicState;
 	pipelineCreateInfo.layout = m_PipelineLayout;
 	pipelineCreateInfo.renderPass = VulkanState::Renderer->RenderPass->RenderPass;
 	pipelineCreateInfo.subpass = 0;

@@ -4,6 +4,7 @@
 GLFWwindow* Window::s_WindowPtr = nullptr;
 bool Window::s_ShouldClose = false;
 WindowSize Window::s_Size = WindowSize();
+WindowSize Window::s_LastValidSize = WindowSize();
 
 
 /* -- PUBLIC -- */
@@ -11,6 +12,7 @@ WindowSize Window::s_Size = WindowSize();
 void Window::InitWindow(const int& width, const int& height)
 {
 	s_Size = WindowSize(width, height);
+	s_LastValidSize = s_Size;
 
 	// glfw: initialize and configure
 	glfwInit();
@@ -74,6 +76,10 @@ VkResult Window::GetWindowSurfaceForVulkan(VkInstance instance, VkSurfaceKHR* su
 
 void Window::frameBufferSizeCallback(GLFWwindow*, int width, int height)
 {
+	if (width == 0 || height == 0)
+	{
+		s_LastValidSize = s_Size;
+	}
 	s_Size = WindowSize(width, height);
 	Renderer::RequestResize();
 }

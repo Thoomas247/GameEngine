@@ -16,22 +16,19 @@ int Engine::Run()
 	//SceneManager::CreateScene();
 
 	// TODO:
-	// [x] clean up header files and create cpp files where needed (especially entity class)
-	// [x] implement camera component properly
+	// [x] make viewport and scissor size dynamic in vulkan
+	// [] find a better way to clean up vulkan objects on application close
+	// [] implement camera component properly
 	// [] fix importing to match new format:
-	//		[x] import into .scene file which contains each component type in separate lists
+	//		[] import into .scene file which contains each component type in separate lists
 	//		[] create skeleton component
 	//		[] save skeleton in new format
 	//		[] save animations in new format
 	//		[] fix animation linear interpolation on import
-	// [x] fix scene loading to match new format
+	// [] fix scene loading to match new format
 	// [] add scene saving
 	// [] add skeleton loading to scene loading
-	// [x] create asset manager to manage GPU assets:
-	//		[x] Textures
-	//		[x] Shaders
-	//		[x] VAOs
-	//		[x] Finish ShaderMaterial to replace shader and material
+	// [] create texture loader
 	// [x] make shaders only require 1 file
 	// [] find shader uniform locations on load
 	// [] create animator
