@@ -26,14 +26,16 @@ public:
 	VkPipeline Pipeline;
 
 private:
+	std::shared_ptr<VulkanInstance> m_Instance;
+	std::shared_ptr<VulkanDevice> m_Device;
+
 	std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStageCreateInfo;
 	std::vector<VkShaderModule> m_ShaderModules;
 	VkPipelineLayout m_PipelineLayout;
 
 public:
 	VulkanPipeline(const std::string& glslPath);
-
-	void Cleanup();
+	~VulkanPipeline();
 
 private:
 	void getSpirvFiles(const std::string& glslPath, std::vector<CachedShader>& spirvFiles);

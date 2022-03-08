@@ -27,11 +27,14 @@ public:
 	VkRect2D Scissor;
 
 private:
+	std::shared_ptr<VulkanInstance> m_Instance;
+	std::shared_ptr<VulkanDevice> m_Device;
+
 	VkRenderPass m_RenderPass;
 
 public:
 	VulkanSwapChain();
-	void Cleanup();
+	~VulkanSwapChain();
 
 	void Create(VkRenderPass renderPass, uint32_t fallbackWidth = DEFAULT_SWAPCHAIN_WIDTH, uint32_t fallbackHeight = DEFAULT_SWAPCHAIN_HEIGHT, bool vsync = DEFAULT_SWAPCHAIN_VSYNC);
 	void Recreate(uint32_t fallbackWidth, uint32_t fallbackHeight, bool vsync = false);

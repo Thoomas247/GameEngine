@@ -9,7 +9,10 @@
 
 VulkanSwapChain::VulkanSwapChain()
 {
-	if (VulkanState::Device == nullptr || VulkanState::Instance == nullptr)
+	m_Instance = VulkanState::Instance;
+	m_Device = VulkanState::Device;
+
+	if (m_Instance == nullptr || m_Device == nullptr)
 	{
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Device and instance must be created before creating the swap chain!");
 	}
@@ -18,26 +21,26 @@ VulkanSwapChain::VulkanSwapChain()
 	setColorFormat();
 }
 
-void VulkanSwapChain::Cleanup()
+VulkanSwapChain::~VulkanSwapChain()
 {
 	for (int i = 0; i < FrameBuffers.size(); i++)
 	{
-		vkDestroyFramebuffer(VulkanState::Device->LogicalDevice, FrameBuffers[i], nullptr);
+		vkDestroyFramebuffer(m_Device->LogicalDevice, FrameBuffers[i], nullptr);
 	}
 	if (SwapChain != VK_NULL_HANDLE)
 	{
 		for (uint32_t i = 0; i < ImageCount; i++)
 		{
-			vkDestroyImageView(VulkanState::Device->LogicalDevice, Buffers[i].view, nullptr);
+			vkDestroyImageView(m_Device->LogicalDevice, Buffers[i].view, nullptr);
 		}
 	}
-	if (VulkanState::Instance->Surface != VK_NULL_HANDLE)
+	if (m_Instance->Surface != VK_NULL_HANDLE)
 	{
-		vkDestroySwapchainKHR(VulkanState::Device->LogicalDevice, SwapChain, nullptr);
-		vkDestroySurfaceKHR(VulkanState::Instance->Instance, VulkanState::Instance->Surface, nullptr);
+		vkDestroySwapchainKHR(m_Device->LogicalDevice, SwapChain, nullptr);
+		vkDestroySurfaceKHR(m_Instance->Instance, m_Instance->Surface, nullptr);
 	}
 	FrameBuffers.clear();
-	VulkanState::Instance->Surface = VK_NULL_HANDLE;
+	m_Instance->Surface = VK_NULL_HANDLE;
 	SwapChain = VK_NULL_HANDLE;
 }
 
@@ -59,17 +62,17 @@ void VulkanSwapChain::setQueues()
 {
 	// get available queue family properties
 	uint32_t queueCount;
-	vkGetPhysicalDeviceQueueFamilyProperties(VulkanState::Device->PhysicalDevice, &queueCount, NULL);
+	vkGetPhysicalDeviceQueueFamilyProperties(m_Device->PhysicalDevice, &queueCount, NULL);
 	assert(queueCount >= 1);
 
 	std::vector<VkQueueFamilyProperties> queueProps = std::vector<VkQueueFamilyProperties>(queueCount);
-	vkGetPhysicalDeviceQueueFamilyProperties(VulkanState::Device->PhysicalDevice, &queueCount, queueProps.data());
+	vkGetPhysicalDeviceQueueFamilyProperties(m_Device->PhysicalDevice, &queueCount, queueProps.data());
 
 	// find a queue with present support
 	std::vector<VkBool32> supportsPresent = std::vector<VkBool32>(queueCount);
 	for (uint32_t i = 0; i < queueCount; i++)
 	{
-		vkGetPhysicalDeviceSurfaceSupportKHR(VulkanState::Device->PhysicalDevice, i, VulkanState::Instance->Surface, &supportsPresent[i]);
+		vkGetPhysicalDeviceSurfaceSupportKHR(m_Device->PhysicalDevice, i, m_Instance->Surface, &supportsPresent[i]);
 	}
 
 	// search for a graphics queue and a present queue
@@ -124,7 +127,7 @@ void VulkanSwapChain::setColorFormat()
 	// get list of supported surface formats
 	uint32_t formatCount;
 
-	VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(VulkanState::Device->PhysicalDevice, VulkanState::Instance->Surface, &formatCount, NULL);
+	VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(m_Device->PhysicalDevice, m_Instance->Surface, &formatCount, NULL);
 
 	if (result != VK_SUCCESS || formatCount == 0)
 	{
@@ -133,7 +136,7 @@ void VulkanSwapChain::setColorFormat()
 
 	std::vector<VkSurfaceFormatKHR> surfaceFormats = std::vector<VkSurfaceFormatKHR>(formatCount);
 
-	result = vkGetPhysicalDeviceSurfaceFormatsKHR(VulkanState::Device->PhysicalDevice, VulkanState::Instance->Surface, &formatCount, surfaceFormats.data());
+	result = vkGetPhysicalDeviceSurfaceFormatsKHR(m_Device->PhysicalDevice, m_Instance->Surface, &formatCount, surfaceFormats.data());
 	if (result != VK_SUCCESS)
 	{
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to get physical device surface formats!");
@@ -177,7 +180,7 @@ void VulkanSwapChain::createSwapChain(uint32_t fallbackWidth, uint32_t fallbackH
 	// get physical device surface properties and formats
 	VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
-	VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VulkanState::Device->PhysicalDevice, VulkanState::Instance->Surface, &surfaceCapabilities);
+	VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_Device->PhysicalDevice, m_Instance->Surface, &surfaceCapabilities);
 	if (result != VK_SUCCESS)
 	{
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to get device surface capabilities!");
@@ -185,14 +188,14 @@ void VulkanSwapChain::createSwapChain(uint32_t fallbackWidth, uint32_t fallbackH
 
 	// Get available present modes
 	uint32_t presentModeCount;
-	result = vkGetPhysicalDeviceSurfacePresentModesKHR(VulkanState::Device->PhysicalDevice, VulkanState::Instance->Surface, &presentModeCount, NULL);
+	result = vkGetPhysicalDeviceSurfacePresentModesKHR(m_Device->PhysicalDevice, m_Instance->Surface, &presentModeCount, NULL);
 	if (result != VK_SUCCESS || presentModeCount == 0)
 	{
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to get device surface present mode count!");
 	}
 
 	std::vector<VkPresentModeKHR> presentModes = std::vector<VkPresentModeKHR>(presentModeCount);
-	result = vkGetPhysicalDeviceSurfacePresentModesKHR(VulkanState::Device->PhysicalDevice, VulkanState::Instance->Surface, &presentModeCount, presentModes.data());
+	result = vkGetPhysicalDeviceSurfacePresentModesKHR(m_Device->PhysicalDevice, m_Instance->Surface, &presentModeCount, presentModes.data());
 	if (result != VK_SUCCESS)
 	{
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to get device surface present modes!");
@@ -268,7 +271,7 @@ void VulkanSwapChain::createSwapChain(uint32_t fallbackWidth, uint32_t fallbackH
 
 	VkSwapchainCreateInfoKHR swapchainCreateInfo{};
 	swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	swapchainCreateInfo.surface = VulkanState::Instance->Surface;
+	swapchainCreateInfo.surface = m_Instance->Surface;
 	swapchainCreateInfo.minImageCount = desiredNumberOfSwapchainImages;
 	swapchainCreateInfo.imageFormat = ColorFormat;
 	swapchainCreateInfo.imageColorSpace = ColorSpace;
@@ -294,7 +297,7 @@ void VulkanSwapChain::createSwapChain(uint32_t fallbackWidth, uint32_t fallbackH
 	}
 
 	// create swap chain
-	result = vkCreateSwapchainKHR(VulkanState::Device->LogicalDevice, &swapchainCreateInfo, nullptr, &SwapChain);
+	result = vkCreateSwapchainKHR(m_Device->LogicalDevice, &swapchainCreateInfo, nullptr, &SwapChain);
 	if (result != VK_SUCCESS)
 	{
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to create swap chain!");
@@ -304,20 +307,20 @@ void VulkanSwapChain::createSwapChain(uint32_t fallbackWidth, uint32_t fallbackH
 	{
 		for (uint32_t i = 0; i < ImageCount; i++)
 		{
-			vkDestroyImageView(VulkanState::Device->LogicalDevice, Buffers[i].view, nullptr);
-			vkDestroyFramebuffer(VulkanState::Device->LogicalDevice, FrameBuffers[i], nullptr);
+			vkDestroyImageView(m_Device->LogicalDevice, Buffers[i].view, nullptr);
+			vkDestroyFramebuffer(m_Device->LogicalDevice, FrameBuffers[i], nullptr);
 		}
-		vkDestroySwapchainKHR(VulkanState::Device->LogicalDevice, oldSwapchain, nullptr);
+		vkDestroySwapchainKHR(m_Device->LogicalDevice, oldSwapchain, nullptr);
 	}
 
-	result = vkGetSwapchainImagesKHR(VulkanState::Device->LogicalDevice, SwapChain, &ImageCount, nullptr);
+	result = vkGetSwapchainImagesKHR(m_Device->LogicalDevice, SwapChain, &ImageCount, nullptr);
 	if (result != VK_SUCCESS)
 	{
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to get swap chain image count!");
 	}
 
 	Images.resize(ImageCount);
-	result = vkGetSwapchainImagesKHR(VulkanState::Device->LogicalDevice, SwapChain, &ImageCount, Images.data());
+	result = vkGetSwapchainImagesKHR(m_Device->LogicalDevice, SwapChain, &ImageCount, Images.data());
 	if (result != VK_SUCCESS)
 	{
 		LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to get swap chain images!");
@@ -344,7 +347,7 @@ void VulkanSwapChain::createSwapChain(uint32_t fallbackWidth, uint32_t fallbackH
 
 		Buffers[i].image = Images[i];
 
-		result = vkCreateImageView(VulkanState::Device->LogicalDevice, &colorAttachmentView, nullptr, &Buffers[i].view);
+		result = vkCreateImageView(m_Device->LogicalDevice, &colorAttachmentView, nullptr, &Buffers[i].view);
 		if (result != VK_SUCCESS)
 		{
 			LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to create image views!");
@@ -367,7 +370,7 @@ void VulkanSwapChain::createSwapChain(uint32_t fallbackWidth, uint32_t fallbackH
 		framebufferInfo.height = Extent.height;
 		framebufferInfo.layers = 1;
 
-		if (vkCreateFramebuffer(VulkanState::Device->LogicalDevice, &framebufferInfo, nullptr, &FrameBuffers[i]) != VK_SUCCESS)
+		if (vkCreateFramebuffer(m_Device->LogicalDevice, &framebufferInfo, nullptr, &FrameBuffers[i]) != VK_SUCCESS)
 		{
 			LOG_ERROR("VULKAN_SWAP_CHAIN::Failed to create framebuffers!");
 		}

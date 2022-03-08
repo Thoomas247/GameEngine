@@ -12,15 +12,12 @@
 class VulkanState
 {
 public:
-	static std::unique_ptr<VulkanInstance> Instance;
-	static std::unique_ptr<VulkanDevice> Device;
-	static std::unique_ptr<VulkanRenderer> Renderer;
-
-	static std::vector<VulkanPipeline*> Pipelines;
-	static std::vector<VulkanBuffer*> Buffers;
+	static std::shared_ptr<VulkanInstance> Instance;
+	static std::shared_ptr<VulkanDevice> Device;
+	static std::shared_ptr<VulkanRenderer> Renderer;
 
 public:
 	static void Init();
-	static void Cleanup();
+	static void WaitIdle();
 };
 

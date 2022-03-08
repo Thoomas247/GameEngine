@@ -6,7 +6,10 @@
 
 VulkanRenderPass::VulkanRenderPass(VkFormat colorFormat)
 {
-    if (VulkanState::Device == nullptr)
+    m_Instance = VulkanState::Instance;
+    m_Device = VulkanState::Device;
+
+    if (m_Device == nullptr)
     {
         LOG_ERROR("VULKAN_RENDER_PASS::Device and swapchain must be created before creating the render pass!");
     }
@@ -47,14 +50,14 @@ VulkanRenderPass::VulkanRenderPass(VkFormat colorFormat)
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &dependency;
 
-    if (vkCreateRenderPass(VulkanState::Device->LogicalDevice, &renderPassInfo, nullptr, &RenderPass) != VK_SUCCESS)
+    if (vkCreateRenderPass(m_Device->LogicalDevice, &renderPassInfo, nullptr, &RenderPass) != VK_SUCCESS)
     {
         LOG_ERROR("VULKAN_RENDER_PASS::Failed to create render pass!");
     }
 }
 
-void VulkanRenderPass::Cleanup()
+VulkanRenderPass::~VulkanRenderPass()
 {
-    vkDestroyRenderPass(VulkanState::Device->LogicalDevice, RenderPass, nullptr);
+    vkDestroyRenderPass(m_Device->LogicalDevice, RenderPass, nullptr);
     RenderPass = VK_NULL_HANDLE;
 }

@@ -1,38 +1,22 @@
 #include "precompiled.h"
 #include "VulkanState.h"
 
-
-std::unique_ptr<VulkanInstance> VulkanState::Instance = nullptr;
-std::unique_ptr<VulkanDevice> VulkanState::Device = nullptr;
-std::unique_ptr<VulkanRenderer> VulkanState::Renderer = nullptr;
-
-// TODO: find a better way to Cleanup() these at the end
-std::vector<VulkanPipeline*> VulkanState::Pipelines;
-std::vector<VulkanBuffer*> VulkanState::Buffers;
+// ownership of these is shared accross all vulkan objects such that they are only destroyed once everything is cleaned up
+std::shared_ptr<VulkanInstance> VulkanState::Instance = nullptr;
+std::shared_ptr<VulkanDevice> VulkanState::Device = nullptr;
+std::shared_ptr<VulkanRenderer> VulkanState::Renderer = nullptr;
 
 
 /* -- PUBLIC -- */
 
 void VulkanState::Init()
 {
-    Instance = std::make_unique<VulkanInstance>();
-    Device = std::make_unique<VulkanDevice>(Instance->PickPhysicalDevice(), VkPhysicalDeviceFeatures(), VULKAN_DEVICE_EXTENSIONS);
-    Renderer = std::make_unique<VulkanRenderer>();
+    Instance = std::make_shared<VulkanInstance>();
+    Device = std::make_shared<VulkanDevice>(Instance->PickPhysicalDevice(), VkPhysicalDeviceFeatures(), VULKAN_DEVICE_EXTENSIONS);
+    Renderer = std::make_shared<VulkanRenderer>();
 }
 
-void VulkanState::Cleanup()
+void VulkanState::WaitIdle()
 {
     vkDeviceWaitIdle(Device->LogicalDevice);
-
-    for (int i = 0; i < Pipelines.size(); i++)
-    {
-        Pipelines[i]->Cleanup();
-    }
-    for (int i = 0; i < Buffers.size(); i++)
-    {
-        Buffers[i]->Cleanup();
-    }
-    Renderer->Cleanup();
-    Device->Cleanup();
-    Instance->Cleanup();
 }

@@ -6,6 +6,9 @@
 
 VulkanRenderer::VulkanRenderer()
 {
+    m_Instance = VulkanState::Instance;
+    m_Device = VulkanState::Device;
+
     m_ResizeRequested = false;
     m_CurrentFrameIndex = 0;
     m_CurrentSwapChainImageIndex = 0;
@@ -21,11 +24,8 @@ VulkanRenderer::VulkanRenderer()
     setClearValue(0.05f, 0.2f, 0.5f, 1.0f, 0.0f);
 }
 
-void VulkanRenderer::Cleanup()
+VulkanRenderer::~VulkanRenderer()
 {
-    RenderPass->Cleanup();
-    SwapChain->Cleanup();
-
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
         vkDestroySemaphore(VulkanState::Device->LogicalDevice, m_RenderCompleteSemaphores[i], nullptr);

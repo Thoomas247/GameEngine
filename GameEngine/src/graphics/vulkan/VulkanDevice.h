@@ -22,13 +22,13 @@ public:
 	VkCommandPool CommandPool = VK_NULL_HANDLE;
 
 private:
+	std::shared_ptr<VulkanInstance> m_Instance;
+
 	bool m_EnableDebugMarkers;
 
 public:
 	VulkanDevice(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char*> enabledExtensions);
 	~VulkanDevice();
-
-	void Cleanup();
 
 	uint32_t GetMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound = nullptr);
 	uint32_t GetQueueFamilyIndex(VkQueueFlagBits queueFlags);

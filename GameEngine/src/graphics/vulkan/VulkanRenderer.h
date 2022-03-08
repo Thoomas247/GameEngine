@@ -7,6 +7,9 @@ public:
 	std::unique_ptr<VulkanRenderPass> RenderPass;	// renderpass must be initialized after swapchain
 
 private:
+	std::shared_ptr<VulkanInstance> m_Instance;
+	std::shared_ptr<VulkanDevice> m_Device;
+
 	bool m_ResizeRequested;
 
 	uint32_t m_CurrentFrameIndex;
@@ -21,6 +24,7 @@ private:
 
 public:
 	VulkanRenderer();
+	~VulkanRenderer();
 	void Cleanup();
 
 	void StartRendering();

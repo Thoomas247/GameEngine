@@ -17,14 +17,14 @@ int Engine::Run()
 
 	// TODO:
 	// [x] make viewport and scissor size dynamic in vulkan
-	// [] find a better way to clean up vulkan objects on application close
-	// [] implement camera component properly
+	// [x] find a better way to clean up vulkan objects on application close
 	// [] fix importing to match new format:
 	//		[] import into .scene file which contains each component type in separate lists
 	//		[] create skeleton component
 	//		[] save skeleton in new format
 	//		[] save animations in new format
 	//		[] fix animation linear interpolation on import
+	// [] implement camera component properly
 	// [] fix scene loading to match new format
 	// [] add scene saving
 	// [] add skeleton loading to scene loading
@@ -69,7 +69,7 @@ int Engine::Run()
 		Window::PollEvents();
 	}
 
-	VulkanState::Cleanup();
+	VulkanState::WaitIdle();
 	Window::CleanUp();
 
 	return 0;

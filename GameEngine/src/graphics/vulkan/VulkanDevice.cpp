@@ -7,12 +7,14 @@
 
 VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char*> enabledExtensions)
 {
+	m_Instance = VulkanState::Instance;
+
 	if (physicalDevice == nullptr)
 	{
 		LOG_ERROR("VULKAN_DEVICE::Physical device cannot be null!");
 	}
 
-	if (VulkanState::Instance == nullptr)
+	if (m_Instance == nullptr)
 	{
 		LOG_ERROR("VULKAN_DEVICE::Instance must be created before creating the device!");
 	}
@@ -61,18 +63,6 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeat
 }
 
 VulkanDevice::~VulkanDevice()
-{
-	if (CommandPool)
-	{
-		vkDestroyCommandPool(LogicalDevice, CommandPool, nullptr);
-	}
-	if (LogicalDevice)
-	{
-		vkDestroyDevice(LogicalDevice, nullptr);
-	}
-}
-
-void VulkanDevice::Cleanup()
 {
 	vkDestroyCommandPool(LogicalDevice, CommandPool, nullptr);
 	vkDestroyDevice(LogicalDevice, nullptr);

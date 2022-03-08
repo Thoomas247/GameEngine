@@ -6,25 +6,26 @@
 
 VulkanPipeline::VulkanPipeline(const std::string& glslPath)
 {
+	m_Instance = VulkanState::Instance;
+	m_Device = VulkanState::Device;
+
 	std::vector<CachedShader> spirvFiles = std::vector<CachedShader>();
 
 	getSpirvFiles(glslPath, spirvFiles);
 	compileFromSpirv(spirvFiles);
 	createPipeline();
-
-	// add to VukanState so it can be cleaned up
-	// TODO: add vulkan's pointers directly and remove cleanup from here
-	VulkanState::Pipelines.push_back(this);
 }
 
-void VulkanPipeline::Cleanup()
+VulkanPipeline::~VulkanPipeline()
 {
 	for (int i = 0; i < m_ShaderModules.size(); i++)
 	{
-		vkDestroyShaderModule(VulkanState::Device->LogicalDevice, m_ShaderModules[i], nullptr);
+		vkDestroyShaderModule(m_Device->LogicalDevice, m_ShaderModules[i], nullptr);
 	}
-	vkDestroyPipeline(VulkanState::Device->LogicalDevice, Pipeline, nullptr);
-	vkDestroyPipelineLayout(VulkanState::Device->LogicalDevice, m_PipelineLayout, nullptr);
+	vkDestroyPipeline(m_Device->LogicalDevice, Pipeline, nullptr);
+	vkDestroyPipelineLayout(m_Device->LogicalDevice, m_PipelineLayout, nullptr);
+
+	Pipeline = VK_NULL_HANDLE;
 }
 
 
@@ -188,7 +189,7 @@ void VulkanPipeline::compileFromSpirv(const std::vector<CachedShader>& spirvFile
 		createInfo.codeSize = spirv.size() * sizeof(uint32_t);
 		createInfo.pCode = spirv.data();
 
-		if (vkCreateShaderModule(VulkanState::Device->LogicalDevice, &createInfo, nullptr, &m_ShaderModules[i]) != VK_SUCCESS)
+		if (vkCreateShaderModule(m_Device->LogicalDevice, &createInfo, nullptr, &m_ShaderModules[i]) != VK_SUCCESS)
 		{
 			LOG_ERROR("VULKAN_PIPELINE::Failed to create shader module!");
 		}
@@ -205,7 +206,7 @@ void VulkanPipeline::compileFromSpirv(const std::vector<CachedShader>& spirvFile
 	createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	createInfo.pNext = nullptr;
 
-	if (vkCreatePipelineLayout(VulkanState::Device->LogicalDevice, &createInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
+	if (vkCreatePipelineLayout(m_Device->LogicalDevice, &createInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
 	{
 		LOG_ERROR("VULKAN_PIPELINE::Failed to create pipeline layout!");
 	}
@@ -366,7 +367,7 @@ void VulkanPipeline::createPipeline()
 	pipelineCreateInfo.subpass = 0;
 	pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-	if (vkCreateGraphicsPipelines(VulkanState::Device->LogicalDevice, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &Pipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(m_Device->LogicalDevice, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &Pipeline) != VK_SUCCESS)
 	{
 		LOG_ERROR("RENDER_PIPELINE::Failed to create graphics pipeline!");
 	}
