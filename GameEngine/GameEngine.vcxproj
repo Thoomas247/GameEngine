@@ -115,13 +115,7 @@
     <ClCompile Include="include\spirv-cross\spirv_reflect.cpp" />
     <ClCompile Include="include\stb\stb_image.cpp" />
     <ClCompile Include="include\tinygltf\tiny_gltf.cpp" />
-    <ClCompile Include="src\graphics\shaders\ShaderUtil.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\graphics\shaders\MaterialShader.cpp">
+    <ClCompile Include="src\graphics\ShaderUtil.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -158,12 +152,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\importer\GLTFImporter.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\graphics\GraphicsAssetManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -243,12 +231,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\MeshBuffers.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
-    </ClCompile>
     <ClCompile Include="src\core\UUID.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
@@ -261,55 +243,55 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\shaders\UniformBuffer.cpp">
+    <ClCompile Include="src\graphics\UniformBuffer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanDevice.cpp">
+    <ClCompile Include="src\vulkan\VulkanDevice.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanInstance.cpp">
+    <ClCompile Include="src\vulkan\VulkanInstance.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanSwapChain.cpp">
+    <ClCompile Include="src\vulkan\VulkanSwapChain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanRenderer.cpp">
+    <ClCompile Include="src\vulkan\VulkanRenderer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanPipeline.cpp">
+    <ClCompile Include="src\vulkan\VulkanPipeline.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanState.cpp">
+    <ClCompile Include="src\vulkan\VulkanState.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanRenderPass.cpp">
+    <ClCompile Include="src\vulkan\VulkanRenderPass.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanBuffer.cpp">
+    <ClCompile Include="src\vulkan\VulkanBuffer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -318,14 +300,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\spirv-cross\spirv_cross_util.hpp" />
-    <ClInclude Include="src\graphics\shaders\ShaderUtil.h" />
-    <ClInclude Include="src\graphics\shaders\MaterialShader.h" />
-    <ClInclude Include="src\graphics\vulkan\StructsAndConstants.h" />
+    <ClInclude Include="src\graphics\ShaderUtil.h" />
+    <ClInclude Include="src\graphics\Vertex.h" />
+    <ClInclude Include="src\vulkan\StructsAndConstants.h" />
     <ClInclude Include="src\importer\Importer.h" />
     <ClInclude Include="src\ECS\ComponentContainer.h" />
     <ClInclude Include="src\ECS\EntityModifier.h" />
     <ClInclude Include="src\importer\GLTFImporter.h" />
-    <ClInclude Include="src\graphics\GraphicsAssetManager.h" />
     <ClInclude Include="src\precompiled.h" />
     <ClInclude Include="src\scene\SceneManager.h" />
     <ClInclude Include="src\ECS\ECS.h" />
@@ -345,18 +326,17 @@
     <ClInclude Include="src\animator\Animation.h" />
     <ClInclude Include="src\animator\Joint.h" />
     <ClInclude Include="src\graphics\Renderer.h" />
-    <ClInclude Include="src\graphics\MeshBuffers.h" />
     <ClInclude Include="src\core\UUID.h" />
     <ClInclude Include="src\core\Util.h" />
-    <ClInclude Include="src\graphics\shaders\UniformBuffer.h" />
-    <ClInclude Include="src\graphics\vulkan\VulkanDevice.h" />
-    <ClInclude Include="src\graphics\vulkan\VulkanInstance.h" />
-    <ClInclude Include="src\graphics\vulkan\VulkanSwapChain.h" />
-    <ClInclude Include="src\graphics\vulkan\VulkanRenderer.h" />
-    <ClInclude Include="src\graphics\vulkan\VulkanPipeline.h" />
-    <ClInclude Include="src\graphics\vulkan\VulkanState.h" />
-    <ClInclude Include="src\graphics\vulkan\VulkanRenderPass.h" />
-    <ClInclude Include="src\graphics\vulkan\VulkanBuffer.h" />
+    <ClInclude Include="src\graphics\UniformBuffer.h" />
+    <ClInclude Include="src\vulkan\VulkanDevice.h" />
+    <ClInclude Include="src\vulkan\VulkanInstance.h" />
+    <ClInclude Include="src\vulkan\VulkanSwapChain.h" />
+    <ClInclude Include="src\vulkan\VulkanRenderer.h" />
+    <ClInclude Include="src\vulkan\VulkanPipeline.h" />
+    <ClInclude Include="src\vulkan\VulkanState.h" />
+    <ClInclude Include="src\vulkan\VulkanRenderPass.h" />
+    <ClInclude Include="src\vulkan\VulkanBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\PBRShader.glsl" />

@@ -10,9 +10,6 @@ UniformBuffer::UniformBuffer(const std::string& name, const int& binding, const 
 	m_Binding = binding;
 	m_Uniforms = uniforms;
 	m_Size = (int)uniforms.size();
-
-	//glCreateBuffers(1, &m_GLID);
-	//glNamedBufferData(m_GLID, m_Size, NULL, GL_STATIC_DRAW);
 }
 
 void UniformBuffer::SetData(const std::string& uniformName, const std::vector<char>& data)
@@ -36,13 +33,10 @@ void UniformBuffer::SetData(const std::string& uniformName, const std::vector<ch
 
 void UniformBuffer::Delete()
 {
-	//glDeleteBuffers(1, &m_GLID);
+
 }
 
 void UniformBuffer::Bind()
 {
-	//glBindBufferBase(GL_UNIFORM_BUFFER, m_Binding, m_GLID);
+
 }
-
-
-/* -- PRIVATE -- */

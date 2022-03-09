@@ -35,10 +35,10 @@ int Engine::Run()
 
 
 	//Importer::Import("F:/Users/TM1/Downloads/Tree/MyFirstTree.gltf");
-	//SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
+	SceneManager::LoadScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 	//SceneManager::LoadSubScene(ProjectManager::GetScenesPath() + "MyFirstTree.scene");
 
-	ECS::CreateComponent<MeshComponent>(nullptr);
+	//ECS::CreateComponent<MeshComponent>(nullptr);
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;

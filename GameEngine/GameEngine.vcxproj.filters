@@ -54,9 +54,6 @@
     <ClCompile Include="src\core\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\MeshBuffers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -73,9 +70,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\SceneManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\graphics\GraphicsAssetManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\importer\GLTFImporter.cpp">
@@ -105,10 +99,7 @@
     <ClCompile Include="include\tinygltf\tiny_gltf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\shaders\MaterialShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\graphics\shaders\ShaderUtil.cpp">
+    <ClCompile Include="src\graphics\ShaderUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Util.cpp">
@@ -138,31 +129,31 @@
     <ClCompile Include="include\spirv-cross\spirv_parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\shaders\UniformBuffer.cpp">
+    <ClCompile Include="src\graphics\UniformBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanDevice.cpp">
+    <ClCompile Include="src\vulkan\VulkanDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanInstance.cpp">
+    <ClCompile Include="src\vulkan\VulkanInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanSwapChain.cpp">
+    <ClCompile Include="src\vulkan\VulkanSwapChain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanRenderer.cpp">
+    <ClCompile Include="src\vulkan\VulkanRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanPipeline.cpp">
+    <ClCompile Include="src\vulkan\VulkanPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanState.cpp">
+    <ClCompile Include="src\vulkan\VulkanState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanRenderPass.cpp">
+    <ClCompile Include="src\vulkan\VulkanRenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\vulkan\VulkanBuffer.cpp">
+    <ClCompile Include="src\vulkan\VulkanBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -189,9 +180,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\graphics\MeshBuffers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\Scene.h">
@@ -227,9 +215,6 @@
     <ClInclude Include="src\scene\SceneManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\GraphicsAssetManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\importer\GLTFImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -245,46 +230,46 @@
     <ClInclude Include="src\importer\Importer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\shaders\MaterialShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\spirv-cross\spirv_cross_util.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\shaders\ShaderUtil.h">
+    <ClInclude Include="src\graphics\ShaderUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\shaders\UniformBuffer.h">
+    <ClInclude Include="src\graphics\UniformBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VulkanDevice.h">
+    <ClInclude Include="src\vulkan\VulkanDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VulkanInstance.h">
+    <ClInclude Include="src\vulkan\VulkanInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\StructsAndConstants.h">
+    <ClInclude Include="src\vulkan\StructsAndConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VulkanSwapChain.h">
+    <ClInclude Include="src\vulkan\VulkanSwapChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VulkanRenderer.h">
+    <ClInclude Include="src\vulkan\VulkanRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VulkanPipeline.h">
+    <ClInclude Include="src\vulkan\VulkanPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VulkanState.h">
+    <ClInclude Include="src\vulkan\VulkanState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VulkanRenderPass.h">
+    <ClInclude Include="src\vulkan\VulkanRenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vulkan\VulkanBuffer.h">
+    <ClInclude Include="src\vulkan\VulkanBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

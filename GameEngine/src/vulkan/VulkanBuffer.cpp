@@ -4,7 +4,30 @@
 
 /* -- PUBLIC -- */
 
-VulkanBuffer::VulkanBuffer(VkBufferUsageFlagBits usageFlag, VkDeviceSize size, void* data)
+VulkanBuffer::VulkanBuffer(VulkanBuffer&& oldBuffer) noexcept
+{
+	m_Instance = oldBuffer.m_Instance;
+	m_Device = oldBuffer.m_Device;
+
+	Buffer = oldBuffer.Buffer;
+	BufferMemory = oldBuffer.BufferMemory;
+
+	oldBuffer.Buffer = VK_NULL_HANDLE;
+	oldBuffer.BufferMemory = VK_NULL_HANDLE;
+}
+
+VulkanBuffer::~VulkanBuffer()
+{
+	if (Buffer != VK_NULL_HANDLE)
+	{
+		vkDestroyBuffer(m_Device->LogicalDevice, Buffer, nullptr);
+		vkFreeMemory(m_Device->LogicalDevice, BufferMemory, nullptr);
+	}
+
+	Buffer = VK_NULL_HANDLE;
+}
+
+void VulkanBuffer::Init(VkBufferUsageFlagBits usageFlag, VkDeviceSize size, void* data)
 {
 	m_Instance = VulkanState::Instance;
 	m_Device = VulkanState::Device;
@@ -32,12 +55,4 @@ VulkanBuffer::VulkanBuffer(VkBufferUsageFlagBits usageFlag, VkDeviceSize size, v
 
 	vkDestroyBuffer(m_Device->LogicalDevice, stagingBuffer, nullptr);
 	vkFreeMemory(m_Device->LogicalDevice, stagingBufferMemory, nullptr);
-}
-
-VulkanBuffer::~VulkanBuffer()
-{
-	vkDestroyBuffer(m_Device->LogicalDevice, Buffer, nullptr);
-	vkFreeMemory(m_Device->LogicalDevice, BufferMemory, nullptr);
-
-	Buffer = VK_NULL_HANDLE;
 }

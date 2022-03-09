@@ -16,19 +16,63 @@ struct Vertex
 		Color = color;
 	}
 
-	static const int NUM_VERTEX_ATTRIBS = 4;
-
-
-	// TODO: move these to a VulkanVertexInfo class
-
-	static VkVertexInputBindingDescription GetBindingDescription()
+	Vertex(const std::vector<float>& floats)
 	{
-		VkVertexInputBindingDescription bindingDescription{};
-		bindingDescription.binding = 0;
-		bindingDescription.stride = sizeof(Vertex);
-		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		return bindingDescription;
+		if (floats.size() != NUM_VERTEX_FLOATS)
+		{
+			LOG_ERROR("VERTEX::The passed float vector is the wrong size! It is size " + std::to_string(floats.size()) + " (should be " + std::to_string(NUM_VERTEX_FLOATS) + ").");
+		}
+
+		// position
+		Position.x = floats[0];
+		Position.y = floats[1];
+		Position.z = floats[2];
+
+		// normal
+		Normal.x = floats[3];
+		Normal.y = floats[4];
+		Normal.z = floats[5];
+
+		// textCoord
+		TexCoord.x = floats[6];
+		TexCoord.y = floats[7];
+
+		// color
+		Color.x = floats[8];
+		Color.y = floats[9];
+		Color.z = floats[10];
+		Color.z = floats[11];
 	}
+
+	std::vector<float> Serialize()
+	{
+		std::vector<float> floats;
+
+		// position
+		floats.push_back(Position.x);
+		floats.push_back(Position.y);
+		floats.push_back(Position.z);
+
+		// normal
+		floats.push_back(Normal.x);
+		floats.push_back(Normal.y);
+		floats.push_back(Normal.z);
+
+		// textCoord
+		floats.push_back(TexCoord.x);
+		floats.push_back(TexCoord.y);
+
+		// color
+		floats.push_back(Color.r);
+		floats.push_back(Color.g);
+		floats.push_back(Color.b);
+		floats.push_back(Color.a);
+
+		return floats;
+	}
+
+	static const int NUM_VERTEX_ATTRIBS = 4;
+	static const int NUM_VERTEX_FLOATS = 3 + 3 + 2 + 4;
 
 	static std::array<VkVertexInputAttributeDescription, NUM_VERTEX_ATTRIBS> GetAttributeDescriptions()
 	{
@@ -67,17 +111,13 @@ struct Vertex
 
 		return attributeDescriptions;
 	}
-};
 
-class MeshBuffers
-{
-public:
-	uint32_t NumIndices;
-
-	VulkanBuffer VertexBuffer;
-	VulkanBuffer IndexBuffer;
-
-public:
-	MeshBuffers(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
-
+	static VkVertexInputBindingDescription GetBindingDescription()
+	{
+		VkVertexInputBindingDescription bindingDescription{};
+		bindingDescription.binding = 0;
+		bindingDescription.stride = sizeof(Vertex);
+		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		return bindingDescription;
+	}
 };

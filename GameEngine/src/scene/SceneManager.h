@@ -2,8 +2,6 @@
 
 #include "../scene/Scene.h"
 
-/*
-
 class SceneManager
 {
 private:
@@ -24,5 +22,7 @@ public:
 	/// <param name="absolutePath"></param>
 	static void LoadSubScene(const std::string& absolutePath, const std::shared_ptr<Entity>& parent = s_CurrentScene->GetRoot());
 	static std::shared_ptr<Entity> CreateEntityAtRoot(const std::string& name) { return s_CurrentScene->AddEntityToRoot(name); }
+
+private:
+	static void getSceneFileData(const std::string& absolutePath, json& j, std::string& sceneName, size_t& dotPos, size_t& slashPos);
 };
-*/

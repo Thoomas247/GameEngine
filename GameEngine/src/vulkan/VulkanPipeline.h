@@ -1,13 +1,5 @@
 #pragma once
 
-enum class ShaderType
-{
-	vertex, fragment,
-
-	// keep this at the end
-	NUM_TYPES
-};
-
 struct CachedShader
 {
 	ShaderType Type;
@@ -23,7 +15,7 @@ struct CachedShader
 class VulkanPipeline
 {
 public:
-	VkPipeline Pipeline;
+	VkPipeline Pipeline = VK_NULL_HANDLE;
 
 private:
 	std::shared_ptr<VulkanInstance> m_Instance;
@@ -34,8 +26,11 @@ private:
 	VkPipelineLayout m_PipelineLayout;
 
 public:
-	VulkanPipeline(const std::string& glslPath);
+	VulkanPipeline() = default;
+	VulkanPipeline(VulkanPipeline&& oldPipeline) noexcept;
 	~VulkanPipeline();
+
+	void Init(const std::string& glslPath);
 
 private:
 	void getSpirvFiles(const std::string& glslPath, std::vector<CachedShader>& spirvFiles);

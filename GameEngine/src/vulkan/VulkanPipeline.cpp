@@ -4,7 +4,35 @@
 
 /* -- PUBLIC -- */
 
-VulkanPipeline::VulkanPipeline(const std::string& glslPath)
+VulkanPipeline::VulkanPipeline(VulkanPipeline&& oldPipeline) noexcept
+{
+	m_Instance = oldPipeline.m_Instance;
+	m_Device = oldPipeline.m_Device;
+
+	Pipeline = oldPipeline.Pipeline;
+	m_PipelineLayout = oldPipeline.m_PipelineLayout;
+	m_ShaderModules = oldPipeline.m_ShaderModules;
+	m_ShaderStageCreateInfo = oldPipeline.m_ShaderStageCreateInfo;
+
+	oldPipeline.Pipeline = VK_NULL_HANDLE;
+}
+
+VulkanPipeline::~VulkanPipeline()
+{
+	if (Pipeline != VK_NULL_HANDLE)
+	{
+		for (int i = 0; i < m_ShaderModules.size(); i++)
+		{
+			vkDestroyShaderModule(m_Device->LogicalDevice, m_ShaderModules[i], nullptr);
+		}
+		vkDestroyPipeline(m_Device->LogicalDevice, Pipeline, nullptr);
+		vkDestroyPipelineLayout(m_Device->LogicalDevice, m_PipelineLayout, nullptr);
+	}
+
+	Pipeline = VK_NULL_HANDLE;
+}
+
+void VulkanPipeline::Init(const std::string& glslPath)
 {
 	m_Instance = VulkanState::Instance;
 	m_Device = VulkanState::Device;
@@ -14,18 +42,6 @@ VulkanPipeline::VulkanPipeline(const std::string& glslPath)
 	getSpirvFiles(glslPath, spirvFiles);
 	compileFromSpirv(spirvFiles);
 	createPipeline();
-}
-
-VulkanPipeline::~VulkanPipeline()
-{
-	for (int i = 0; i < m_ShaderModules.size(); i++)
-	{
-		vkDestroyShaderModule(m_Device->LogicalDevice, m_ShaderModules[i], nullptr);
-	}
-	vkDestroyPipeline(m_Device->LogicalDevice, Pipeline, nullptr);
-	vkDestroyPipelineLayout(m_Device->LogicalDevice, m_PipelineLayout, nullptr);
-
-	Pipeline = VK_NULL_HANDLE;
 }
 
 
@@ -235,23 +251,6 @@ void VulkanPipeline::reflect(const std::vector<uint32_t>& shaderWords)
 {
 	spirv_cross::Compiler compiler = spirv_cross::Compiler(shaderWords);
 	spirv_cross::ShaderResources resources = compiler.get_shader_resources();
-
-	for (const auto& resource : resources.uniform_buffers)
-	{
-		// get buffer name and type
-		std::string bufferName = resource.name;
-		const auto& bufferType = compiler.get_type(resource.base_type_id);
-
-		std::vector<Uniform> uniformData;
-
-		// loop through uniforms
-		const auto& uniforms = bufferType.member_types;
-		for (int i = 0; i < uniforms.size(); i++)
-		{
-			//std::string uniformName = compiler.get_member_name(resource.base_type_id, i);
-			//const auto& uniformType = compiler.get_type(bufferType.member_types[i]);
-		}
-	}
 }
 
 void VulkanPipeline::createPipeline()

@@ -85,9 +85,7 @@ void GLTFImporter::Import(const std::string& absolutePath, const size_t& slashPo
 		std::vector<float> texCoords = getVertexTextureCoords(model, primitive);
 		std::vector<float> colors = getVertexColors(model, primitive);
 		//std::vector<unsigned short> joints = getVertexJoints(model, primitive, indexDict);
-		std::vector<unsigned short> joints = {};
 		//std::vector<float> weights = getVertexWeights(model, primitive);
-		std::vector<float> weights = {};
 
 		if (normals.size() == 0)
 		{
@@ -101,18 +99,10 @@ void GLTFImporter::Import(const std::string& absolutePath, const size_t& slashPo
 		{
 			colors = std::vector<float>((positions.size() / 3) * 4, 1.0f);
 		}
-		if (joints.size() == 0)
-		{
-			joints = std::vector<unsigned short>((positions.size() / 3) * 4, 0);
-		}
-		if (weights.size() == 0)
-		{
-			weights = std::vector<float>((positions.size() / 3) * 4, 0.0f);
-		}
 
 		// interleave vertex data
 		std::vector<float> vertices;
-		vertices.reserve((positions.size() / 3) * 20);	// 20 floats per vertex
+		vertices.reserve((positions.size() / 3) * Vertex::NUM_VERTEX_FLOATS);
 		for (unsigned int i = 0; i < (positions.size() / 3); i++)
 		{
 			vertices.push_back(positions[i * 3 + 0]);
@@ -130,29 +120,17 @@ void GLTFImporter::Import(const std::string& absolutePath, const size_t& slashPo
 			vertices.push_back(colors[i * 4 + 1]);
 			vertices.push_back(colors[i * 4 + 2]);
 			vertices.push_back(colors[i * 4 + 3]);
-
-			vertices.push_back(joints[i * 4 + 0]);
-			vertices.push_back(joints[i * 4 + 1]);
-			vertices.push_back(joints[i * 4 + 2]);
-			vertices.push_back(joints[i * 4 + 3]);
-
-			vertices.push_back(weights[i * 4 + 0]);
-			vertices.push_back(weights[i * 4 + 1]);
-			vertices.push_back(weights[i * 4 + 2]);
-			vertices.push_back(weights[i * 4 + 3]);
 		}
 
 		std::string entityID = std::to_string(UUID::GenerateUUID());
-		std::string vertexArrayAssetID = std::to_string(UUID::GenerateUUID());
 		std::string transformComponentID = std::to_string(UUID::GenerateUUID());
 		std::string meshComponentID = std::to_string(UUID::GenerateUUID());
 
-		// vertices
-		j["vertexArrayAssets"][vertexArrayAssetID]["vertices"] = vertices;
+		j["meshComponents"][meshComponentID]["vertices"] = vertices;
 
 		// indices
 		std::vector<unsigned int> indices = getIndices(model, primitive);
-		j["vertexArrayAssets"][vertexArrayAssetID]["indices"] = indices;
+		j["meshComponents"][meshComponentID]["indices"] = indices;
 
 		// material
 		int& materialIndex = primitive.material;
@@ -177,8 +155,6 @@ void GLTFImporter::Import(const std::string& absolutePath, const size_t& slashPo
 		j["meshComponents"][meshComponentID]["material"]["emissiveTexture"] = emissiveTexture;
 		j["meshComponents"][meshComponentID]["material"]["normalTexture"] = normalTexture;
 		j["meshComponents"][meshComponentID]["material"]["occlusionTexture"] = occlusionTexture;
-
-		j["meshComponents"][meshComponentID]["vertexArrayAsset"] = vertexArrayAssetID;
 
 		// transform
 		glm::mat4 transform = glm::mat4(1.0f);
