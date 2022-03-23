@@ -11,6 +11,7 @@ VulkanPipeline::VulkanPipeline(VulkanPipeline&& oldPipeline) noexcept
 
 	Pipeline = oldPipeline.Pipeline;
 	m_PipelineLayout = oldPipeline.m_PipelineLayout;
+	m_DescriptorSetLayout = oldPipeline.m_DescriptorSetLayout;
 	m_ShaderModules = oldPipeline.m_ShaderModules;
 	m_ShaderStageCreateInfo = oldPipeline.m_ShaderStageCreateInfo;
 
@@ -27,6 +28,7 @@ VulkanPipeline::~VulkanPipeline()
 		}
 		vkDestroyPipeline(m_Device->LogicalDevice, Pipeline, nullptr);
 		vkDestroyPipelineLayout(m_Device->LogicalDevice, m_PipelineLayout, nullptr);
+		vkDestroyDescriptorSetLayout(m_Device->LogicalDevice, m_DescriptorSetLayout, nullptr);
 	}
 
 	Pipeline = VK_NULL_HANDLE;
@@ -40,7 +42,7 @@ void VulkanPipeline::Init(const std::string& glslPath)
 	std::vector<CachedShader> spirvFiles = std::vector<CachedShader>();
 
 	getSpirvFiles(glslPath, spirvFiles);
-	compileFromSpirv(spirvFiles);
+	compileFromSpirvAndReflect(spirvFiles);
 	createPipeline();
 }
 
@@ -58,7 +60,7 @@ void VulkanPipeline::getSpirvFiles(const std::string& glslPath, std::vector<Cach
 	// [] on shader load, compile shader and set saved uniforms
 
 	// load the glsl file
-	std::string shaderString = loadGlslFileContents(glslPath);
+	std::string shaderString = ShaderUtil::LoadGlslFileContents(glslPath);
 
 	// create the directory if it does not exist
 	std::string shaderPath = ProjectManager::GetCachePath() + "shaders/";
@@ -96,10 +98,10 @@ void VulkanPipeline::getSpirvFiles(const std::string& glslPath, std::vector<Cach
 		{
 			ShaderType type = (ShaderType)i;
 
-			std::string shaderCode = splitShader(shaderString, ShaderUtil::GetTypeString(type));
+			std::string shaderCode = ShaderUtil::SplitShaderStage(shaderString, type);
 			if (!shaderCode.empty())
 			{
-				std::vector<uint32_t> shaderSpirv = compileToSpirv(shaderCode, ShaderUtil::GetShadercType(type));
+				std::vector<uint32_t> shaderSpirv = ShaderUtil::ConvertToSpirv(shaderCode, type);
 
 				// save to file
 				std::string spirvPath = shaderPath + ".spv" + ShaderUtil::GetTypeExtension(type);
@@ -119,89 +121,33 @@ void VulkanPipeline::getSpirvFiles(const std::string& glslPath, std::vector<Cach
 	}
 }
 
-std::string VulkanPipeline::loadGlslFileContents(const std::string& absolutePath)
-{
-	std::string fileContents;
-	std::ifstream fileStream(absolutePath);
-
-	if (fileStream.is_open())
-	{
-		std::stringstream stringStream;
-		stringStream << fileStream.rdbuf();
-
-		fileStream.close();
-
-		fileContents = stringStream.str();
-	}
-	else
-	{
-		LOG_ERROR("SHADER::File at path " + absolutePath + " not successfully read.");
-	}
-
-	return fileContents;
-}
-
-std::string VulkanPipeline::splitShader(const std::string& shaderString, const std::string& shaderType)
-{
-	std::string startTag = "#start " + shaderType;
-	std::string endTag = "#end " + shaderType;
-
-	std::smatch match;
-
-	// shader start
-	std::regex startRegex = std::regex("(" + startTag + ")");
-	std::regex_search(shaderString, match, startRegex);
-	size_t startPos = match.position(0) + startTag.size() + 1;
-
-	if (match.size() == 0)
-	{
-		return std::string();
-	}
-
-	// shader end
-	std::regex endRegex = std::regex("(" + endTag + ")");
-	std::regex_search(shaderString, match, endRegex);
-	size_t endPos = match.position(0) - 1;
-
-	if (match.size() == 0)
-	{
-		LOG_ERROR("SHADER::Shader end tag (" + endTag + ") not found!");
-	}
-
-	return shaderString.substr(startPos, endPos - startPos).c_str();
-}
-
-std::vector<uint32_t> VulkanPipeline::compileToSpirv(const std::string& shaderString, const shaderc_shader_kind& type)
-{
-	shaderc::Compiler compiler = shaderc::Compiler();
-	shaderc::CompileOptions compileOptions;
-	compileOptions.SetTargetEnvironment(shaderc_target_env_vulkan, 0);
-	compileOptions.SetAutoBindUniforms(true);
-	compileOptions.SetAutoMapLocations(true);
-	compileOptions.SetOptimizationLevel(shaderc_optimization_level_performance);
-
-	shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(shaderString, type, "Shader");
-	if (result.GetCompilationStatus() != shaderc_compilation_status_success)
-	{
-		LOG_ERROR("SHADER::Shader compilation failed! (" + result.GetErrorMessage() + ")");
-	}
-
-	return std::vector<uint32_t>(result.cbegin(), result.cend());
-}
-
-void VulkanPipeline::compileFromSpirv(const std::vector<CachedShader>& spirvFiles)
+void VulkanPipeline::compileFromSpirvAndReflect(const std::vector<CachedShader>& spirvFiles)
 {
 	m_ShaderStageCreateInfo.resize(spirvFiles.size());
 	m_ShaderModules.resize(spirvFiles.size());
 	for (int i = 0; i < spirvFiles.size(); i++)
 	{
+		// load the shader file from disk
 		const CachedShader& spirvShader = spirvFiles.at(i);
-		std::vector<uint32_t> spirv = loadSpirvFileContents(spirvShader.Path);
+		std::vector<uint32_t> spirv;
 
+		std::ifstream fileStream(spirvShader.Path, std::ios::in | std::ios::binary);
+
+		if (!fileStream.is_open())
+		{
+			LOG_ERROR("VULKAN_PIPELINE::Failed to open spirv file!");
+		}
+
+		size_t fileSize = std::filesystem::file_size(spirvShader.Path);
+		spirv.resize(fileSize / sizeof(uint32_t));
+
+		fileStream.read((char*)spirv.data(), fileSize);
+		fileStream.close();
+
+		// compile shader from spirv
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		createInfo.pNext = nullptr;
-
 		createInfo.codeSize = spirv.size() * sizeof(uint32_t);
 		createInfo.pCode = spirv.data();
 
@@ -210,47 +156,40 @@ void VulkanPipeline::compileFromSpirv(const std::vector<CachedShader>& spirvFile
 			LOG_ERROR("VULKAN_PIPELINE::Failed to create shader module!");
 		}
 
+		// tell vulkan how to use this shader
 		m_ShaderStageCreateInfo[i].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		m_ShaderStageCreateInfo[i].pNext = nullptr;
 		m_ShaderStageCreateInfo[i].stage = ShaderUtil::GetVulkanType(spirvShader.Type);
 		m_ShaderStageCreateInfo[i].module = m_ShaderModules[i];
 		m_ShaderStageCreateInfo[i].pName = "main";
+
+		// reflect on the shader to retrieve its uniforms, push constants, etc...
+		spirv_cross::Compiler compiler = spirv_cross::Compiler(spirv);
+		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
+
+		for (auto& ubo : resources.uniform_buffers)
+		{
+			VkDescriptorSetLayoutBinding uboLayoutBinding{};
+			uboLayoutBinding.binding = compiler.get_decoration(ubo.id, spv::DecorationBinding);
+			uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			uboLayoutBinding.descriptorCount = 1;	// TODO: Find way to get descriptor count using spirv_cross
+			uboLayoutBinding.stageFlags = ShaderUtil::GetVulkanType(spirvShader.Type);
+
+			m_LayoutBindings.push_back(uboLayoutBinding);
+		}
+
+		// TODO: Get push constants here too
 	}
 
-	// the shaders determine the number of inputs, outputs and push constants so this goes here
-	VkPipelineLayoutCreateInfo createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	createInfo.pNext = nullptr;
+	// create descriptor set layout now that descriptors have been retrieved
+	VkDescriptorSetLayoutCreateInfo layoutCreateInfo{};
+	layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutCreateInfo.bindingCount = m_LayoutBindings.size();
+	layoutCreateInfo.pBindings = m_LayoutBindings.data();
 
-	if (vkCreatePipelineLayout(m_Device->LogicalDevice, &createInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
-	{
-		LOG_ERROR("VULKAN_PIPELINE::Failed to create pipeline layout!");
+	if (vkCreateDescriptorSetLayout(m_Device->LogicalDevice, &layoutCreateInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
+		LOG_ERROR("VULKAN_PIPELINE::Failed to create descriptor set layout!");
 	}
-}
-
-std::vector<uint32_t> VulkanPipeline::loadSpirvFileContents(const std::string& absolutePath)
-{
-	std::vector<uint32_t> data;
-	std::ifstream fileStream(absolutePath, std::ios::in | std::ios::binary);
-
-	if (!fileStream.is_open())
-	{
-		LOG_ERROR("VULKAN_PIPELINE::Failed to open spirv file!");
-	}
-
-	size_t fileSize = std::filesystem::file_size(absolutePath);
-	data.resize(fileSize / sizeof(uint32_t));
-
-	fileStream.read((char*)data.data(), fileSize);
-	fileStream.close();
-
-	return data;
-}
-
-void VulkanPipeline::reflect(const std::vector<uint32_t>& shaderWords)
-{
-	spirv_cross::Compiler compiler = spirv_cross::Compiler(shaderWords);
-	spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 }
 
 void VulkanPipeline::createPipeline()
@@ -258,7 +197,17 @@ void VulkanPipeline::createPipeline()
 	auto bindingDescription = Vertex::GetBindingDescription();
 	auto attributeDescriptions = Vertex::GetAttributeDescriptions();
 
-	// TODO: set all of these settings (eg cull mode and polygon mode) based on variables in meshInfo
+	// pipeline layout create info
+	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo{};\
+	pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutCreateInfo.setLayoutCount = m_LayoutBindings.size();
+	pipelineLayoutCreateInfo.pSetLayouts = &m_DescriptorSetLayout;
+	pipelineLayoutCreateInfo.pNext = nullptr;
+
+	if (vkCreatePipelineLayout(m_Device->LogicalDevice, &pipelineLayoutCreateInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
+	{
+		LOG_ERROR("VULKAN_PIPELINE::Failed to create pipeline layout!");
+	}
 
 	// vertex input create info
 	VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};

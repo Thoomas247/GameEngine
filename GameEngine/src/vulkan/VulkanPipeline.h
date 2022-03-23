@@ -1,5 +1,8 @@
 #pragma once
 
+/// <summary>
+/// Struct used to represent a cached shader which needs to be loaded.
+/// </summary>
 struct CachedShader
 {
 	ShaderType Type;
@@ -12,6 +15,11 @@ struct CachedShader
 	}
 };
 
+// TODO: Move shader file loading to another class. VulkanPipeline should only handle compiling and descriptor layouts.
+
+/// <summary>
+/// The pipeline combines the shader and material into one object as the two need eachother to work.
+/// </summary>
 class VulkanPipeline
 {
 public:
@@ -23,7 +31,11 @@ private:
 
 	std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStageCreateInfo;
 	std::vector<VkShaderModule> m_ShaderModules;
+
 	VkPipelineLayout m_PipelineLayout;
+
+	std::vector<VkDescriptorSetLayoutBinding> m_LayoutBindings;
+	VkDescriptorSetLayout m_DescriptorSetLayout;
 
 public:
 	VulkanPipeline() = default;
@@ -33,13 +45,14 @@ public:
 	void Init(const std::string& glslPath);
 
 private:
+	/// <summary>
+	/// Retrieves the spirv files of this shader.
+	/// If the shader hasn't been cached yet, the shader is converted to spirv and saved automatically.
+	/// </summary>
+	/// <param name="glslPath"></param>
+	/// <param name="spirvFiles">The vector to fill in with the required information about this shader's spirv files</param>
 	void getSpirvFiles(const std::string& glslPath, std::vector<CachedShader>& spirvFiles);
-	std::string loadGlslFileContents(const std::string& absolutePath);
-	std::string splitShader(const std::string& shaderString, const std::string& shaderType);
-	std::vector<uint32_t> compileToSpirv(const std::string& shaderString, const shaderc_shader_kind& type);
-	void compileFromSpirv(const std::vector<CachedShader>& spirvFiles);
-	std::vector<uint32_t> loadSpirvFileContents(const std::string& absolutePath);
-	void reflect(const std::vector<uint32_t>& shaderWords);
+	void compileFromSpirvAndReflect(const std::vector<CachedShader>& spirvFiles);
 	void createPipeline();
 };
 

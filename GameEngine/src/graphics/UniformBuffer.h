@@ -1,46 +1,12 @@
 #pragma once
 
-struct Uniform
-{
-	std::string Name;
-	int Offset;
-	int Size;
-
-	std::vector<char> Data;
-
-	Uniform(const std::string& name, const int& offset, const int& size)
-	{
-		Name = name;
-		Offset = offset;
-		Size = size;
-		Data = std::vector<char>(size);
-	}
-
-	Uniform(const std::string& name, const int& offset, const std::vector<char>& data)
-	{
-		Name = name;
-		Offset = offset;
-		Size = (int)data.size();
-		Data = data;
-	}
-};
-
 class UniformBuffer
 {
 private:
-	std::string m_Name;
-	int m_Binding;
-	int m_Size;
-	unsigned int m_GLID;
-
-	std::vector<Uniform> m_Uniforms;
+	std::array<VulkanBuffer, MAX_FRAMES_IN_FLIGHT> m_Buffers;
 
 public:
-	UniformBuffer(const std::string& name, const int& binding, const std::vector<Uniform>& uniforms);
+	UniformBuffer(const uint64_t& size);
 
-	void SetData(const std::string& uniformName, const std::vector<char>& data);
-
-	void Delete();
-	void Bind();
+	void SetData(void* data, const uint32_t& frameIndex);
 };
-

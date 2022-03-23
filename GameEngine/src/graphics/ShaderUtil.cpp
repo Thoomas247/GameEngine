@@ -4,6 +4,76 @@
 
 /* -- PUBLIC -- */
 
+std::string ShaderUtil::LoadGlslFileContents(const std::string& absolutePath)
+{
+	std::string fileContents;
+	std::ifstream fileStream(absolutePath);
+
+	if (fileStream.is_open())
+	{
+		std::stringstream stringStream;
+		stringStream << fileStream.rdbuf();
+
+		fileStream.close();
+
+		fileContents = stringStream.str();
+	}
+	else
+	{
+		LOG_ERROR("SHADER_UTIL::File at path " + absolutePath + " not successfully read.");
+	}
+
+	return fileContents;
+}
+
+std::string ShaderUtil::SplitShaderStage(const std::string& shaderString, const ShaderType& shaderType)
+{
+	std::string startTag = "#start " + GetTypeString(shaderType);
+	std::string endTag = "#end " + GetTypeString(shaderType);
+
+	std::smatch match;
+
+	// shader start
+	std::regex startRegex = std::regex("(" + startTag + ")");
+	std::regex_search(shaderString, match, startRegex);
+	size_t startPos = match.position(0) + startTag.size() + 1;
+
+	if (match.size() == 0)
+	{
+		return std::string();
+	}
+
+	// shader end
+	std::regex endRegex = std::regex("(" + endTag + ")");
+	std::regex_search(shaderString, match, endRegex);
+	size_t endPos = match.position(0) - 1;
+
+	if (match.size() == 0)
+	{
+		LOG_ERROR("SHADER_UTIL::Shader end tag (" + endTag + ") not found!");
+	}
+
+	return shaderString.substr(startPos, endPos - startPos).c_str();
+}
+
+std::vector<uint32_t> ShaderUtil::ConvertToSpirv(const std::string& shaderString, const ShaderType& shaderType)
+{
+	shaderc::Compiler compiler = shaderc::Compiler();
+	shaderc::CompileOptions compileOptions;
+	compileOptions.SetTargetEnvironment(shaderc_target_env_vulkan, 0);
+	compileOptions.SetAutoBindUniforms(true);
+	compileOptions.SetAutoMapLocations(true);
+	compileOptions.SetOptimizationLevel(shaderc_optimization_level_performance);
+
+	shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(shaderString, GetShadercType(shaderType), "Shader");
+	if (result.GetCompilationStatus() != shaderc_compilation_status_success)
+	{
+		LOG_ERROR("SHADER::Shader compilation failed! (" + result.GetErrorMessage() + ")");
+	}
+
+	return std::vector<uint32_t>(result.cbegin(), result.cend());
+}
+
 VkShaderStageFlagBits ShaderUtil::GetVulkanType(const ShaderType& type)
 {
 	switch (type)

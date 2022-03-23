@@ -25,7 +25,6 @@ private:
 public:
 	VulkanRenderer();
 	~VulkanRenderer();
-	void Cleanup();
 
 	void StartRendering();
 	void Submit(VkPipeline pipeline, VkBuffer vertexBuffer, VkBuffer indexBuffer, const uint32_t& indexCount);

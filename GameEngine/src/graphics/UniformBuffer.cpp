@@ -4,39 +4,15 @@
 
 /* -- PUBLIC -- */
 
-UniformBuffer::UniformBuffer(const std::string& name, const int& binding, const std::vector<Uniform>& uniforms)
+UniformBuffer::UniformBuffer(const uint64_t& size)
 {
-	m_Name = name;
-	m_Binding = binding;
-	m_Uniforms = uniforms;
-	m_Size = (int)uniforms.size();
-}
-
-void UniformBuffer::SetData(const std::string& uniformName, const std::vector<char>& data)
-{
-	for (Uniform& uniform : m_Uniforms)
+	for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) 
 	{
-		if (uniform.Name == uniformName)
-		{
-			if (data.size() != uniform.Size)
-			{
-				LOG_ERROR("UNIFORM_BUFFER::Passed data for uniform " + uniformName + " is not the right size!");
-			}
-			else
-			{
-				uniform.Data = data;
-				break;
-			}
-		}
+		m_Buffers[i].InitHostCoherent(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, size);
 	}
 }
 
-void UniformBuffer::Delete()
+void UniformBuffer::SetData(void* data, const uint32_t& frameIndex)
 {
-
-}
-
-void UniformBuffer::Bind()
-{
-
+	m_Buffers[frameIndex].SetData(data);
 }
