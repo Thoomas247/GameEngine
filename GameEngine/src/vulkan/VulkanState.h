@@ -8,6 +8,7 @@
 #include "VulkanRenderer.h"
 #include "VulkanPipeline.h"
 #include "VulkanBuffer.h"
+#include "VulkanDescriptorPool.h"
 
 class VulkanState
 {

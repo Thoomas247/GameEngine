@@ -89,6 +89,18 @@ VkShaderStageFlagBits ShaderUtil::GetVulkanType(const ShaderType& type)
 	}
 }
 
+VkDescriptorType ShaderUtil::GetVulkanType(const DescriptorType& type)
+{
+	switch (type)
+	{
+	case DescriptorType::uniform_buffer:
+		return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+
+	default:
+		LOG_ERROR("SHADER_UTIL::Descriptor type is invalid!");
+	}
+}
+
 shaderc_shader_kind ShaderUtil::GetShadercType(const ShaderType& type)
 {
 	switch (type)
@@ -116,6 +128,18 @@ std::string ShaderUtil::GetTypeString(const ShaderType& type)
 
 	default:
 		LOG_ERROR("SHADER_UTIL::Shader type is invalid!");
+	}
+}
+
+std::string ShaderUtil::GetTypeString(const DescriptorType& type)
+{
+	switch (type)
+	{
+	case DescriptorType::uniform_buffer:
+		return "uniform_buffer";
+
+	default:
+		LOG_ERROR("SHADER_UTIL::Descriptor type is invalid!");
 	}
 }
 

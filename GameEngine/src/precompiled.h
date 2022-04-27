@@ -53,6 +53,7 @@ using json = nlohmann::json;
 
 #include "vulkan/VulkanState.h"
 
+#include "graphics/MaterialShader.h"
 #include "graphics/Renderer.h"
 #include "graphics/Vertex.h"
 

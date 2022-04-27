@@ -11,7 +11,7 @@ MeshComponent::MeshComponent(Entity* entity, const std::vector<Vertex>& vertices
 	IndexBuffer.Init(VK_BUFFER_USAGE_INDEX_BUFFER_BIT, sizeof(indices[0]) * indices.size(), (void*)indices.data());
 	NumIndices = (uint32_t)indices.size();
 
-	Pipeline.Init(glslPath);
+	Shader.Compile(glslPath);
 
 	m_Vertices = vertices;
 	m_Indices = indices;
@@ -58,12 +58,12 @@ MeshComponent::MeshComponent(Entity* entity, json j)
 	{
 		LOG_WARN("MESH_COMPONENT::Mesh has no shader, using the default one.");
 		m_GlslPath = DEFAULT_SHADER_PATH;
-		Pipeline.Init(m_GlslPath);
+		Shader.Compile(m_GlslPath);
 	}
 	else
 	{
 		m_GlslPath = j["shaderPath"];
-		Pipeline.Init(m_GlslPath);
+		Shader.Compile(m_GlslPath);
 	}
 }
 

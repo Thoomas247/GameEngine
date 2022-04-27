@@ -16,7 +16,7 @@ void Renderer::Draw()
     
     for (auto& mesh : ECS::GetComponents<MeshComponent>())
     {
-        VulkanState::Renderer->Submit(mesh.Pipeline.Pipeline, mesh.VertexBuffer.Buffer, mesh.IndexBuffer.Buffer, mesh.NumIndices);
+        VulkanState::Renderer->Submit(mesh.Shader.Pipeline.Pipeline, mesh.VertexBuffer.Buffer, mesh.IndexBuffer.Buffer, mesh.NumIndices);
     }
 
     VulkanState::Renderer->FinishRendering();

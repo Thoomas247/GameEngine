@@ -1,5 +1,8 @@
 #pragma once
 
+
+/* -- ENUMS -- */
+
 enum class ShaderType
 {
 	vertex, fragment,
@@ -7,6 +10,58 @@ enum class ShaderType
 	// keep this at the end
 	NUM_TYPES
 };
+
+enum class DescriptorType
+{
+	uniform_buffer,
+
+	// keep this at the end
+	NUM_TYPES
+};
+
+
+/* -- STRUCTS -- */
+
+/// <summary>
+/// Struct used to represent a cached shader which needs to be loaded.
+/// </summary>
+struct CachedShaderInfo
+{
+	ShaderType Type;
+	std::string Path;
+
+	CachedShaderInfo(const ShaderType& type, const std::string& path)
+	{
+		Type = type;
+		Path = path;
+	}
+};
+
+/// <summary>
+/// Used to pass the shader code to the pipeline.
+/// </summary>
+struct SpirvCodeInfo
+{
+	ShaderType Type;
+	std::vector<uint32_t> Code;
+};
+
+struct DescriptorPoolSize
+{
+	DescriptorType Type;
+	uint32_t Size;
+};
+
+struct DescriptorSetBinding
+{
+	uint32_t Binding;
+	DescriptorType Type;
+	uint32_t Count;
+	ShaderType Stage;
+};
+
+
+/* -- UTIL -- */
 
 class ShaderUtil
 {
@@ -34,7 +89,12 @@ public:
 	static std::vector<uint32_t> ConvertToSpirv(const std::string& shaderString, const ShaderType& shaderType);
 
 	static VkShaderStageFlagBits GetVulkanType(const ShaderType& type);
+	static VkDescriptorType GetVulkanType(const DescriptorType& type);
+
 	static shaderc_shader_kind GetShadercType(const ShaderType& type);
+
 	static std::string GetTypeString(const ShaderType& type);
+	static std::string GetTypeString(const DescriptorType& type);
+
 	static std::string GetTypeExtension(const ShaderType& type);
 };

@@ -23,7 +23,9 @@ public:
 	VulkanBuffer IndexBuffer;
 	uint32_t NumIndices;
 
-	VulkanPipeline Pipeline;
+	// TODO: Make Mesh class to store the 3 member vars above
+
+	MaterialShader Shader;
 
 private:
 	std::vector<Vertex> m_Vertices;
